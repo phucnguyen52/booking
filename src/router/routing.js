@@ -7,6 +7,9 @@ import HomePage from "../page/Home/HomePage";
 import BookingPage from "../page/Booking/BookingPage";
 import Login from "../page/Auth/Login/Login";
 import Register from "../page/Auth/Register/Register";
+import Order from "../page/Order/Order";
+import OrderDetail from "../page/Order/OrderDetail";
+import Payment from "../page/Order/Payment";
 
 const router = createBrowserRouter([
     {
@@ -31,9 +34,23 @@ const router = createBrowserRouter([
                 path: APP_ROUTER.BOOKING,
                 element: <BookingPage />,
             },
+            
         ],
     },
-
+    {
+        path: APP_ROUTER.ORDER,
+        element: <Order />,
+        children: [
+            {
+                path: APP_ROUTER.ORDERDETAIL,
+                element: <OrderDetail />,
+            },
+            {
+                path: APP_ROUTER.PAYMENT,
+                element: <Payment />,
+            },
+        ]
+    },
     {
         path: APP_ROUTER.AUTH,
         element: <AuthLayout />,

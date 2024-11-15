@@ -8,7 +8,7 @@ function MainLayout() {
     return (
         <div className="mx-auto w-full" style={{ maxWidth: "100vw" }}>
             <Header />
-            <main>
+            <main className="mx-32">
                 <Outlet />
                 main layout
             </main>
