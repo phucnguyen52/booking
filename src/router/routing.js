@@ -7,7 +7,10 @@ import HomePage from "../page/Home/HomePage";
 import BookingPage from "../page/Booking/BookingPage";
 import Login from "../page/Auth/Login/Login";
 import Register from "../page/Auth/Register/Register";
-
+import HotelDetail from "../page/HotelDetail/HotelDetail";
+import Timeline from "../components/Calendar/Timeline";
+import BookingDetails from "../page/BookingDetails/BookingDetails";
+import AllRoom from "../page/RoomHotel/AllRoom";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -30,6 +33,22 @@ const router = createBrowserRouter([
             {
                 path: APP_ROUTER.BOOKING,
                 element: <BookingPage />,
+            },
+            {
+                path: APP_ROUTER.HOTELDETAIL,
+                element: <HotelDetail />,
+            },
+            {
+                path: APP_ROUTER.TIMELINE,
+                element: <Timeline />,
+            },
+            {
+                path: APP_ROUTER.BOOKINGDETAILS,
+                element: <BookingDetails />,
+            },
+            {
+                path: APP_ROUTER.ALLROOM,
+                element: <AllRoom />,
             },
         ],
     },
