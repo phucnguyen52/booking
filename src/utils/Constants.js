@@ -12,6 +12,10 @@ export const APP_ROUTER = {
     REGISTER: "/auth/register",
     CHANGE_PASSWORD: "change-password",
     REFRESH_TOKEN: "/auth/accessToken-generate",
+    HOTELDETAIL: "/hotel-detail",
+    TIMELINE: "/timeline",
+    BOOKINGDETAILS: "/booking-details",
+    ALLROOM: "/all-rooms",
 };
 
 export const QR = {
