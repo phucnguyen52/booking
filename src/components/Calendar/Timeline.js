@@ -1,5 +1,17 @@
-import React, { Fragment, useCallback, useState } from "react";
-import { Eventcalendar, setOptions, localeVi, Select } from "@mobiscroll/react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import {
+    Eventcalendar,
+    setOptions,
+    localeVi,
+    Select,
+    getJson,
+    Dropdown,
+    locale,
+    CalendarPrev,
+    CalendarNext,
+    Button,
+    CalendarNav,
+} from "@mobiscroll/react";
 import { useMemo } from "react";
 import "@mobiscroll/react/dist/css/mobiscroll.min.css";
 setOptions({
@@ -21,11 +33,21 @@ const Timeline = () => {
                           eventList: false,
                       },
                   }
-                : {
+                : selectedView === "week"
+                ? {
                       timeline: {
                           type: "week",
                           size: 1,
                           maxEventStack: 2,
+                          eventList: false,
+                          resolutionHorizontal: "day",
+                      },
+                  }
+                : {
+                      timeline: {
+                          type: "month",
+                          size: 1,
+                          maxEventStack: 4,
                           eventList: false,
                           resolutionHorizontal: "day",
                       },
@@ -49,16 +71,25 @@ const Timeline = () => {
     const viewChange = useCallback((event) => {
         setView(event.value);
     }, []);
-    const renderMyHeader = () => (
-        <Fragment>
+    const [mySelectedDate, setSelectedDate] = useState(new Date());
+    const navigate = useCallback(() => {
+        setSelectedDate(new Date());
+    }, []);
+    const renderMyHeader = useCallback(() => (
+        <>
+            <CalendarNav className="md-sync-events-outlook-nav" />
             <Select
                 data={views}
                 value={selectedView}
                 onChange={viewChange}
                 inputStyle="box"
             />
-        </Fragment>
-    );
+            <Button onClick={navigate}>Today</Button>
+            <CalendarPrev />
+
+            <CalendarNext />
+        </>
+    ),[navigate]);
 
     const myEvents = useMemo(
         () => [
@@ -207,6 +238,173 @@ const Timeline = () => {
         []
     );
 
+    const [lang, setLang] = useState("en");
+    const languages = useMemo(
+        () => [
+            {
+                value: "en",
+                text: "English",
+            },
+            {
+                value: "ar",
+                text: "Arabic",
+            },
+            {
+                value: "bg",
+                text: "Bulgarian",
+            },
+            {
+                value: "ca",
+                text: "Català",
+            },
+            {
+                value: "cs",
+                text: "Cestina",
+            },
+            {
+                value: "zh",
+                text: "Chinese",
+            },
+            {
+                value: "hr",
+                text: "Croatian",
+            },
+            {
+                value: "da",
+                text: "Dansk",
+            },
+            {
+                value: "de",
+                text: "Deutsch",
+            },
+            {
+                value: "en-GB",
+                text: "English (UK)",
+            },
+            {
+                value: "es",
+                text: "Español",
+            },
+            {
+                value: "fr",
+                text: "Français",
+            },
+            {
+                value: "el",
+                text: "Greek",
+            },
+            {
+                value: "hi",
+                text: "Hindi",
+            },
+            {
+                value: "it",
+                text: "Italiano",
+            },
+            {
+                value: "ja",
+                text: "Japanese",
+            },
+            {
+                value: "ko",
+                text: "Korean",
+            },
+            {
+                value: "lt",
+                text: "Lietuvių",
+            },
+            {
+                value: "hu",
+                text: "Magyar",
+            },
+            {
+                value: "nl",
+                text: "Nederlands",
+            },
+            {
+                value: "no",
+                text: "Norsk",
+            },
+            {
+                value: "pl",
+                text: "Polski",
+            },
+            {
+                value: "pt-PT",
+                text: "Português Europeu",
+            },
+            {
+                value: "pt-BR",
+                text: "Pt. Brasileiro",
+            },
+            {
+                value: "ro",
+                text: "Româna",
+            },
+            {
+                value: "sr",
+                text: "Serbian",
+            },
+            {
+                value: "sk",
+                text: "Slovencina",
+            },
+            {
+                value: "fi",
+                text: "Suomi",
+            },
+            {
+                value: "sv",
+                text: "Svenska",
+            },
+            {
+                value: "th",
+                text: "Thai",
+            },
+            {
+                value: "tr",
+                text: "Türkçe",
+            },
+            {
+                value: "ua",
+                text: "Ukrainian",
+            },
+            {
+                value: "vi",
+                text: "Vietnamese",
+            },
+            {
+                value: "ru",
+                text: "Русский",
+            },
+            {
+                value: "ru-UA",
+                text: "Русский (UA)",
+            },
+            {
+                value: "he",
+                text: "עברית",
+            },
+            {
+                value: "fa",
+                text: "فارسی",
+            },
+        ],
+        []
+    );
+    const handleChange = useCallback((event) => {
+        setLang(event.target.value);
+    }, []);
+    const [myEventss, setEventss] = useState([]);
+    useEffect(() => {
+        getJson(
+            "https://trial.mobiscroll.com/timeline-events/",
+            (events) => {
+                setEventss(events);
+            },
+            "jsonp"
+        );
+    }, []);
     return (
         <div
             className="w-[90%] h-[800px] mx-auto border border-gray-100 rounded-md p-4 overflow-auto relative [&::-webkit-scrollbar]:w-2
@@ -215,7 +413,26 @@ const Timeline = () => {
             dark:[&::-webkit-scrollbar-track]:bg-neutral-700
             dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
         >
+            <div className="mbsc-grid">
+                <div className="mbsc-row mbsc-justify-content-center">
+                    <div className="mbsc-col-sm-8">
+                        <Dropdown
+                            inputStyle="box"
+                            value={lang}
+                            onChange={handleChange}
+                        >
+                            {languages.map((lang) => (
+                                <option key={lang.value} value={lang.value}>
+                                    {lang.text}
+                                </option>
+                            ))}
+                        </Dropdown>
+                    </div>
+                </div>
+            </div>
             <Eventcalendar
+                locale={locale[lang]}
+                selectedDate={mySelectedDate}
                 renderHeader={renderMyHeader}
                 clickToCreate={true}
                 dragToCreate={true}
