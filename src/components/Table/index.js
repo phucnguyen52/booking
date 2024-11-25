@@ -123,7 +123,7 @@ const Table = ({
         onRoleChange(event.target.value);
     };
     return (
-        <div className="bg-white rounded-xl shadow-2xl max-h-screen m-4">
+        <div className="bg-white rounded-xl shadow-2xl max-h-screen">
             <div className="flex justify-between items-center py-4 pl-3 bg-gray-100/80 border-b-[1px]">
                 <div className="text-2xl font-bold text-cyan-600 ">{title}</div>
                 <div className="flex justify-center">
@@ -204,7 +204,7 @@ const Table = ({
                 </div>
             </div>
             <div
-                className="h-[80vh] overflow-y-auto relative [&::-webkit-scrollbar]:w-2
+                className="h-[80vh] overflow-auto relative [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2 
                                 [&::-webkit-scrollbar-track]:bg-gray-100
                                 [&::-webkit-scrollbar-thumb]:bg-gray-300
                                 dark:[&::-webkit-scrollbar-track]:bg-neutral-700
@@ -260,11 +260,11 @@ const Table = ({
                                     <div
                                         className={`${
                                             column.isFilterable
-                                                ? "text-xs text-cyan-500"
+                                                ? "text-xs text-nowrap text-cyan-500"
                                                 : ""
                                         }`}
                                     >
-                                        <div>{column.label}</div>
+                                        <div className="text-nowrap">{column.label}</div>
                                     </div>
                                     {column.isFilterable && (
                                         <select
@@ -347,7 +347,7 @@ const Table = ({
                                     {columns.map((column) => (
                                         <td
                                             key={column.key}
-                                            className={`${
+                                            className={`text-nowrap ${
                                                 column.key === "id" ||
                                                 column.key === "quantitySell" ||
                                                 column.key === "price" ||

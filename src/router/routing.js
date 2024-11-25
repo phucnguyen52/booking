@@ -15,6 +15,8 @@ import Timeline from "../components/Calendar/Timeline";
 import BookingDetails from "../page/BookingDetails/BookingDetails";
 import AllRoom from "../page/RoomHotel/AllRoom";
 import ListOrder from "../page/Manager/Order";
+import Room from "../page/Manager/Room";
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -59,6 +61,11 @@ const router = createBrowserRouter([
                 path: APP_ROUTER.LISTORDERS,
                 element: <ListOrder />,
             },
+            {
+                path: APP_ROUTER.ROOM,
+                element: <Room />,
+            },
+           
             //
 
         ],

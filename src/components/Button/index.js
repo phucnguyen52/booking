@@ -12,12 +12,13 @@ const Button = ({
     border = true,
     disabled = false,
     onClick,
+    textColor = "white",
     ...restProps
 }) => {
     const borderClass = border ? "border" : "";
     
     const colorClass =
-        `cursor-pointer text-white bg-${color}-600 hover:bg-${color}-800 focus:ring-4 focus:ring-${color}-300 dark:bg-${color}-600 dark:hover:bg-${color}-700 focus:outline-none dark:focus:ring-${color}-800`;
+        `cursor-pointer ${textColor} bg-${color}-600 hover:bg-${color}-800 focus:ring-4 focus:ring-${color}-300 dark:bg-${color}-600 dark:hover:bg-${color}-700 focus:outline-none dark:focus:ring-${color}-800`;
     const sizeClass =
         size === "xs"
             ? "rounded-md bg-brand-500 p-2 text-xs font-medium"
@@ -39,7 +40,7 @@ const Button = ({
             type={type}
             className={`
         inline-flex items-center justify-center rounded-md
-        ${borderClass} ${colorClass} ${sizeClass} ${className}
+        ${borderClass} ${colorClass} ${sizeClass} ${className} te
       `}
             disabled={disabled}
             onClick={handleClick}
