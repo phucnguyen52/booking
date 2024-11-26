@@ -7,26 +7,38 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 function Register() {
-    const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [nameError, setNameError] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const [confirmPasswordError, setConfirmPasswordError] = useState("");
-    const [isShowPassword, setIsShowPassword] = useState(false);
-    const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
-    const [token, setToken] = useState("");
-    const [isOtpSent, setIsOtpSent] = useState(false);
-    const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-    const [otpError, setOtpError] = useState("");
+    const [formData, setFormData] = useState({
+        email: "",
+        name: "",
+        password: "",
+        confirmPassword: "",
+        nameError: "",
+        emailError: "",
+        passwordError: "",
+        confirmPasswordError: "",
+        isShowPassword: false,
+        isShowConfirmPassword: false,
+        token: "",
+        isOtpSent: false,
+        otp: ["", "", "", "", "", ""],
+        otpError: "",
+        isFocused: false,
+        isFocusedEmail: false,
+        isFocusedPass: false,
+        isFocusedConfirmPass: false,
+        isFocusedRole: false,
+        role: "",
+        roleError: "",
+    });
     const navigate = useNavigate();
     const otpRefs = useRef([]);
     const handleInputChange = (index, value) => {
-        const newOtp = [...otp];
+        const newOtp = [...formData.otp];
         newOtp[index] = value;
-        setOtp(newOtp);
+        setFormData((prevState) => ({
+            ...prevState,
+            otp: newOtp,
+        }));
         if (value) {
             if (index < otpRefs.current.length - 1) {
                 otpRefs.current[index + 1].focus();
@@ -37,14 +49,23 @@ function Register() {
             }
         }
     };
+
     const handleKeyDown = (index, e) => {
-        if (e.key === "Backspace" && !otp[index]) {
+        if (e.key === "Backspace" && !formData.otp[index]) {
             if (index > 0) {
                 otpRefs.current[index - 1].focus();
             }
         }
     };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
     const IsValidate = () => {
+        let isproceedRole = true;
         let isproceedIdEmail = true;
         let isproceedName = true;
         let isproceedPhone = true;
@@ -52,76 +73,86 @@ function Register() {
         let isproceedCheckPass = true;
         let isproceedError = true;
 
-        //check id và mail
-        if (email === null || email === "") {
+        if (formData.email === null || formData.email === "") {
             isproceedIdEmail = false;
-            toast.warning("Vui lòng nhập email của bạn");
-            setEmailError("Vui lòng nhập email của bạn!");
+            setFormData((prevState) => ({
+                ...prevState,
+                emailError: "Vui lòng nhập email của bạn!",
+            }));
         } else if (
             /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(
-                email
+                formData.email
             )
         ) {
-            setEmailError("");
+            setFormData((prevState) => ({
+                ...prevState,
+                emailError: "",
+            }));
             isproceedIdEmail = true;
         } else {
             isproceedIdEmail = false;
-            setEmailError(" Email không hợp lệ!");
-            toast.warning("Email không hợp lệ!");
+            setFormData((prevState) => ({
+                ...prevState,
+                emailError: " Email không hợp lệ!",
+            }));
         }
-        //check name
-        if (name === null || name === "") {
+        if (formData.name === null || formData.name === "") {
             isproceedName = false;
-            setNameError("Vui lòng nhập tên của bạn");
-            toast.warning("Vui lòng nhập tên của bạn");
+            setFormData((prevState) => ({
+                ...prevState,
+                nameError: "Vui lòng nhập tên của bạn",
+            }));
         }
-        //check số điện thoại
-        // if (!phone.trim()) {
-        //     isproceedPhone = false
-        //     setPhoneError('Vui lòng nhập SĐT của bạn')
-        //     toast.warning('Vui lòng nhập SĐT của bạn')
-        // } else if (/(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/.test(phone)) {
-        //     isproceedPhone = true
-        //     setPhoneError('')
-        // } else {
-        //     isproceedPhone = false
-        //     setPhoneError('SĐT không hợp lệ')
-        //     toast.warning('SĐT không hợp lệ')
-        // }
-        // check mật khẩu
-        if (!password.trim()) {
+        if (!formData.password.trim()) {
             isproceedPass = false;
-            setPasswordError("Vui lòng nhập mật khẩu của bạn!");
-            toast.warning("Vui lòng nhập mật khẩu của bạn!");
+            setFormData((prevState) => ({
+                ...prevState,
+                passwordError: "Vui lòng nhập mật khẩu của bạn!",
+            }));
         } else if (
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-                password
+                formData.password
             )
         ) {
-            setPasswordError("");
+            setFormData((prevState) => ({
+                ...prevState,
+                passwordError: "",
+            }));
             isproceedPass = true;
         } else {
             isproceedPass = false;
-            toast.warning(
-                "Mật khẩu không hợp lệ! Tối thiểu tám ký tự, ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt."
-            );
-            setPasswordError(
-                "Mật khẩu không hợp lệ! Tối thiểu tám ký tự, ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt."
-            );
+            setFormData((prevState) => ({
+                ...prevState,
+                passwordError:
+                    "Mật khẩu không hợp lệ! Tối thiểu tám ký tự, ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt.",
+            }));
         }
-        if (!confirmPassword.trim()) {
+        if (!formData.confirmPassword.trim()) {
             isproceedCheckPass = false;
-            setConfirmPasswordError("Vui lòng nhập lại mật khẩu");
-            toast.warning("Vui lòng nhập lại mật khẩu");
-        } else if (password !== confirmPassword) {
+            setFormData((prevState) => ({
+                ...prevState,
+                confirmPasswordError: "Vui lòng nhập lại mật khẩu",
+            }));
+        } else if (formData.password !== formData.confirmPassword) {
             isproceedCheckPass = false;
-            setConfirmPasswordError("Mật khẩu không khớp");
-            toast.warning("Mật khẩu không khớp");
+            setFormData((prevState) => ({
+                ...prevState,
+                confirmPasswordError: "Mật khẩu không khớp",
+            }));
         } else {
-            setConfirmPasswordError("");
+            setFormData((prevState) => ({
+                ...prevState,
+                confirmPasswordError: "",
+            }));
             isproceedCheckPass = true;
         }
-
+        if (formData.role === null || formData.role === "") {
+            isproceedName = false;
+            setFormData((prevState) => ({
+                ...prevState,
+                roleError: "Vui lòng chọn vai trò của bạn",
+            }));
+        }
         return (
             isproceedIdEmail &&
             isproceedName &&
@@ -131,19 +162,23 @@ function Register() {
             isproceedError
         );
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setNameError("");
-        setPasswordError("");
-        setConfirmPasswordError("");
-        setEmailError("");
-        setOtpError("");
-        e.preventDefault();
+        setFormData((prevState) => ({
+            ...prevState,
+            nameError: "",
+            passwordError: "",
+            confirmPasswordError: "",
+            emailError: "",
+            otpError: "",
+        }));
         if (IsValidate()) {
             const requestBody = {
-                fullName: name,
-                email: email,
-                password: password,
+                role: formData.role,
+                fullName: formData.name,
+                email: formData.email,
+                password: formData.password,
             };
             console.log(requestBody);
             try {
@@ -154,63 +189,92 @@ function Register() {
                 const data = response.data;
                 if (response.status === 201) {
                     toast.success(data.message);
-                    setToken(data.token);
-                    setIsOtpSent(true);
+                    setFormData((prevState) => ({
+                        ...prevState,
+                        token: data.token,
+                        isOtpSent: true,
+                    }));
                 }
             } catch (error) {
                 toast.error("Email đã tồn tại!");
-                setEmailError("Email đã tồn tại!");
+                setFormData((prevState) => ({
+                    ...prevState,
+                    emailError: "Email đã tồn tại!",
+                }));
             }
         }
     };
+
     const handleVerifyOTP = async () => {
-        const codes = otp.join("");
+        const codes = formData.otp.join("");
         if (codes.length === 6) {
             try {
                 const response = await axios.post(
                     "http://localhost:8080/api/customer/active",
                     {
-                        token: token,
+                        token: formData.token,
                         code: codes,
                     }
                 );
                 const data = response.data;
                 if (data.success === true) {
                     toast.success("Đăng kí thành công.");
-                    setIsOtpSent(false);
-                    setName("");
-                    setEmail("");
-                    setPassword("");
-                    setConfirmPassword("");
+                    setFormData((prevState) => ({
+                        ...prevState,
+                        isOtpSent: false,
+                        name: "",
+                        email: "",
+                        password: "",
+                        confirmPassword: "",
+                    }));
                     navigate("/auth/login");
                 }
             } catch (error) {
                 toast.error("Mã OTP sai");
-                setOtpError("Mã xác thực sai. Vui lòng nhập lại mã xác thực!");
+                setFormData((prevState) => ({
+                    ...prevState,
+                    otpError: "Mã xác thực sai. Vui lòng nhập lại mã xác thực!",
+                }));
             }
         } else {
             toast.warning("Vui lòng nhập đầy đủ mã xác thực!");
-            setOtpError("Vui lòng nhập đầy đủ mã xác thực!");
+            setFormData((prevState) => ({
+                ...prevState,
+                otpError: "Vui lòng nhập đầy đủ mã xác thực!",
+            }));
         }
     };
-    const [isFocused, setIsFocused] = useState(false);
-    const [isFocusedEmail, setIsFocusedEmail] = useState(false);
-    const [isFocusedPass, setIsFocusedPass] = useState(false);
-    const [isFocusedConfirmPass, setIsFocusedConfirmPass] = useState(false);
+
+    // Các hàm handle focus cũng tương tự
     const handleFocusName = () => {
-        setNameError("");
+        setFormData((prevState) => ({
+            ...prevState,
+            nameError: "",
+        }));
     };
-
     const handleFocusEmail = () => {
-        setEmailError("");
+        setFormData((prevState) => ({
+            ...prevState,
+            emailError: "",
+        }));
     };
-
     const handleFocusPassword = () => {
-        setPasswordError("");
+        setFormData((prevState) => ({
+            ...prevState,
+            passwordError: "",
+        }));
     };
-
     const handleFocusConfirmPassword = () => {
-        setConfirmPasswordError("");
+        setFormData((prevState) => ({
+            ...prevState,
+            confirmPasswordError: "",
+        }));
+    };
+    const handleFocusRole = () => {
+        setFormData((prevState) => ({
+            ...prevState,
+            roleError: "",
+        }));
     };
     return (
         <div className="flex w-full h-full">
@@ -224,11 +288,11 @@ function Register() {
             <div className="w-1/2 flex items-center justify-center flex-">
                 <form className="max-w-[70%]" onSubmit={handleSubmit}>
                     <div className="mb-2 text-3xl font-bold">Đăng ký</div>
-                    <div className="mb-4 text-sm text-gray-600">
+                    <div className="mb-2 text-sm text-gray-600">
                         Bạn có thể đăng nhập tài khoản của mình để truy cập các
                         dịch vụ của chúng tôi.
                     </div>
-                    <div className="mb-4 text-sm font-bold">
+                    <div className="mb-2 text-sm font-bold">
                         Đăng nhập hoặc đăng ký (miễn phí)
                     </div>
                     <div className="flex">
@@ -240,7 +304,7 @@ function Register() {
                         </a>
                     </div>
                     <div className="relative">
-                        <div className="ml-10 p-4 text-sm before:absolute before:left-0 before:top-7 before:block before:h-px before:w-[9%] before:flex-1 before:bg-gray-400 before:content-[''] after:absolute after:right-0 after:top-7 after:block after:h-px after:w-[80%] after:flex-1 after:bg-gray-400 after:content-['']">
+                        <div className="ml-10 px-4 py-2 text-sm before:absolute before:left-0 before:top-5 before:block before:h-px before:w-[9%] before:flex-1 before:bg-gray-400 before:content-[''] after:absolute after:right-0 after:top-5 after:block after:h-px after:w-[80%] after:flex-1 after:bg-gray-400 after:content-['']">
                             Hoặc
                         </div>
                     </div>
@@ -249,7 +313,7 @@ function Register() {
                             <label
                                 htmlFor="name"
                                 className={`font-medium ${
-                                    isFocused
+                                    formData.isFocused
                                         ? "text-black font-bold"
                                         : "text-gray-500"
                                 } transition-colors`}
@@ -262,31 +326,39 @@ function Register() {
                                 name="name"
                                 id="name"
                                 className={`${
-                                    !nameError
+                                    !formData.nameError
                                         ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
                                         : "border-2 border-solid border-red-500 outline-none"
                                 } w-full mt-1 rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
+                                value={formData.name}
+                                onChange={(e) => handleChange(e)}
                                 onFocus={() => {
-                                    setIsFocused(true);
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocused: true,
+                                    }));
                                     handleFocusName();
                                 }}
-                                onBlur={() => setIsFocused(false)}
+                                onBlur={() =>
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocused: false,
+                                    }))
+                                }
                             />
                             <div
                                 className={`${
-                                    nameError ? "" : "invisible py-5"
-                                } ml-4 pt-1 text-sm text-rose-500`}
+                                    formData.nameError ? "" : "invisible py-4"
+                                } ml-4 pt-0.5 text-xs text-rose-500`}
                             >
-                                {nameError}
+                                {formData.nameError}
                             </div>
                         </div>
-                        <div className="">
+                        <div>
                             <label
                                 htmlFor="email"
                                 className={`font-medium ${
-                                    isFocusedEmail
+                                    formData.isFocusedEmail
                                         ? "text-black font-bold"
                                         : "text-gray-500"
                                 } transition-colors`}
@@ -299,30 +371,38 @@ function Register() {
                                 id="email"
                                 name="email"
                                 className={`${
-                                    !emailError
+                                    !formData.emailError
                                         ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
                                         : "border-2 border-solid border-red-500 outline-none"
                                 } w-full mt-1 rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={formData.email}
+                                onChange={(e) => handleChange(e)}
                                 onFocus={() => {
-                                    setIsFocusedEmail(true);
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedEmail: true,
+                                    }));
                                     handleFocusEmail();
                                 }}
-                                onBlur={() => setIsFocusedEmail(false)}
+                                onBlur={() =>
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedEmail: false,
+                                    }))
+                                }
                             />
                             <div
                                 className={`${
-                                    emailError ? "" : "invisible py-5"
-                                } ml-4 pt-1 text-sm text-rose-500`}
+                                    formData.emailError ? "" : "invisible py-4"
+                                } ml-4 pt-0.5 text-xs text-rose-500`}
                             >
-                                {emailError}
+                                {formData.emailError}
                             </div>
                         </div>
                         <label
                             htmlFor="password"
                             className={`mb-1 font-medium ${
-                                isFocusedPass
+                                formData.isFocusedPass
                                     ? "text-black font-bold"
                                     : "text-gray-500"
                             } transition-colors`}
@@ -332,7 +412,7 @@ function Register() {
                         <div className="relative">
                             <input
                                 type={
-                                    isShowPassword === true
+                                    formData.isShowPassword
                                         ? "text"
                                         : "password"
                                 }
@@ -340,43 +420,61 @@ function Register() {
                                 name="password"
                                 id="password"
                                 className={`${
-                                    !passwordError
+                                    !formData.passwordError
                                         ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
                                         : "border-2 border-solid border-red-500 outline-none"
                                 } w-full rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
-                                value={password}
-                                onChange={(event) =>
-                                    setPassword(event.target.value)
-                                }
+                                value={formData.password}
+                                onChange={(e) => handleChange(e)}
                                 onFocus={() => {
-                                    setIsFocusedPass(true);
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedPass: true,
+                                    }));
                                     handleFocusPassword();
                                 }}
-                                onBlur={() => setIsFocusedPass(false)}
+                                onBlur={() =>
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedPass: false,
+                                    }))
+                                }
                             />
                             <div
                                 className={`${
-                                    passwordError ? "" : "invisible py-5"
-                                } ml-4 pt-1 text-sm text-rose-500`}
+                                    formData.passwordError
+                                        ? ""
+                                        : "invisible py-4"
+                                } ml-4 pt-0.5 text-xs text-rose-500`}
                             >
-                                {passwordError}
+                                {formData.passwordError}
                             </div>
-                            {isShowPassword ? (
+                            {formData.isShowPassword ? (
                                 <PiEyeSlash
                                     className="absolute right-4 top-3 h-6 w-6 cursor-pointer text-gray-400"
-                                    onClick={() => setIsShowPassword(false)}
+                                    onClick={() =>
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            isShowPassword: false,
+                                        }))
+                                    }
                                 />
                             ) : (
                                 <PiEye
                                     className="absolute right-4 top-3 h-6 w-6 cursor-pointer text-gray-400"
-                                    onClick={() => setIsShowPassword(true)}
+                                    onClick={() =>
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            isShowPassword: true,
+                                        }))
+                                    }
                                 />
                             )}
                         </div>
                         <label
                             htmlFor="confirmPassword"
                             className={`mb-1 font-medium ${
-                                isFocusedConfirmPass
+                                formData.isFocusedConfirmPass
                                     ? "text-black font-bold"
                                     : "text-gray-500"
                             } transition-colors`}
@@ -386,7 +484,7 @@ function Register() {
                         <div className="relative">
                             <input
                                 type={
-                                    isShowConfirmPassword === true
+                                    formData.isShowConfirmPassword
                                         ? "text"
                                         : "password"
                                 }
@@ -394,44 +492,109 @@ function Register() {
                                 name="confirmPassword"
                                 id="confirmPassword"
                                 className={`${
-                                    !confirmPasswordError
+                                    !formData.confirmPasswordError
                                         ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
                                         : "border-2 border-solid border-red-500 outline-none"
                                 } w-full rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
-                                value={confirmPassword}
-                                onChange={(event) =>
-                                    setConfirmPassword(event.target.value)
-                                }
+                                value={formData.confirmPassword}
+                                onChange={(e) => handleChange(e)}
                                 onFocus={() => {
-                                    setIsFocusedConfirmPass(true);
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedConfirmPass: true,
+                                    }));
                                     handleFocusConfirmPassword();
                                 }}
-                                onBlur={() => setIsFocusedConfirmPass(false)}
+                                onBlur={() =>
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedConfirmPass: false,
+                                    }))
+                                }
                             />
                             <div
                                 className={`${
-                                    confirmPasswordError ? "" : "invisible py-5"
-                                } ml-4 pt-1 text-sm text-rose-500`}
+                                    formData.confirmPasswordError
+                                        ? ""
+                                        : "invisible py-4"
+                                } ml-4 pt-0.5 text-xs text-rose-500`}
                             >
-                                {confirmPasswordError}
+                                {formData.confirmPasswordError}
                             </div>
-                            {isShowConfirmPassword ? (
+                            {formData.isShowConfirmPassword ? (
                                 <PiEyeSlash
                                     className="absolute right-4 top-3 h-6 w-6 cursor-pointer text-gray-400"
                                     onClick={() =>
-                                        setIsShowConfirmPassword(false)
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            isShowConfirmPassword: false,
+                                        }))
                                     }
                                 />
                             ) : (
                                 <PiEye
                                     className="absolute right-4 top-3 h-6 w-6 cursor-pointer text-gray-400"
                                     onClick={() =>
-                                        setIsShowConfirmPassword(true)
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            isShowConfirmPassword: true,
+                                        }))
                                     }
                                 />
                             )}
                         </div>
-
+                        <div>
+                        <label
+                            htmlFor="role"
+                            className={`mb-1 font-medium ${
+                                formData.isFocusedRole
+                                    ? "text-black font-bold"
+                                    : "text-gray-500"
+                            } transition-colors`}
+                        >
+                           Chọn vai trò
+                        </label>
+                            <select
+                                id="role"
+                                name="role"
+                                className={`${
+                                    !formData.roleError
+                                        ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
+                                        : "border-2 border-solid border-red-500 outline-none"
+                                } w-full mt-1 rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
+                                value={formData.role}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        role: e.target.value,
+                                    })
+                                }
+                                onFocus={() => {
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedRole: true,
+                                    }));
+                                    handleFocusRole();
+                                }}
+                                onBlur={() =>
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedRole: false,
+                                    }))
+                                }
+                            >
+                                <option value="">-- Chọn vai trò --</option>
+                                <option value="customer">Khách hàng</option>
+                                <option value="manager">Quản lý</option>
+                            </select>
+                        </div>
+                        <div
+                            className={`${
+                                formData.roleError ? "" : "invisible py-4"
+                            } ml-4 pt-0.5 text-xs text-rose-500`}
+                        >
+                            {formData.roleError}
+                        </div>
                         <button
                             className="mt-3 mb-2 rounded-md bg-black px-4 py-3 text-sm text-white hover:bg-blue-600 hover:text-white hover:transition-all"
                             type="submit"
@@ -445,11 +608,11 @@ function Register() {
                     >
                         Đăng nhập
                     </Link>
-                    {isOtpSent && (
+                    {formData.isOtpSent && (
                         <>
                             <div
                                 className={`fixed inset-0 z-10 overflow-y-auto ${
-                                    isOtpSent ? "block" : "hidden"
+                                    formData.isOtpSent ? "block" : "hidden"
                                 }`}
                             >
                                 <div className="flex min-h-screen items-center justify-center p-4">
@@ -464,7 +627,12 @@ function Register() {
                                         <button
                                             type="button"
                                             className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-lg rounded-tr-xl bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900"
-                                            onClick={() => setIsOtpSent(false)}
+                                            onClick={() =>
+                                                setFormData((prevState) => ({
+                                                    ...prevState,
+                                                    isOtpSent: false,
+                                                }))
+                                            }
                                         >
                                             <svg
                                                 className="h-4 w-4"
@@ -484,7 +652,8 @@ function Register() {
                                         </h2>
                                         <p className="mb-4 text-center text-gray-600">
                                             Chúng tôi đã gửi mã đến email{" "}
-                                            <strong>{email}</strong>. <br />
+                                            <strong>{formData.email}</strong>.{" "}
+                                            <br />
                                             Vui lòng kiểm tra email của bạn!
                                         </p>
 
@@ -502,7 +671,11 @@ function Register() {
                                                             className="h-12 w-12 rounded-xl border border-gray-300 text-center focus:border-blue-700 focus:ring-blue-700"
                                                             type="text"
                                                             maxLength="1"
-                                                            value={otp[index]}
+                                                            value={
+                                                                formData.otp[
+                                                                    index
+                                                                ]
+                                                            }
                                                             onChange={(e) =>
                                                                 handleInputChange(
                                                                     index,
@@ -521,9 +694,9 @@ function Register() {
                                                 )}
                                             </div>
                                             <div className="flex flex-col items-center justify-between gap-4">
-                                                {otpError && (
+                                                {formData.otpError && (
                                                     <div className="mt-1 text-sm text-rose-500">
-                                                        {otpError}
+                                                        {formData.otpError}
                                                     </div>
                                                 )}
                                                 <button

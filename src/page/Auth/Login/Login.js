@@ -8,27 +8,36 @@ import axios from "axios";
 import Cookies from "js-cookie";
 function Login() {
     const navigate = useNavigate();
-    const [isShowPassword, setIsShowPassword] = useState(false);
-    const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [errors, setErrors] = useState("");
+    const [formData, setFormData] = useState({
+        email: "",
+        emailError: "",
+        password: "",
+        passwordError: "",
+        isShowPassword: false,
+        errors: "",
+        isFocusedEmail: false,
+        isFocusedPass: false,
+    });
+
     const handleSubmit = async (e) => {
-        setEmailError("");
-        setPasswordError("");
-        setErrors("");
         e.preventDefault();
+        setFormData({
+            ...formData,
+            emailError: "",
+            passwordError: "",
+            errors: "",
+        });
+        console.log(formData);
         if (validate()) {
             try {
                 const response = await axios.post(
                     "http://localhost:8080/api/customer/login",
                     {
-                        email: email,
-                        password: password,
+                        email: formData.email,
+                        password: formData.password,
                     }
                 );
-                // && response.data.roleID === 2
+
                 if (
                     response &&
                     response.data &&
@@ -38,13 +47,16 @@ function Login() {
                     toast.success("Đăng nhập thành công", {
                         autoClose: 500,
                     });
-                    navigate("/rooms");
+                    navigate("/home");
                 } else {
                     console.error("Đăng nhập không thành công");
                     toast.error("Bạn không phải là người dùng");
                 }
             } catch (error) {
-                setErrors(error.response.data.message);
+                setFormData({
+                    ...formData,
+                    errors: error.response.data.message,
+                });
                 toast.error(error.response.data.message);
             }
         }
@@ -53,53 +65,65 @@ function Login() {
     const validate = () => {
         let resultEmail = true;
         let resultPassword = true;
-        if (email === null || email === "") {
+        if (!formData.email.trim()) {
             resultEmail = false;
-            toast.warning("Vui lòng nhập email của bạn");
-            setEmailError("Vui lòng nhập email của bạn!");
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                emailError: "Vui lòng nhập email của bạn!",
+            }));
         } else if (
             /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(
-                email
+                formData.email
             )
         ) {
-            setEmailError("");
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                emailError: "",
+            }));
             resultEmail = true;
         } else {
             resultEmail = false;
-            setEmailError(" Email không hợp lệ!");
-            toast.warning("Email không hợp lệ!");
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                emailError: "Email không hợp lệ!",
+            }));
         }
-        if (!password.trim()) {
+        if (!formData.password.trim()) {
             resultPassword = false;
-            setPasswordError("Vui lòng nhập mật khẩu của bạn!");
-            toast.warning("Vui lòng nhập mật khẩu của bạn!");
-        } else {
-            setPasswordError("");
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                passwordError: "Vui lòng nhập mật khẩu của bạn!",
+            }));
+        } else if (
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+                formData.password
+            )
+        ) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                passwordError: "",
+            }));
             resultPassword = true;
+        } else {
+            resultPassword = false;
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                passwordError:
+                    "Mật khẩu tối thiểu tám ký tự, ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt.",
+            }));
         }
-        // } else if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
-        //     setPasswordError('')
-        //     resultPassword = true
-        // } else {
-        //     resultPassword = false
-        //     toast.warning(
-        //         'Mật khẩu không hợp lệ! Tối thiểu tám ký tự, ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt.',
-        //     )
-        //     setPasswordError(
-        //         'Mật khẩu không hợp lệ! Tối thiểu tám ký tự, ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt.',
-        //     )
-        // }
+
         return resultEmail && resultPassword;
     };
-    const [isFocused, setIsFocused] = useState(false);
-    const [isFocusedPass, setIsFocusedPass] = useState(false);
+
     const handleFocusEmail = () => {
-        setEmailError(""); 
+        setFormData({ ...formData, emailError: "" });
     };
 
     const handleFocusPassword = () => {
-        setPasswordError(""); 
+        setFormData({ ...formData, passwordError: "" });
     };
+
     return (
         <div className="flex w-full h-full">
             <div className="w-1/2 bg-blue-500 min-h-screen flex justify-center items-center">
@@ -138,7 +162,7 @@ function Login() {
                         <label
                             htmlFor="email"
                             className={`mb-1 font-medium ${
-                                isFocused
+                                formData.isFocusedEmail
                                     ? "text-black font-bold"
                                     : "text-gray-500"
                             } transition-colors`}
@@ -151,31 +175,43 @@ function Login() {
                             placeholder="Email của bạn"
                             name="email"
                             className={`${
-                                !emailError
+                                !formData.emailError
                                     ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
                                     : "border-2 border-solid border-red-500 outline-none"
                             } rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
+                            value={formData.email}
+                            onChange={(event) =>
+                                setFormData({
+                                    ...formData,
+                                    email: event.target.value,
+                                })
+                            }
                             onFocus={() => {
-                                setIsFocused(true);
-                                handleFocusEmail(); 
+                                setFormData({
+                                    ...formData,
+                                    isFocusedEmail: true,
+                                });
+                                handleFocusEmail();
                             }}
-                            onBlur={() => setIsFocused(false)}
+                            onBlur={() =>
+                                setFormData({
+                                    ...formData,
+                                    isFocusedEmail: false,
+                                })
+                            }
                         />
-
                         <div
                             className={`${
-                                emailError ? "" : "invisible py-5"
-                            } ml-4 pt-1 text-sm text-rose-500`}
+                                formData.emailError ? "" : "invisible py-4"
+                            } ml-4 pt-1 text-xs text-rose-500`}
                         >
-                            {emailError}
+                            {formData.emailError}
                         </div>
 
                         <label
                             htmlFor="password"
                             className={`mb-1 font-medium ${
-                                isFocusedPass
+                                formData.isFocusedPass
                                     ? "text-black font-bold"
                                     : "text-gray-500"
                             } transition-colors`}
@@ -185,7 +221,7 @@ function Login() {
                         <div className="relative">
                             <input
                                 type={
-                                    isShowPassword === true
+                                    formData.isShowPassword
                                         ? "text"
                                         : "password"
                                 }
@@ -193,48 +229,72 @@ function Login() {
                                 name="password"
                                 id="password"
                                 className={`${
-                                    !passwordError
+                                    !formData.passwordError
                                         ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
                                         : "border-2 border-solid border-red-500 outline-none"
                                 } w-full rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
-                                value={password}
+                                value={formData.password}
                                 onChange={(event) =>
-                                    setPassword(event.target.value)
+                                    setFormData({
+                                        ...formData,
+                                        password: event.target.value,
+                                    })
                                 }
                                 onFocus={() => {
-                                    setIsFocusedPass(true);
-                                    handleFocusPassword(); 
+                                    setFormData({
+                                        ...formData,
+                                        isFocusedPass: true,
+                                    });
+                                    handleFocusPassword();
                                 }}
-                                onBlur={() => setIsFocusedPass(false)}
+                                onBlur={() =>
+                                    setFormData({
+                                        ...formData,
+                                        isFocusedPass: false,
+                                    })
+                                }
                             />
                             <div
                                 className={`${
-                                    passwordError ? "" : "invisible py-5"
-                                } ml-4 pt-1 text-sm text-rose-500`}
+                                    formData.passwordError
+                                        ? ""
+                                        : "invisible py-4"
+                                } ml-4 pt-1 text-xs text-rose-500`}
                             >
-                                {passwordError}
+                                {formData.passwordError}
                             </div>
-                            {isShowPassword ? (
+                            {formData.isShowPassword ? (
                                 <PiEyeSlash
                                     className="absolute right-4 top-3 h-6 w-6 cursor-pointer text-gray-400"
-                                    onClick={() => setIsShowPassword(false)}
+                                    onClick={() =>
+                                        setFormData({
+                                            ...formData,
+                                            isShowPassword: false,
+                                        })
+                                    }
                                 />
                             ) : (
                                 <PiEye
                                     className="absolute right-4 top-3 h-6 w-6 cursor-pointer text-gray-400"
-                                    onClick={() => setIsShowPassword(true)}
+                                    onClick={() =>
+                                        setFormData({
+                                            ...formData,
+                                            isShowPassword: true,
+                                        })
+                                    }
                                 />
                             )}
                         </div>
+
                         <button
                             type="submit"
                             className="mt-2 rounded-md bg-black px-4 py-3 text-sm text-white hover:bg-blue-600 hover:text-white hover:transition-all"
                         >
                             Đăng nhập
                         </button>
-                        {errors && (
-                            <div className="ml-4 pt-1 text-sm text-rose-500">
-                                {errors}
+                        {formData.errors && (
+                            <div className="ml-4 pt-1 text-xs text-rose-500">
+                                {formData.errors}
                             </div>
                         )}
                     </div>
