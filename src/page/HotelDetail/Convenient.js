@@ -16,23 +16,7 @@ const Convenient = () => {
         ],
     };
     const mockData = {
-        "Cực kỳ phù hợp cho kỳ lưu trú của bạn": [
-            "Phòng tắm",
-            "Ngoài trời",
-            "Nhà bếp",
-            "Tiện ích trong phòng",
-            "Vật nuôi",
-            "Hoạt động",
-            "Khu vực phòng khách",
-            "Truyền thông & Công nghệ",
-            "Đồ ăn & thức uống",
-            "Internet",
-            "Chỗ đậu xe",
-            "Dịch vụ",
-            "Tổng quát",
-            "Lối vào dành cho người khuyết tật",
-            "Ngôn ngữ được sử dụng",
-        ],
+       
         "Phòng tắm": [
             "Phòng tắm",
             "Giấy vệ sinh",
@@ -52,21 +36,6 @@ const Convenient = () => {
             "Sân hiên phơi nắng",
             "Sân trong",
             "Sân vườn",
-        ],
-        "Nhà bếp": ["Bếp chung", "Ấm đun nước điện", "Tủ lạnh"],
-        "Tiện ích trong phòng": [
-            "Ổ điện gần giường",
-            "Giá phơi quần áo",
-            "Giá treo quần áo",
-        ],
-        "Vật nuôi": ["Vật nuôi được phép. Không tính thêm phí."],
-        "Hoạt động": ["Bãi biển"],
-        "Khu vực phòng khách": ["Khu vực tiếp khách"],
-        "Truyền thông & Công nghệ": ["Truyền hình cáp"],
-        "Đồ ăn & thức uống": ["Minibar"],
-        Internet: ["Wi-fi có ở toàn bộ khách sạn và miễn phí."],
-        "Chỗ đậu xe": [
-            "Có chỗ đỗ xe riêng miễn phí tại chỗ (không cần đặt chỗ trước).",
         ],
         "Dịch vụ": [
             "Dịch vụ đưa đón",

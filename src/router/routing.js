@@ -10,13 +10,13 @@ import Register from "../page/Auth/Register/Register";
 import Order from "../page/Order/Order";
 import OrderDetail from "../page/Order/OrderDetail";
 import Payment from "../page/Order/Payment";
-import HotelDetail from "../page/HotelDetail/HotelDetail";
+import HotelDetail from "../page/HotelDetail/index";
 import Timeline from "../components/Calendar/Timeline";
 import BookingDetails from "../page/BookingDetails/BookingDetails";
 import AllRoom from "../page/RoomHotel/AllRoom";
 import ListOrder from "../page/Manager/Order";
 import Room from "../page/Manager/Room";
-
+import HotelRegister from "../page/HotelRegister";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -67,7 +67,10 @@ const router = createBrowserRouter([
             },
            
             //
-
+            {
+                path: APP_ROUTER.HOTELREGISTER,
+                element: <HotelRegister />,
+            },
         ],
     },
     {

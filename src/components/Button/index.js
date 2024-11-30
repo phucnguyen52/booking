@@ -12,7 +12,7 @@ const Button = ({
     border = true,
     disabled = false,
     onClick,
-    textColor = "white",
+    textColor = "",
     ...restProps
 }) => {
     const borderClass = border ? "border" : "";

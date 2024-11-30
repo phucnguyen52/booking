@@ -543,17 +543,17 @@ function Register() {
                                 />
                             )}
                         </div>
-                        <div>
-                        <label
-                            htmlFor="role"
-                            className={`mb-1 font-medium ${
-                                formData.isFocusedRole
-                                    ? "text-black font-bold"
-                                    : "text-gray-500"
-                            } transition-colors`}
-                        >
-                           Chọn vai trò
-                        </label>
+                        {/* <div>
+                            <label
+                                htmlFor="role"
+                                className={`mb-1 font-medium ${
+                                    formData.isFocusedRole
+                                        ? "text-black font-bold"
+                                        : "text-gray-500"
+                                } transition-colors`}
+                            >
+                                Chọn vai trò
+                            </label>
                             <select
                                 id="role"
                                 name="role"
@@ -587,20 +587,21 @@ function Register() {
                                 <option value="customer">Khách hàng</option>
                                 <option value="manager">Quản lý</option>
                             </select>
-                        </div>
-                        <div
+                        </div> */}
+                        {/* <div
                             className={`${
                                 formData.roleError ? "" : "invisible py-4"
                             } ml-4 pt-0.5 text-xs text-rose-500`}
                         >
                             {formData.roleError}
                         </div>
+                        */}
                         <button
                             className="mt-3 mb-2 rounded-md bg-black px-4 py-3 text-sm text-white hover:bg-blue-600 hover:text-white hover:transition-all"
                             type="submit"
                         >
                             Đăng ký
-                        </button>
+                        </button> 
                     </div>
                     <Link
                         to={"/auth/login"}

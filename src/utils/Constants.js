@@ -18,6 +18,7 @@ export const APP_ROUTER = {
     ALLROOM: "/all-rooms",
     LISTORDERS: "/list-orders",
     ROOM: "/rooms",
+    HOTELREGISTER: "/hotel/register",
 };
 
 export const QR = {

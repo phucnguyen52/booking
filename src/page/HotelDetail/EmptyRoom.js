@@ -42,17 +42,17 @@ const EmptyRoom = ({ emptyRoom }) => {
                                 Giá cho n đêm
                                 <MdOutlineArrowDropDown className="absolute w-12 h-12 bottom-[-26px] left-14 text-[#003b95]" />
                             </th>
-                            <th
+                            {/* <th
                                 className="z-20 text-nowrap bg-[#4c76b2] text-white px-2 py-[6px] text-sm font-bold pb-8 border-1 border-[#5bbaff] border border-t-0 sticky top-0"
                                 style={{ width: "30%" }}
                             >
                                 Các lựa chọn
-                            </th>
+                            </th> */}
                             <th
                                 className="z-20 text-nowrap bg-[#4c76b2] text-white px-2 py-[6px] text-sm font-bold pb-8 border-1 border-[#5bbaff] border border-t-0 sticky top-0"
                                 style={{ width: "7%" }}
                             >
-                                Chọn bungalow
+                                Chọn phòng
                             </th>
                         </tr>
                     </thead>
@@ -236,7 +236,7 @@ const EmptyRoom = ({ emptyRoom }) => {
                                         ))}
                                     </div>
                                 </td>
-                                <td
+                                {/* <td
                                     className="px-2 py-4 border-r border-[#5bbaff] h-full"
                                     style={{ width: "30%" }}
                                 >
@@ -291,7 +291,7 @@ const EmptyRoom = ({ emptyRoom }) => {
                                             </div>
                                         ))}
                                     </div>
-                                </td>
+                                </td> */}
 
                                 <td
                                     className="px-2 py-4 border-r border-[#5bbaff]"
