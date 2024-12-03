@@ -17,6 +17,7 @@ import AllRoom from "../page/RoomHotel/AllRoom";
 import ListOrder from "../page/Manager/Order";
 import Room from "../page/Manager/Room";
 import HotelRegister from "../page/HotelRegister";
+import OrdersCustomer from "../page/OrdersCustomer";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
             {
                 path: APP_ROUTER.HOTELREGISTER,
                 element: <HotelRegister />,
+            },
+            {
+                path: APP_ROUTER.ORDERSCUSTOMER,
+                element: <OrdersCustomer />,
             },
         ],
     },

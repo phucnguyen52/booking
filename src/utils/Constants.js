@@ -1,4 +1,3 @@
-
 export const APP_ROUTER = {
     INDEX: "/",
     HOME: "/home",
@@ -19,11 +18,12 @@ export const APP_ROUTER = {
     LISTORDERS: "/list-orders",
     ROOM: "/rooms",
     HOTELREGISTER: "/hotel/register",
+    ORDERSCUSTOMER: "/orders/customer",
 };
 
 export const QR = {
-    BANK_ID : '970422',
-    ACCOUNT_NO : '0398246147',
-    TEMPLATE : 'compact',
-    ACCOUNT_NAME :'NGUYEN PHUC',
-}
+    BANK_ID: "970422",
+    ACCOUNT_NO: "0398246147",
+    TEMPLATE: "compact",
+    ACCOUNT_NAME: "NGUYEN PHUC",
+};

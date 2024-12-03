@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const CountryDropdown = ({ selectedCountry, onCountryChange }) => {
+const CountryDropdown = ({ selectedCountry, onFieldChange }) => {
   const [countries, setCountries] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -24,7 +24,7 @@ const CountryDropdown = ({ selectedCountry, onCountryChange }) => {
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const selectCountry = (country) => {
-    onCountryChange(country.name.common);
+    onFieldChange('selectedCountry',country.name.common);
     setIsOpen(false);
   };
 

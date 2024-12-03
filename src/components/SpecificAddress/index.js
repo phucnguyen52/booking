@@ -9,7 +9,7 @@ import {
     apiGetPublicDistrict,
     apiGetPublicWard,
 } from "../../services/address";
-const SpecificAddress = ({ onAddressChange, province_name }) => {
+const SpecificAddress = ({onFieldChange}) => {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
@@ -18,6 +18,7 @@ const SpecificAddress = ({ onAddressChange, province_name }) => {
     const [ward, setWard] = useState("");
     const [numberAddress, setNumberAddress] = useState("");
     const [reset, setReset] = useState(false);
+    const previousAddressRef = useRef("");
     useEffect(() => {
         const fetchPublicProvince = async () => {
             const response = await apiGetPublicProvinces();
@@ -28,7 +29,7 @@ const SpecificAddress = ({ onAddressChange, province_name }) => {
         fetchPublicProvince();
     }, []);
     useEffect(() => {
-        setDistrict(null);
+        setDistrict("");
         const fetchPublicDistrict = async () => {
             const response = await apiGetPublicDistrict(province);
             if (response.status === 200) {
@@ -40,7 +41,7 @@ const SpecificAddress = ({ onAddressChange, province_name }) => {
         !province && setDistricts([]);
     }, [province]);
     useEffect(() => {
-        setWard(null);
+        setWard("");
         const fetchPublicWard = async () => {
             const response = await apiGetPublicWard(district);
             if (response.status === 200) {
@@ -52,7 +53,7 @@ const SpecificAddress = ({ onAddressChange, province_name }) => {
         !district && setWards([]);
     }, [district]);
     useEffect(() => {
-        const address = `${numberAddress ? `${numberAddress}, ` : ""}${
+        const address = `${numberAddress ? `${numberAddress},` : ""}${
             ward
                 ? `${wards?.find((item) => item.ward_id === ward)?.ward_name},`
                 : ""
@@ -71,8 +72,9 @@ const SpecificAddress = ({ onAddressChange, province_name }) => {
                   }`
                 : ""
         }`;
-        onAddressChange(address);
-    }, [province, district, ward, numberAddress, onAddressChange]);
+        onFieldChange('address', address)
+        onFieldChange("city", province ? provinces.find((item) => item.province_id === province)?.province_name : "")
+    }, [province, district, ward, numberAddress]);
     return (
         <>
             <div className="w-full">
@@ -115,7 +117,7 @@ const SpecificAddress = ({ onAddressChange, province_name }) => {
                             id="address"
                             value={numberAddress}
                             placeholder="Tên đường, số nhà"
-                            className="w-full rounded-md border border-gray-300 p-2 outline-none"
+                            className="w-full rounded-md border border-gray-300 p-2 outline-none bg-white"
                             onChange={(e) => setNumberAddress(e.target.value)}
                         />
                     </div>
