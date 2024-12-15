@@ -14,16 +14,9 @@ import HotelDetail from "../page/HotelDetail/HotelDetail";
 import Timeline from "../components/Calendar/Timeline";
 import BookingDetails from "../page/BookingDetails/BookingDetails";
 import AllRoom from "../page/RoomHotel/AllRoom";
+import Information from "../page/Order/Information";
+import PrivateRoutes from "./PrivateRoutes";
 const router = createBrowserRouter([
-    {
-        path: "/",
-        loader: () => {
-            if (!localStorage.getItem("user")) {
-                throw redirect(APP_ROUTER.HOME);
-            }
-            return null;
-        },
-    },
     {
         path: "/",
         element: <MainLayout />,
@@ -41,33 +34,36 @@ const router = createBrowserRouter([
                 path: APP_ROUTER.HOTELDETAIL,
                 element: <HotelDetail />,
             },
+
             {
-                path: APP_ROUTER.TIMELINE,
-                element: <Timeline />,
+                path: APP_ROUTER.ORDER,
+                element: <Order />,
             },
+        ],
+    },
+    {
+        path: APP_ROUTER.USER,
+        element: <PrivateRoutes role="customer" />,
+        children: [
             {
                 path: APP_ROUTER.BOOKINGDETAILS,
                 element: <BookingDetails />,
+            },
+        ],
+    },
+    {
+        path: APP_ROUTER.ADMIN,
+        element: <PrivateRoutes role="admin" />,
+        children: [           
+            {
+                path: APP_ROUTER.TIMELINE,
+                element: <Timeline />,
             },
             {
                 path: APP_ROUTER.ALLROOM,
                 element: <AllRoom />,
             },
         ],
-    },
-    {
-        path: APP_ROUTER.ORDER,
-        element: <Order />,
-        children: [
-            {
-                path: APP_ROUTER.ORDERDETAIL,
-                element: <OrderDetail />,
-            },
-            {
-                path: APP_ROUTER.PAYMENT,
-                element: <Payment />,
-            },
-        ]
     },
     {
         path: APP_ROUTER.AUTH,

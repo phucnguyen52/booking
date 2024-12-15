@@ -1,210 +1,135 @@
-import React, { Fragment, useCallback, useState } from "react";
-import { Eventcalendar, setOptions, localeVi, Select } from "@mobiscroll/react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Eventcalendar, setOptions, localeVi, Select, CalendarNav, CalendarPrev, CalendarToday, CalendarNext } from "@mobiscroll/react";
 import { useMemo } from "react";
 import "@mobiscroll/react/dist/css/mobiscroll.min.css";
+import { roomDetailService } from "../../service/roomDetailService";
+import { bookingService } from "../../service/bookingService";
+import ModalBooking from "./ModalBooking";
 setOptions({
     locale: localeVi,
     theme: "windows",
     themeVariant: "light",
 });
+const fomatDate = (date) => new Date(date).toLocaleDateString('en-CA')
 
 const Timeline = () => {
-    const [selectedView, setView] = useState("week");
-    const myView = useMemo(
-        () =>
-            selectedView === "day"
-                ? {
-                      timeline: {
-                          type: "day",
-                          size: 1,
-                          maxEventStack: 2,
-                          eventList: false,
-                      },
-                  }
-                : {
-                      timeline: {
-                          type: "week",
-                          size: 1,
-                          maxEventStack: 2,
-                          eventList: false,
-                          resolutionHorizontal: "day",
-                      },
-                  },
-        [selectedView]
-    );
-    const views = [
-        {
-            text: "Ngày",
-            value: "day",
+    const [selectedView, setView] = useState("month");
+    const [status, setStatus] = useState({
+        booked: {
+            title: "Đã đặt trước",
+            color: "#f5942766",
+            isChecked: false,
         },
-        {
-            text: "Tuần",
-            value: "week",
+        cancelled: {
+            title: "Đã huỷ",
+            color: "#1a99ee66",
+            isChecked: false,
         },
-        {
-            text: "Tháng",
-            value: "month",
+        completed: {
+            title: "Đã trả",
+            color: "#8c867f66",
+            isChecked: false,
         },
-    ];
-    const viewChange = useCallback((event) => {
-        setView(event.value);
-    }, []);
-    const renderMyHeader = () => (
-        <Fragment>
-            <Select
-                data={views}
-                value={selectedView}
-                onChange={viewChange}
-                inputStyle="box"
-            />
-        </Fragment>
-    );
+        pending: {
+            title: "Đang sử dụng",
+            color: "#43ff6466",
+            isChecked: false,
+        }
+    })
+    const [date, setDate] = useState({ start: null, end: null });
+    const [bookingSchedule, setBookingSchedule] = useState([])
+    const [room, setRoom] = useState([])
 
-    const myEvents = useMemo(
-        () => [
-            {
-                start: "2024-11-02T00:00",
-                end: "2024-11-05T00:00",
-                title: "Event 1",
-                resource: 1,
-            },
-            {
-                start: "2024-11-10T09:00",
-                end: "2024-11-15T15:00",
-                title: "Event 2",
-                resource: 3,
-            },
-            {
-                start: "2024-11-12T00:00",
-                end: "2024-11-14T00:00",
-                title: "Event 3",
-                resource: 4,
-            },
-            {
-                start: "2024-11-15T07:00",
-                end: "2024-11-20T12:00",
-                title: "Event 4",
-                resource: 5,
-            },
-            {
-                start: "2024-11-03T00:00",
-                end: "2024-11-10T00:00",
-                title: "Event 5",
-                resource: 6,
-            },
-            {
-                start: "2024-11-10T08:00",
-                end: "2024-11-11T20:00",
-                title: "Event 6",
-                resource: 7,
-            },
-            {
-                start: "2024-11-22T00:00",
-                end: "2024-11-28T00:00",
-                title: "Event 7",
-                resource: 7,
-            },
-            {
-                start: "2024-11-08T00:00",
-                end: "2024-11-13T00:00",
-                title: "Event 8",
-                resource: 15,
-            },
-            {
-                start: "2024-11-25T00:00",
-                end: "2024-11-27T00:00",
-                title: "Event 9",
-                resource: 10,
-            },
-            {
-                start: "2024-11-20T00:00",
-                end: "2024-11-23T00:00",
-                title: "Event 10",
-                resource: 12,
-            },
-        ],
-        []
-    );
+    useEffect(() => {
+        const fetchData = async () => {
+            setRoom((await roomDetailService.getRoom()).map((item, index) => ({
+                id: item.id,
+                name: item.room_number,
+            })))
+        }
+        fetchData()
+    }, [])
+    useEffect(() => {
+        const fetchData = async () => {
+            await fetchSchedule()
+        }
+        fetchData()
+    }, [date, status])
+    const fetchSchedule = async () => {
+        if(date){
+            const schedule = await bookingService.getSchedule(date.start, date.end)
+            if (schedule?.length > 0) {
+                setBookingSchedule((await bookingService.getSchedule(date.start, date.end)).map(i => ({
+                    resource: i.room_id,
+                    start: i.checkin,
+                    end: i.checkout,
+                    text: i.booking_detail_id,
+                    color: status[i.status].color,
+                })))
+            }
+        }
+        
+    }
 
-    const myResources = useMemo(
-        () => [
-            {
-                id: 1,
-                name: "Resource A",
-                color: "#e20000",
+    const view = useMemo(() => {
+        return {
+            timeline: {
+                type: selectedView,
+                size: 1,
+                maxEventStack: 2,
+                eventList: false,
+                rowHeight: "equal",
+                eventHeight: "variable",
+                resolutionHorizontal: "day",
             },
-            {
-                id: 2,
-                name: "Resource B",
-                color: "#76e083",
-            },
-            {
-                id: 3,
-                name: "Resource C",
-                color: "#4981d6",
-            },
-            {
-                id: 4,
-                name: "Resource D",
-                color: "#e25dd2",
-            },
-            {
-                id: 5,
-                name: "Resource E",
-                color: "#1dab2f",
-            },
-            {
-                id: 6,
-                name: "Resource F",
-                color: "#d6d145",
-            },
-            {
-                id: 7,
-                name: "Resource G",
-                color: "#34c8e0",
-            },
-            {
-                id: 8,
-                name: "Resource H",
-                color: "#9dde46",
-            },
-            {
-                id: 9,
-                name: "Resource I",
-                color: "#166f6f",
-            },
-            {
-                id: 10,
-                name: "Resource J",
-                color: "#f7961e",
-            },
-            {
-                id: 11,
-                name: "Resource K",
-                color: "#34c8e0",
-            },
-            {
-                id: 12,
-                name: "Resource L",
-                color: "#af0000",
-            },
-            {
-                id: 13,
-                name: "Resource M",
-                color: "#446f1c",
-            },
-            {
-                id: 14,
-                name: "Resource N",
-                color: "#073138",
-            },
-            {
-                id: 15,
-                name: "Resource O",
-                color: "#4caf00",
-            },
-        ],
-        []
+        }
+    }, [selectedView])
+
+    const headerTimeline = () => (
+        <div className=" w-full">
+            <div className="flex items-center">
+                <CalendarNav />
+                <div className="grow flex justify-end items-center">
+                    <CalendarPrev />
+                    <CalendarToday />
+                    <CalendarNext />
+                    <Select
+                        data={[
+                            { text: "Tuần", value: "week" },
+                            { text: "Tháng", value: "month" },
+                        ]}
+                        value={selectedView}
+                        onChange={(event) => setView(event.value)}
+                        inputStyle="box"
+                    />
+                </div>
+            </div>
+            <div className="flex justify-center gap-4">
+                {Object.keys(status).map(item => (
+                    <div key={item} >
+                        <input id={item} name="status" value={item}  type="checkbox" className="peer hidden" 
+                        onChange={(e)=>{
+                            setStatus(prev=>({
+                                ...prev, 
+                                [e.target.value]: {
+                                    ...prev[e.target.value], 
+                                    isChecked: e.target.checked 
+                                }
+                            }))
+                        }}/>
+                        <label  htmlFor={item} className="flex gap-2 items-center peer-checked:underline">
+                            <span className="rounded-full w-4 h-4" style={{ backgroundColor: status[item].color }}></span>
+                            <div className={``}>
+                                {status[item].title}
+                            </div>
+                        </label>
+
+
+                    </div>
+
+                ))}
+            </div>
+        </div>
     );
 
     return (
@@ -216,17 +141,34 @@ const Timeline = () => {
             dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
         >
             <Eventcalendar
-                renderHeader={renderMyHeader}
-                clickToCreate={true}
-                dragToCreate={true}
-                dragToMove={true}
-                dragToResize={true}
+                renderHeader={headerTimeline}
+                clickToCreate={false}
+                dragToCreate={false}
+                dragToMove={false}
+                dragToResize={false}
                 eventDelete={false}
-                view={myView}
-                data={myEvents}
-                resources={myResources}
                 nowIndicator={true}
+                view={view}
+                data={bookingSchedule}
+                resources={room}
+                onPageChange={(e) => {
+                    setDate({
+                        start: fomatDate(e.firstDay),
+                        end: fomatDate(e.lastDay)
+                    })
+                }}
+                onPageLoaded={(e) => {
+                    const firstDay = fomatDate(e.firstDay)
+                    const lastDay = fomatDate(e.lastDay)
+                    if (firstDay !== date.start && lastDay !== date.end) {
+                        setDate({
+                            start: firstDay,
+                            end: lastDay,
+                        });
+                    }
+                }}
             />
+            <ModalBooking />
         </div>
     );
 };
