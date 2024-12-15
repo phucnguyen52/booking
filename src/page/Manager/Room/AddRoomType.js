@@ -29,7 +29,7 @@ const AddRoomType = ({ handleClose, handleFetch}) => {
         });
     };
     const handleIsFilters = () => {
-        setExpandedRow([]);
+        // setExpandedRow([]);
     };
     const handleBeforeUpload = async (event) => {
         const file = event.target.files[0];
