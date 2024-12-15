@@ -47,10 +47,10 @@ const Rating = (props) => {
                         <div className="grid grid-cols-2 gap-y2">
                            {data.reviews.map((item, index) => (
                               <div key={index} className="border-b py-4 pr-4 pl-2 text-sm">
-                                 <div className="flex justify-between items-center mb-4 pr-20">
+                                 <div className="flex flex-col gap-1 mb-4 pr-20">
                                     <div className="flex gap-3">
                                        <img className="w-10 h-10 rounded-full object-cover " src={item.userImage} alt="" />
-                                       <div className="font-bold my-2">{item.userName}</div>
+                                       <div className="font-bold my-2 text-nowrap">{item.userName}</div>
                                     </div>
                                     <StarRating className="text-lg" css="text-[#4c76b2] w-4 h-4" rating={item.reviewStars} />
                                  </div>

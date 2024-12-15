@@ -16,29 +16,13 @@ const Convenient = () => {
         ],
     };
     const mockData = {
-        "Cực kỳ phù hợp cho kỳ lưu trú của bạn": [
-            "Phòng tắm",
-            "Ngoài trời",
-            "Nhà bếp",
-            "Tiện ích trong phòng",
-            "Vật nuôi",
-            "Hoạt động",
-            "Khu vực phòng khách",
-            "Truyền thông & Công nghệ",
-            "Đồ ăn & thức uống",
-            "Internet",
-            "Chỗ đậu xe",
-            "Dịch vụ",
-            "Tổng quát",
-            "Lối vào dành cho người khuyết tật",
-            "Ngôn ngữ được sử dụng",
-        ],
+       
         "Phòng tắm": [
             "Phòng tắm",
             "Giấy vệ sinh",
             "Khăn tắm",
-            "Chậu rửa vệ sinh (bidet)",
-            "Dép",
+           
+           
             "Toilet chung",
             "Phòng tắm riêng",
             "Nhà vệ sinh",
@@ -48,49 +32,29 @@ const Convenient = () => {
         "Ngoài trời": [
             "Bàn ghế ngoài trời",
             "Khu vực ăn uống ngoài trời",
-            "Sân hiên",
-            "Sân hiên phơi nắng",
+            
             "Sân trong",
             "Sân vườn",
-        ],
-        "Nhà bếp": ["Bếp chung", "Ấm đun nước điện", "Tủ lạnh"],
-        "Tiện ích trong phòng": [
-            "Ổ điện gần giường",
-            "Giá phơi quần áo",
-            "Giá treo quần áo",
-        ],
-        "Vật nuôi": ["Vật nuôi được phép. Không tính thêm phí."],
-        "Hoạt động": ["Bãi biển"],
-        "Khu vực phòng khách": ["Khu vực tiếp khách"],
-        "Truyền thông & Công nghệ": ["Truyền hình cáp"],
-        "Đồ ăn & thức uống": ["Minibar"],
-        Internet: ["Wi-fi có ở toàn bộ khách sạn và miễn phí."],
-        "Chỗ đậu xe": [
-            "Có chỗ đỗ xe riêng miễn phí tại chỗ (không cần đặt chỗ trước).",
         ],
         "Dịch vụ": [
             "Dịch vụ đưa đón",
             "Dịch vụ trợ giúp đặc biệt",
             "Cho thuê xe hơi",
-            "Thu đổi ngoại tệ",
-            "Dịch vụ là (ủi)",
+            
             "Giặt ủi",
             "Dịch vụ phòng",
         ],
         "Tổng quát": [
             "Khu vực cho phép hút thuốc",
             "Điều hòa nhiệt độ",
-            "Phòng không gây dị ứng",
-            "Sàn lát gạch/đá cẩm thạch",
+            
+            
             "Phòng gia đình",
-            "Phòng không hút thuốc",
+          
             "Lối vào dành cho người khuyết tật",
             "Xe lăn có thể đi đến mọi nơi trong toàn bộ khuôn viên",
         ],
-        "Lối vào dành cho người khuyết tật": [
-            "Xe lăn có thể đi đến mọi nơi trong toàn bộ khuôn viên",
-        ],
-        "Ngôn ngữ được sử dụng": ["Tiếng Anh", "Tiếng Việt"],
+       
     };
 
     return (

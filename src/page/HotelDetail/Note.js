@@ -3,7 +3,7 @@ import Button from "../../components/Button";
 
 const Note = () => {
     return (
-        <div className="">
+        <div className="mb-5">
             
             <div className="border border-gray-200 rounded-md p-6 text-sm mt-5">
                 <div className="mb-2">

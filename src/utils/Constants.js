@@ -1,4 +1,3 @@
-
 export const APP_ROUTER = {
     INDEX: "/",
     HOME: "/home",
@@ -16,9 +15,15 @@ export const APP_ROUTER = {
     USER: "/user",
     CHANGE_PASSWORD: "/user/change-password",
     BOOKINGDETAILS: "/user/booking-details",
+    ORDERSCUSTOMER: "/user/orders/customer",
     ADMIN: "/admin",
     TIMELINE: "/admin/timeline",
     ALLROOM: "/admin/all-rooms",
+    LISTORDERS: "/admin/list-orders",
+    ROOM: "/admin/rooms",
+    HOTELREGISTER: "/admin/hotel/register",
+    SERVICES: "/admin/services",
+    ROOMPRICE: "/admin/rooms/price",
 };
 
 export const QR = {

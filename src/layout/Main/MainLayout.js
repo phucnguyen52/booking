@@ -10,7 +10,7 @@ function MainLayout() {
             <Header />
             <main className="mx-32">
                 <Outlet />
-                main layout
+               
             </main>
             <Footer />
         </div>
