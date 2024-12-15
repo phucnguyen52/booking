@@ -1,130 +1,97 @@
 
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
-import { FaStar } from 'react-icons/fa';
-import { FaRegStarHalfStroke } from 'react-icons/fa6';
 import { IoStar, IoStarHalf } from 'react-icons/io5';
-import Payment from './Payment';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { APP_ROUTER } from '../../utils/Constants';
+import { PiUserListDuotone } from "react-icons/pi";
+import { LiaHotelSolid } from "react-icons/lia";
+import { TbListDetails } from "react-icons/tb";
 
-const OrderDetail = () => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        fullname: '',
-        email: '',
-        phone: '',
-        address: '',
-        specialRequests: '',
-        arrivalTime: '',
-    });
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // const { name, value } = e.target;
-        // setFormData({ ...formData, [name]: value });
-        console.log('Submit', e.target.elements)
-        navigate(APP_ROUTER.PAYMENT);
-    };
-
+const OrderDetail = (props) => {
+    const { info, setStep } = props;
     return (
-        <form className='basis-2/3' onSubmit={handleSubmit}>
-            <div className='border rounded-lg p-4 mb-4'>
-                <h2 className="text-xl font-semibold mb-4">Thông tin khách hàng</h2>
-                <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <label className="block text-gray-700 text-sm mb-1">Họ tên</label>
-                            <input
-                                type="text"
-                                name="fullname"
-                                value={formData.fullname}
-                                onChange={handleInputChange}
-                                className="w-full p-1 border outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                required
-                            />
-                        </div>
+        <div className=''>
+            <h1 className='mx-auto font-bold text-2xl text-center pb-4 border-b'>THÔNG TIN ĐẶT PHÒNG</h1>
+            <div className='border-b p-4'>
+                <h2 className="flex gap-2 text-xl font-bold mb-4"><span className='text-3xl'><PiUserListDuotone /></span>Khách hàng</h2>
+                <div className="grid grid-rows-3 grid-cols-6 gap-2 my-2">
+                    <div className='font-semibold'>Họ và tên </div>
+                    <div className='border-b pl-2'>{info.infoCustomer.fullname}</div>
+                    <div className='font-semibold ml-4'>Email </div>
+                    <div className='col-span-3 border-b pl-2'>{info.infoCustomer.email}</div>
+                    <div className='font-semibold'>Số điện thoại </div>
+                    <div className='border-b pl-2'>{info.infoCustomer.phone}</div>
+                    <div className='font-semibold ml-4'>Địa chỉ </div>
+                    <div className='col-span-3 border-b pl-2'>{info.infoCustomer.address}</div>
+                </div>
+            </div>
 
-                        <div>
-                            <label className="block text-gray-700 text-sm mb-1">Số điện thoại</label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleInputChange}
-                                className="w-full p-1 border outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                required
-                                pattern="[0-9]{10}"
-                                placeholder="123 456 7890"
-                            />
-                        </div>
+            <div className='border-b p-4'>
+                <h2 className="flex gap-2 text-xl font-bold mb-4">
+                    <span className='text-3xl'><LiaHotelSolid /></span>
+                    {info.state.name}
+                    <span className='text-sm'>
+                        {Array.from({ length: Math.floor(info.state.star) }, (_, i) => (
+                            <IoStar className='text-yellow-400 inline' key={i} />
+                        ))}
+                        {info.state.star % 1 !== 0 && <IoStarHalf className='text-yellow-400 inline-block' />}
+                        <sup>({info.state.star})</sup>
+                    </span>
+                </h2>
+                <p className="text-sm text-gray-600">{info.state.address}</p>
+            </div>
 
-                        <div className="col-span-2">
-                            <label className="block text-gray-700 text-sm mb-1">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                className="w-full p-1 border outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                required
-                            />
-                            <div className='text-[10px] text-neutral-600'>Thông tin xác nhận sẽ được gửi về địa chỉ mail này</div>
-                        </div>
-                        <div className="col-span-2">
-                            <label className="block text-gray-700 text-sm mb-1">Địa chỉ</label>
-                            <input
-                                type="tel"
-                                name="address"
-                                value={formData.address}
-                                onChange={handleInputChange}
-                                className="w-full p-1 border outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                required
-                            />
-                        </div>
+            <div className='border-b p-4 '>
+                <h2 className="flex gap-2 text-xl font-bold mb-4"><span className='text-3xl'><TbListDetails /></span>Chi tiết phòng</h2>
+                <div className="grid grid-rows-3 grid-cols-6 gap-2 my-2">
+                    <div className=''>Check-in</div>
+                    <div className='font-semibold col-span-2'>{new Date(info.state.checkin).toDateString()}</div>
+                    <div className='border-l pl-4'>Check-out </div>
+                    <div className='font-semibold col-span-2'>{new Date(info.state.checkout).toDateString()}</div>
+                    <div className=''>Số ngày ở </div>
+                    <div className='font-semibold col-span-5'>{(new Date(info.state.checkout) - new Date(info.state.checkin)) / (1000 * 60 * 60 * 24)} đêm</div>
+                    <div className=''>Chi tiết phòng </div>
+                    <div className='font-semibold col-span-5'>{info.state.guests.rooms} phòng cho {info.state.guests.adults} người lớn, {info.state.guests.children} trẻ em</div>
+                    <div className="col-start-2 col-span-5 text-gray-500 italic grid grid-cols-12 gap-2">
+                        {info.state.room.map((r) => {
+                            return (
+                                <>
+                                    <div className='col-span-1'>{r.quantity}</div>
+                                    <div className='col-span-1'>×</div>
+                                    <div className='col-span-6'>{r.name}</div>
+                                    <div className='col-span-4 text-right'>
+                                        Giá mỗi đêm: {r.price.toLocaleString()} VND
+                                    </div>
+                                </>
+                            );
+                        })}
                     </div>
                 </div>
-
             </div>
-            {/* <div className='border rounded-lg p-4 mb-4'>
-                <section className="border-b border-gray-300 p-6">
-                    <h2 className="text-xl font-semibold mb-4">Special Requests</h2>
-                    <textarea
-                        name="specialRequests"
-                        value={formData.specialRequests}
-                        onChange={handleInputChange}
-                        placeholder="Please write your requests in English."
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                    />
-                </section>
-            </div>
-            <div className='border rounded-lg p-4 mb-4'>
-                <section className="border-b border-gray-300 p-6">
-                    <h2 className="text-xl font-semibold mb-4">Your arrival time</h2>
-                    <select
-                        name="arrivalTime"
-                        value={formData.arrivalTime}
-                        onChange={handleInputChange}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                    >
-                        <option value="">Please select</option>
-                        <option value="15:00">15:00</option>
-                        <option value="16:00">16:00</option>
-                    </select>
-                </section>
-            </div> */}
 
-            <div className="flex justify-end">
-                <button type='submit' className="bg-blue-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300">
-                    Thanh toán
+            <div className="text-sm mb-4">
+                {info.state.totalAmount && (
+                    <div className="grid grid-cols-6 grid-rows-3 items-center">
+                        <div className='col-start-5'>Tổng tiền phòng</div>
+                        <div className="text-right">{(info.state.totalAmount).toLocaleString()} VND</div>
+                        <div className='col-start-5'>Giảm giá</div>
+                        <div className="text-right">{info.state.totalDiscount * info.state.totalAmount / 100} VND</div>
+                        <div className="grid grid-cols-subgrid col-span-6 border-y py-2">
+                            <div className='font-bold col-start-5'>TỔNG</div>
+                            <div className="font-bold text-right">{(info.state.totalAmount * (100 - info.state.totalDiscount) / 100).toLocaleString()} VND</div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="flex justify-end gap-4">
+                <button onClick={() => setStep(prev => prev - 1)} className="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                    Quay lại
+                </button>
+                <button onClick={() => setStep(prev => prev + 1)} className="text-white bg-gray-800 hover:bg-gray-900 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                    Tiếp theo
                 </button>
             </div>
-
-        </form>
+        </div>
     );
 }
 

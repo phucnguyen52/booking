@@ -14,6 +14,8 @@ import HotelDetail from "../page/HotelDetail/index";
 import Timeline from "../components/Calendar/Timeline";
 import BookingDetails from "../page/BookingDetails";
 import AllRoom from "../page/RoomHotel/AllRoom";
+import Information from "../page/Order/Information";
+import PrivateRoutes from "./PrivateRoutes";
 import ListOrder from "../page/Manager/Order";
 import Room from "../page/Manager/Room";
 import HotelRegister from "../page/HotelRegister";
@@ -21,15 +23,6 @@ import OrdersCustomer from "../page/OrdersCustomer";
 import Services from "../page/Manager/Services";
 import RoomPrice from "../page/Manager/RoomPrice";
 const router = createBrowserRouter([
-    {
-        path: "/",
-        loader: () => {
-            if (!localStorage.getItem("user")) {
-                throw redirect(APP_ROUTER.HOME);
-            }
-            return null;
-        },
-    },
     {
         path: "/",
         element: <MainLayout />,
@@ -48,12 +41,33 @@ const router = createBrowserRouter([
                 element: <HotelDetail />,
             },
             {
-                path: APP_ROUTER.TIMELINE,
-                element: <Timeline />,
+                path: APP_ROUTER.ORDER,
+                element: <Order />,
             },
+        ],
+    },
+    {
+        path: APP_ROUTER.USER,
+        element: <PrivateRoutes role="customer" />,
+        children: [
             {
                 path: APP_ROUTER.BOOKINGDETAILS,
                 element: <BookingDetails />,
+            },
+            
+            {
+                path: APP_ROUTER.ORDERSCUSTOMER,
+                element: <OrdersCustomer />,
+            },
+        ],
+    },
+    {
+        path: APP_ROUTER.ADMIN,
+        element: <PrivateRoutes role="admin" />,
+        children: [           
+            {
+                path: APP_ROUTER.TIMELINE,
+                element: <Timeline />,
             },
             {
                 path: APP_ROUTER.ALLROOM,
@@ -80,24 +94,6 @@ const router = createBrowserRouter([
             {
                 path: APP_ROUTER.HOTELREGISTER,
                 element: <HotelRegister />,
-            },
-            {
-                path: APP_ROUTER.ORDERSCUSTOMER,
-                element: <OrdersCustomer />,
-            },
-        ],
-    },
-    {
-        path: APP_ROUTER.ORDER,
-        element: <Order />,
-        children: [
-            {
-                path: APP_ROUTER.ORDERDETAIL,
-                element: <OrderDetail />,
-            },
-            {
-                path: APP_ROUTER.PAYMENT,
-                element: <Payment />,
             },
         ],
     },
