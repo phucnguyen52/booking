@@ -1,20 +1,24 @@
 import React, { useState } from "react";
 import Button from "../../../components/Button";
 import { BsImageFill } from "react-icons/bs";
-const AddRoomType = ({ handleClose }) => {
+import axios from "axios";
+import { toast } from "react-toastify";
+const AddRoomType = ({ handleClose, handleFetch}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState([]);
     const [formData, setFormData] = useState({
-        roomCode: "",
-        roomName: "",
-        priceHour: "",
-        priceDay: "",
-        priceOvernight: "",
+        name: "",
+        roomType: "",
+        squareMeters: "",
+        pricePerNight: "",
+        bedroomCount: "",
+        livingRoomCount: "",
+        kitchenCount: "",
+        bathroomCount: "",
         adultCount: "",
         childCount: "",
-        maxAdultCount: "",
-        maxChildCount: "",
-        description: "",
+        HotelId: 1,
+        // description: "",
     });
 
     const handleChange = (e) => {
@@ -24,7 +28,9 @@ const AddRoomType = ({ handleClose }) => {
             [name]: value,
         });
     };
-
+    const handleIsFilters = () => {
+        setExpandedRow([]);
+    };
     const handleBeforeUpload = async (event) => {
         const file = event.target.files[0];
         const formData = new FormData();
@@ -43,12 +49,64 @@ const AddRoomType = ({ handleClose }) => {
         setIsLoading(false);
     };
 
-    const onSubmit = () => {
-        const finalData = {
-            ...formData,
-            imageUrl,
-        };
-        console.log(finalData);
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        for (let key in formData) {
+            if (formData[key] === "") {
+                toast.warning("Vui lòng nhập đầy đủ thông tin.");
+                return;
+            }
+        }
+        // const finalData = {
+        //     ...formData,
+        //     imageUrl,
+        // };
+        // console.log(finalData);
+        try {
+            const response = await axios.post(
+                "http://localhost:8080/api/receptionist/room",
+                {
+                    name: formData.name,
+                    room_type: formData.roomType,
+                    square_meters: formData.squareMeters,
+                    price_per_night: formData.pricePerNight,
+                    bedroom_count: formData.bedroomCount,
+                    living_room_count: formData.livingRoomCount,
+                    kitchen_count: formData.kitchenCount,
+                    bathroom_count: formData.bathroomCount,
+                    adult_count: formData.adultCount,
+                    child_count: formData.childCount,
+                    HotelId: 1,
+                    // description: formData.description,
+                    images: imageUrl,
+                },
+                { withCredentials: true }
+            );
+
+            const data = response.data;
+
+            if (data.status === true) {
+                toast.success(data.message);
+                setFormData({
+                    name: "",
+                    roomType: "",
+                    squareMeters: "",
+                    pricePerNight: "",
+                    bedroomCount: "",
+                    livingRoomCount: "",
+                    kitchenCount: "",
+                    bathroomCount: "",
+                    adultCount: "",
+                    childCount: "",
+                    // description: "",
+                  });
+                handleClose();
+                handleFetch()
+           
+            }
+        } catch (error) {
+            toast.error("Thêm loại phòng không thành công!");
+        }
     };
 
     return (
@@ -85,93 +143,116 @@ const AddRoomType = ({ handleClose }) => {
                     </button>
                 </div>
                 <div className="px-24 py-5 bg-white w-full">
-                    <div className="mb-4 flex items-center">
-                        <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                            Mã loại phòng
-                        </label>
-                        <input
-                            type="text"
-                            name="roomCode"
-                            placeholder="Mã hạng phòng tự động"
-                            className="rounded-t-lg p-2 w-full text-sm text-gray-900 dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 cursor-not-allowed"
-                            disabled
-                            value={formData.roomCode}
-                        />
-                    </div>
-                    <div className="mb-4 flex items-center">
-                        <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
+                    <div className="mb-3 flex items-center">
+                        <label className="text-sm font-medium text-gray-700 text-nowrap w-56">
                             Tên loại phòng
                         </label>
                         <input
                             type="text"
-                            name="roomName"
+                            name="name"
                             placeholder="Nhập tên loại phòng"
                             className="rounded-t-lg p-2 w-full text-sm text-gray-900 dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
-                            value={formData.roomName}
+                            value={formData.name}
                             onChange={handleChange}
                         />
                     </div>
-                    <div className="flex gap-8 w-full">
-                        <div className="w-1/2 flex flex-col justify-between">
-                            <div className="mb-4 flex items-center">
-                                <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                                    Giá giờ
-                                </label>
-                                <input
-                                    type="number"
-                                    name="priceHour"
-                                    placeholder="0"
-                                    min={0}
-                                    className="text-right rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
-                                    value={formData.priceHour}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="mb-4 flex items-center">
-                                <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                                    Giá cả ngày
-                                </label>
-                                <input
-                                    type="number"
-                                    name="priceDay"
-                                    placeholder="0"
-                                    min={0}
-                                    className="text-right rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
-                                    value={formData.priceDay}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="mb-4 flex items-center">
-                                <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                                    Giá qua đêm
-                                </label>
-                                <input
-                                    type="number"
-                                    name="priceOvernight"
-                                    placeholder="0"
-                                    min={0}
-                                    className="text-right rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
-                                    value={formData.priceOvernight}
-                                    onChange={handleChange}
-                                />
-                            </div>
+                    <div className="flex items-center gap-4 mb-2">
+                        <label className="text-sm font-medium text-gray-700 text-nowrap w-40">
+                            Loại hình
+                        </label>
+                        <div className="flex items-center gap-1">
+                            <input
+                                type="radio"
+                                name="roomType"
+                                value="hotel"
+                                checked={formData.roomType === "hotel"}
+                                onChange={handleChange}
+                            />
+                            <label className="text-sm">Khách sạn</label>
                         </div>
-
-                        <div className="flex-1 w-1/2">
-                            <div className="bg-gray-100 p-4 rounded-md mt-2 text-sm text-gray-700 h-full">
-                                <h4 className="text-sm font-medium text-gray-700 mb-3">
-                                    Thời gian nhận - trả quy định
-                                </h4>
-                                <ul className="list-disc ml-4">
-                                    <li className="mb-3">
-                                        Cả ngày tính từ 14:00 đến 12:00
-                                    </li>
-                                    <li>Qua đêm tính từ 22:00 đến 11:00</li>
-                                </ul>
-                            </div>
+                        <div className="flex items-center gap-1">
+                            <input
+                                type="radio"
+                                name="roomType"
+                                value="apartment"
+                                checked={formData.roomType === "apartment"}
+                                onChange={handleChange}
+                                className="w-4 h-4 "
+                            />
+                            <label className="text-sm">Căn hộ</label>
                         </div>
+                    </div>
+                    <div className="mb-3 flex items-center">
+                        <label className="text-sm font-medium text-gray-700 text-nowrap w-56">
+                            Giá ngày đêm
+                        </label>
+                        <input
+                            type="number"
+                            name="pricePerNight"
+                            placeholder="0"
+                            min={0}
+                            className="text-right w-full rounded-t-lg p-2 text-sm text-gray-900 dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
+                            value={formData.pricePerNight}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="mb-3 flex items-center">
+                        <label className="text-sm font-medium text-gray-700 text-nowrap w-56">
+                            Số lượng phòng ngủ
+                        </label>
+                        <input
+                            type="number"
+                            name="bedroomCount"
+                            placeholder="0"
+                            min={0}
+                            className="text-right rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
+                            value={formData.bedroomCount}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="mb-3 flex items-center">
+                        <label className="text-sm font-medium text-gray-700 text-nowrap w-56">
+                            Số lượng phòng khách
+                        </label>
+                        <input
+                            type="number"
+                            name="livingRoomCount"
+                            placeholder="0"
+                            min={0}
+                            className="text-right rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
+                            value={formData.livingRoomCount}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="mb-3 flex items-center">
+                        <label className="text-sm font-medium text-gray-700 text-nowrap w-56">
+                            Số lượng phòng bếp
+                        </label>
+                        <input
+                            type="number"
+                            name="kitchenCount"
+                            placeholder="0"
+                            min={0}
+                            className="text-right rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
+                            value={formData.kitchenCount}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="mb-3 flex items-center">
+                        <label className="text-sm font-medium text-gray-700 text-nowrap w-56">
+                            Số lượng phòng tắm
+                        </label>
+                        <input
+                            type="number"
+                            name="bathroomCount"
+                            placeholder="0"
+                            min={0}
+                            className="text-right rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
+                            value={formData.bathroomCount}
+                            onChange={handleChange}
+                        />
                     </div>
                     <div className="mt-5">
                         <div className="rounded-md w-full border">
@@ -207,39 +288,27 @@ const AddRoomType = ({ handleClose }) => {
                                     </span>
                                 </div>
                             </div>
-
-                            <div className="flex items-center px-3 mb-3">
-                                <span className="w-24 text-sm text-gray-700 font-semibold">
-                                    Tối đa
-                                </span>
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="number"
-                                        name="maxAdultCount"
-                                        placeholder="0"
-                                        className="w-12 p-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500 focus:outline-none text-center"
-                                        value={formData.maxAdultCount}
-                                        onChange={handleChange}
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        người lớn và
-                                    </span>
-                                    <input
-                                        type="number"
-                                        name="maxChildCount"
-                                        placeholder="0"
-                                        className="w-12 p-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500 focus:outline-none text-center"
-                                        value={formData.maxChildCount}
-                                        onChange={handleChange}
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        trẻ em
-                                    </span>
+                            <div className="mb-4 flex items-center px-3">
+                                <label className="text-sm font-medium text-gray-700 text-nowrap w-24">
+                                    Diện tích
+                                </label>
+                                <input
+                                    type="number"
+                                    id="squareMeters"
+                                    name="squareMeters"
+                                    min={0}
+                                    className=" text-right rounded-t-lg p-1 w-20 text-sm text-gray-900 dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
+                                    value={formData.squareMeters}
+                                    onChange={handleChange}
+                                />
+                                <div className="text-sm  text-gray-700 text-nowrap">
+                                    m²
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="mt-5">
+                    {/* Mô tả */}
+                    {/* <div className="mt-5">
                         <div className="rounded-md w-full border">
                             <h3 className="font-medium text-gray-700 mb-4 bg-gray-100 p-3">
                                 Mô tả
@@ -256,9 +325,9 @@ const AddRoomType = ({ handleClose }) => {
                                 ></textarea>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="mt-5">
+                    </div> */}
+                    {/* Hình ảnh */}
+                    {/* <div className="mt-5">
                         <div className="rounded-md w-full border">
                             <h3 className="font-medium text-gray-700 mb-4 bg-gray-100 p-3">
                                 Hình ảnh
@@ -355,13 +424,13 @@ const AddRoomType = ({ handleClose }) => {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div className="rounded-b-lg absolute bottom-0 left-0 w-full bg-white border-t border-gray-300 flex flex-end justify-end gap-2 px-24 py-3">
                 <Button
                     color="green"
-                    textColor="text-white"
+                    textColor="white"
                     children="Lưu và thêm mới"
                     size="lg"
                     handleClick={onSubmit}

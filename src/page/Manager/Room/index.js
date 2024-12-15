@@ -1,362 +1,140 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "../../../components/Table";
-import { AiFillPrinter } from "react-icons/ai";
+import { FaEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import AddRoomType from "./AddRoomType";
 import AddRoom from "./AddRoom";
+import axios from "axios";
 const Room = () => {
-    const [selectedTab, setSelectedTab] = useState("loaiPhong"); // Tab mặc định
+    const [selectedTab, setSelectedTab] = useState("loaiPhong");
     const handleTabClick = (tab) => {
         setSelectedTab(tab);
     };
+    const [roomType, setRoomType] = useState([]);
+    const fetchRoomType = async () => {
+        try {
+            const response = await axios.get(
+                "http://localhost:8080/api/receptionist/room",
+                {
+                    withCredentials: true,
+                }
+            );
+
+            if (response.data.status === true) {
+                
+                setRoomType(response.data.room);
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
+    useEffect(() => {
+        fetchRoomType();
+        fetchRoom()
+    }, []);
     const columns = [
-        { key: "category_id", label: "Mã hạng phòng" },
-        { key: "category_name", label: "Tên hạng phòng" },
-        { key: "room_count", label: "SL phòng" },
-        { key: "hourly_price", label: "Giá giờ" },
-        { key: "daily_price", label: "Giá cả ngày" },
-        { key: "overnight_price", label: "Giá qua đêm" },
-        { key: "status", label: "Trạng thái", isFilterable: true },
-        { key: "branch", label: "Chi nhánh" },
+        { key: "id", label: "Mã loại phòng" },
+        { key: "room_name", label: "Tên loại phòng" },
+        { key: "adult_count", label: "Số lượng người" },
+        { key: "price_per_night", label: "Giá" },
+        { key: "room_count", label: "Số lượng phòng" },
         {
-            key: "button",
-            label: "Hành động",
+            key: "chỉnh sửa",
+            label: "Chỉnh sửa",
             render: (row) => (
                 <button
-                    // onClick={() => handleAction(row)}
-                    className="z-10 text-center mx-auto"
+                    // onClick={(event) => handleEditServices(event, row)}
+                    className="z-10 text-center mx-auto p-2 hover:bg-slate-200 hover:rounded-md"
                 >
-                    <AiFillPrinter className="h-4 w-4" />
+                    <FaEdit className="h-6 w-6" />
+                </button>
+            ),
+        },
+        {
+            key: "xóa",
+            label: "Xóa",
+            render: (row) => (
+                <button
+                    // onClick={(event) => handleDeleteServices(event, row)}
+                    className="z-10 text-center mx-auto p-2 hover:bg-slate-200 hover:rounded-md"
+                >
+                    <MdDeleteForever className="h-6 w-6" />
                 </button>
             ),
         },
     ];
+    const [room, setRoom] = useState([]);
+    const fetchRoom = async () => {
+        try {
+            const response = await axios.get(
+                "http://localhost:8080/api/receptionist/room_detail",
+                {
+                    withCredentials: true,
+                }
+            );
+
+            if (response.data.status === true) {
+                setRoom(response.data.room);
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
     const columns1 = [
-        { key: "room_name", label: "Tên phòng" },
-        { key: "category_name", label: "Hạng phòng", isFilterable: true },
-        { key: "area", label: "Khu vực" },
-        { key: "hourly_price", label: "Giá giờ" },
-        { key: "daily_price", label: "Giá cả ngày" },
-        { key: "overnight_price", label: "Giá qua đêm" },
-        { key: "status", label: "Trạng thái", isFilterable: true },
-        { key: "note", label: "Ghi chú" },
-        { key: "branch", label: "Chi nhánh" },
-    ];
-    const data2 = [
+        { key: "room_number", label: "Số phòng" },
+        { key: "room_name", label: "Loại phòng", isFilterable: true },
+        { key: "price_per_night", label: "Giá phòng" },
         {
-            category_id: "C001",
-            category_name: "Double Bedroom",
-            room_count: 3,
-            hourly_price: "180,000 VND",
-            daily_price: "720,000 VND",
-            overnight_price: "720,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
+            key: "edit",
+            label: "Chỉnh sửa",
+            render: (row) => (
+                <button
+                    // onClick={(event) => handleEditServices(event, row)}
+                    className="z-10 text-center mx-auto p-2 hover:bg-slate-200 hover:rounded-md"
+                >
+                    <FaEdit className="h-6 w-6" />
+                </button>
+            ),
         },
         {
-            category_id: "C002",
-            category_name: "Single Bedroom",
-            room_count: 3,
-            hourly_price: "150,000 VND",
-            daily_price: "600,000 VND",
-            overnight_price: "600,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C003",
-            category_name: "Triple Bedroom",
-            room_count: 3,
-            hourly_price: "250,000 VND",
-            daily_price: "1,000,000 VND",
-            overnight_price: "1,000,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C004",
-            category_name: "Twin Bedroom",
-            room_count: 3,
-            hourly_price: "200,000 VND",
-            daily_price: "800,000 VND",
-            overnight_price: "800,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C005",
-            category_name: "Suite Room",
-            room_count: 5,
-            hourly_price: "500,000 VND",
-            daily_price: "2,000,000 VND",
-            overnight_price: "2,000,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C006",
-            category_name: "Deluxe Room",
-            room_count: 4,
-            hourly_price: "400,000 VND",
-            daily_price: "1,600,000 VND",
-            overnight_price: "1,600,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh 1",
-        },
-        {
-            category_id: "C007",
-            category_name: "Family Room",
-            room_count: 3,
-            hourly_price: "350,000 VND",
-            daily_price: "1,400,000 VND",
-            overnight_price: "1,400,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh 2",
-        },
-        {
-            category_id: "C008",
-            category_name: "Presidential Suite",
-            room_count: 2,
-            hourly_price: "1,000,000 VND",
-            daily_price: "4,000,000 VND",
-            overnight_price: "4,000,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C009",
-            category_name: "Studio Room",
-            room_count: 5,
-            hourly_price: "300,000 VND",
-            daily_price: "1,200,000 VND",
-            overnight_price: "1,200,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh 3",
-        },
-        {
-            category_id: "C010",
-            category_name: "Standard Room",
-            room_count: 6,
-            hourly_price: "250,000 VND",
-            daily_price: "1,000,000 VND",
-            overnight_price: "1,000,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C011",
-            category_name: "Luxury Room",
-            room_count: 2,
-            hourly_price: "600,000 VND",
-            daily_price: "2,400,000 VND",
-            overnight_price: "2,400,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C012",
-            category_name: "Economy Room",
-            room_count: 10,
-            hourly_price: "120,000 VND",
-            daily_price: "480,000 VND",
-            overnight_price: "480,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh 1",
-        },
-        {
-            category_id: "C013",
-            category_name: "Queen Room",
-            room_count: 3,
-            hourly_price: "450,000 VND",
-            daily_price: "1,800,000 VND",
-            overnight_price: "1,800,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C014",
-            category_name: "King Room",
-            room_count: 4,
-            hourly_price: "700,000 VND",
-            daily_price: "2,800,000 VND",
-            overnight_price: "2,800,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            category_id: "C015",
-            category_name: "Penthouse Room",
-            room_count: 1,
-            hourly_price: "1,500,000 VND",
-            daily_price: "6,000,000 VND",
-            overnight_price: "6,000,000 VND",
-            status: "Đang kinh doanh",
-            branch: "Chi nhánh trung tâm",
+            key: "delete",
+            label: "Xóa",
+            render: (row) => (
+                <button
+                    // onClick={(event) => handleDeleteServices(event, row)}
+                    className="z-10 text-center mx-auto p-2 hover:bg-slate-200 hover:rounded-md"
+                >
+                    <MdDeleteForever className="h-6 w-6" />
+                </button>
+            ),
         },
     ];
-    const data3 = [
-        {
-            room_name: "P.503",
-            category_name: "Phòng 02 giường đơn",
-            area: "Tầng 2",
-            hourly_price: "200,000 VND",
-            daily_price: "800,000 VND",
-            overnight_price: "800,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.502",
-            category_name: "Phòng 02 giường đơn",
-            area: "Tầng 2",
-            hourly_price: "200,000 VND",
-            daily_price: "800,000 VND",
-            overnight_price: "800,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.501",
-            category_name: "Phòng 02 giường đơn",
-            area: "Tầng 2",
-            hourly_price: "200,000 VND",
-            daily_price: "800,000 VND",
-            overnight_price: "800,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.403",
-            category_name: "Phòng 01 giường đôi và 1 giường đơn cho 3 người",
-            area: "Tầng 2",
-            hourly_price: "250,000 VND",
-            daily_price: "1,000,000 VND",
-            overnight_price: "1,000,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.402",
-            category_name: "Phòng 01 giường đôi và 1 giường đơn cho 3 người",
-            area: "Tầng 2",
-            hourly_price: "250,000 VND",
-            daily_price: "1,000,000 VND",
-            overnight_price: "1,000,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.401",
-            category_name: "Phòng 01 giường đôi và 1 giường đơn cho 3 người",
-            area: "Tầng 2",
-            hourly_price: "250,000 VND",
-            daily_price: "1,000,000 VND",
-            overnight_price: "1,000,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.303",
-            category_name: "Phòng 01 giường đơn",
-            area: "Tầng 2",
-            hourly_price: "150,000 VND",
-            daily_price: "600,000 VND",
-            overnight_price: "600,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.302",
-            category_name: "Phòng 01 giường đơn",
-            area: "Tầng 2",
-            hourly_price: "150,000 VND",
-            daily_price: "600,000 VND",
-            overnight_price: "600,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.301",
-            category_name: "Phòng 01 giường đơn",
-            area: "Tầng 2",
-            hourly_price: "150,000 VND",
-            daily_price: "600,000 VND",
-            overnight_price: "600,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.203",
-            category_name: "Phòng 01 giường đôi cho 2 người",
-            area: "Tầng 2",
-            hourly_price: "180,000 VND",
-            daily_price: "720,000 VND",
-            overnight_price: "720,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.202",
-            category_name: "Phòng 01 giường đôi cho 2 người",
-            area: "Tầng 2",
-            hourly_price: "180,000 VND",
-            daily_price: "720,000 VND",
-            overnight_price: "720,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-        {
-            room_name: "P.201",
-            category_name: "Phòng 01 giường đôi cho 2 người",
-            area: "Tầng 2",
-            hourly_price: "180,000 VND",
-            daily_price: "720,000 VND",
-            overnight_price: "720,000 VND",
-            status: "Đang hoạt động",
-            note: "",
-            branch: "Chi nhánh trung tâm",
-        },
-    ];
-    const [expandedRow, setExpandedRow] = useState([]);
-    const [expandedRowList, setExpandedRowList] = useState([]);
-    const handleRowClick = (index) => {
-        if (expandedRow.includes(index)) {
-            setExpandedRow(
-                expandedRow.filter((rowIndex) => rowIndex !== index)
+    const [expandedRowType, setExpandedRowType] = useState([]);
+    const [expandedRowRoom, setExpandedRowRoom] = useState([]);
+    const handleRowClickType = (index) => {
+        if (expandedRowType.includes(index)) {
+            setExpandedRowType(
+                expandedRowType.filter((rowIndex) => rowIndex !== index)
             );
         } else {
-            setExpandedRow([...expandedRow, index]);
+            setExpandedRowType([...expandedRowType, index]);
         }
     };
-    const handleRowClickList = (index) => {
-        if (expandedRowList.includes(index)) {
-            setExpandedRowList(
-                expandedRowList.filter((rowIndex) => rowIndex !== index)
+    const handleRowClickRoom = (index) => {
+        if (expandedRowRoom.includes(index)) {
+            setExpandedRowRoom(
+                expandedRowRoom.filter((rowIndex) => rowIndex !== index)
             );
         } else {
-            setExpandedRowList([...expandedRowList, index]);
+            setExpandedRowRoom([...expandedRowRoom, index]);
         }
-    };
-    const handlePrint = (row) => {
-        console.log("In phiếu nhập:", row.maPhieu);
     };
     const handlePageChange = () => {
-        setExpandedRow([]);
-        setExpandedRowList([]);
+        setExpandedRowType([]);
+        setExpandedRowRoom([]);
     };
-
-    const renderExpandedRow = (row) => {
+    const renderExpandedType = (row) => {
         console.log("hàng", row);
         // return (
         //     <div
@@ -499,7 +277,7 @@ const Room = () => {
         //     </div>
         // );
     };
-    const renderExpandedRowClick = (row) => {
+    const renderExpandedRoom = (row) => {
         console.log("hàng", row);
         // return (
         //     <div
@@ -649,7 +427,10 @@ const Room = () => {
     const handleAddType = () => {
         setIsModalOpenAddType(true);
     };
-
+    const handleIsFilters = () => {
+        setExpandedRowType([]);
+        setExpandedRowRoom([])
+    };
     const handleCloseModalAddType = () => {
         setIsModalOpenAddType(false);
     };
@@ -690,12 +471,13 @@ const Room = () => {
                         contentButton="Thêm loại phòng"
                         handleAdd={handleAddType}
                         columns={columns}
-                        // handleFetch={fetchStores}
-                        data={data2}
-                        expandedRow={expandedRow}
-                        onRowClick={handleRowClick}
+                        // handleFetch={fetchRoomType}
+                        data={roomType}
+                        expandedRow={expandedRowType}
+                        onRowClick={handleRowClickType}
                         onPageChange={handlePageChange}
-                        renderExpandedRow={renderExpandedRow}
+                        handleIsFilters={handleIsFilters}
+                        renderExpandedRow={renderExpandedType}
                     />
                 ) : (
                     <Table
@@ -704,33 +486,42 @@ const Room = () => {
                         handleAdd={handleAddRoom}
                         columns={columns1}
                         // handleFetch={fetchStores}
-                        data={data3}
-                        expandedRow={expandedRowList}
-                        onRowClick={handleRowClickList}
+                        data={room}
+                        expandedRow={expandedRowRoom}
+                        onRowClick={handleRowClickRoom}
                         onPageChange={handlePageChange}
-                        renderExpandedRow={renderExpandedRow}
+                        renderExpandedRow={renderExpandedRoom}
+                        handleIsFilters={handleIsFilters}
                     />
                 )}
                 {isModalOpenAddType && (
                     <div
-                        onClick={()=> handleCloseModalAddType()}
+                        onClick={() => handleCloseModalAddType()}
                         className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50"
                     >
-                        <div className="bg-white rounded-lg w-[80%] h-[90%]  relative" onClick={(e)=> (e.stopPropagation())}>
+                        <div
+                            className="bg-white rounded-lg w-[60%] h-[90%]  relative"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <AddRoomType
                                 handleClose={handleCloseModalAddType}
+                                handleFetch={fetchRoomType}
                             ></AddRoomType>
                         </div>
                     </div>
                 )}
                 {isModalOpenAddRoom && (
                     <div
-                        onClick={()=> handleCloseModalAddRoom()}
+                        onClick={() => handleCloseModalAddRoom()}
                         className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50"
                     >
-                        <div className="bg-white rounded-lg w-[50%] h-[90%]  relative" onClick={(e)=> (e.stopPropagation())}>
+                        <div
+                            className="bg-white rounded-lg w-[50%] h-[70%]  relative"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <AddRoom
                                 handleClose={handleCloseModalAddRoom}
+                                handleFetch={fetchRoom}
                             ></AddRoom>
                         </div>
                     </div>

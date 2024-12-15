@@ -10,9 +10,11 @@ function Register() {
     const [formData, setFormData] = useState({
         email: "",
         name: "",
+        phone: "",
         password: "",
         confirmPassword: "",
         nameError: "",
+        phoneError: "",
         emailError: "",
         passwordError: "",
         confirmPasswordError: "",
@@ -24,6 +26,7 @@ function Register() {
         otpError: "",
         isFocused: false,
         isFocusedEmail: false,
+        isFocusedPhone: false,
         isFocusedPass: false,
         isFocusedConfirmPass: false,
         isFocusedRole: false,
@@ -65,7 +68,7 @@ function Register() {
         }));
     };
     const IsValidate = () => {
-        let isproceedRole = true;
+        // let isproceedRole = true;
         let isproceedIdEmail = true;
         let isproceedName = true;
         let isproceedPhone = true;
@@ -146,13 +149,35 @@ function Register() {
             }));
             isproceedCheckPass = true;
         }
-        if (formData.role === null || formData.role === "") {
-            isproceedName = false;
+        // if (formData.role === null || formData.role === "") {
+        //     isproceedName = false;
+        //     setFormData((prevState) => ({
+        //         ...prevState,
+        //         roleError: "Vui lòng chọn vai trò của bạn",
+        //     }));
+        // }
+        if (!formData.phone.trim()) {
+            isproceedPhone = false;
             setFormData((prevState) => ({
                 ...prevState,
-                roleError: "Vui lòng chọn vai trò của bạn",
+                phoneError: "Vui lòng nhập SĐT của bạn",
+            }));
+        } else if (
+            /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/.test(formData.phone)
+        ) {
+            isproceedPhone = true;
+            setFormData((prevState) => ({
+                ...prevState,
+                phoneError: "",
+            }));
+        } else {
+            isproceedPhone = false;
+            setFormData((prevState) => ({
+                ...prevState,
+                phoneError: "SĐT không hợp lệ",
             }));
         }
+        console.log("2", isproceedPhone);
         return (
             isproceedIdEmail &&
             isproceedName &&
@@ -165,20 +190,24 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         setFormData((prevState) => ({
             ...prevState,
             nameError: "",
             passwordError: "",
             confirmPasswordError: "",
             emailError: "",
+            phoneError: "",
             otpError: "",
         }));
+
         if (IsValidate()) {
             const requestBody = {
-                role: formData.role,
+                // role: formData.role,
                 fullName: formData.name,
                 email: formData.email,
                 password: formData.password,
+                phone: formData.phone,
             };
             console.log(requestBody);
             try {
@@ -187,7 +216,8 @@ function Register() {
                     requestBody
                 );
                 const data = response.data;
-                if (response.status === 201) {
+                console.log(data);
+                if (data.status === true) {
                     toast.success(data.message);
                     setFormData((prevState) => ({
                         ...prevState,
@@ -205,8 +235,11 @@ function Register() {
         }
     };
 
-    const handleVerifyOTP = async () => {
+    const handleVerifyOTP = async (e) => {
+        e.preventDefault();
         const codes = formData.otp.join("");
+        console.log("codes",codes);
+        console.log("response", formData.token);
         if (codes.length === 6) {
             try {
                 const response = await axios.post(
@@ -244,8 +277,6 @@ function Register() {
             }));
         }
     };
-
-    // Các hàm handle focus cũng tương tự
     const handleFocusName = () => {
         setFormData((prevState) => ({
             ...prevState,
@@ -256,6 +287,12 @@ function Register() {
         setFormData((prevState) => ({
             ...prevState,
             emailError: "",
+        }));
+    };
+    const handleFocusPhone = () => {
+        setFormData((prevState) => ({
+            ...prevState,
+            phoneError: "",
         }));
     };
     const handleFocusPassword = () => {
@@ -295,7 +332,7 @@ function Register() {
                     <div className="mb-2 text-sm font-bold">
                         Đăng nhập hoặc đăng ký (miễn phí)
                     </div>
-                    <div className="flex">
+                    {/* <div className="flex">
                         <a
                             href="#!"
                             className="mr-2 rounded border border-solid border-gray-400 p-2 hover:scale-110 transition-transform duration-200"
@@ -307,7 +344,7 @@ function Register() {
                         <div className="ml-10 px-4 py-2 text-sm before:absolute before:left-0 before:top-5 before:block before:h-px before:w-[9%] before:flex-1 before:bg-gray-400 before:content-[''] after:absolute after:right-0 after:top-5 after:block after:h-px after:w-[80%] after:flex-1 after:bg-gray-400 after:content-['']">
                             Hoặc
                         </div>
-                    </div>
+                    </div> */}
                     <div className="flex flex-col w-full">
                         <div>
                             <label
@@ -397,6 +434,51 @@ function Register() {
                                 } ml-4 pt-0.5 text-xs text-rose-500`}
                             >
                                 {formData.emailError}
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                htmlFor="phone"
+                                className={`font-medium ${
+                                    formData.isFocusedPhone
+                                        ? "text-black font-bold"
+                                        : "text-gray-500"
+                                } transition-colors`}
+                            >
+                                Số điện thoại
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Số điện thoại của bạn"
+                                id="phone"
+                                name="phone"
+                                className={`${
+                                    !formData.phoneError
+                                        ? "focus:border-2 focus:border-solid focus:border-blue-500 focus:outline-none"
+                                        : "border-2 border-solid border-red-500 outline-none"
+                                } w-full mt-1 rounded-md border-2 border-solid border-gray-400 px-4 py-3 text-sm`}
+                                value={formData.phone}
+                                onChange={(e) => handleChange(e)}
+                                onFocus={() => {
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedPhone: true,
+                                    }));
+                                    handleFocusPhone();
+                                }}
+                                onBlur={() =>
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        isFocusedPhone: false,
+                                    }))
+                                }
+                            />
+                            <div
+                                className={`${
+                                    formData.phoneError ? "" : "invisible py-4"
+                                } ml-4 pt-0.5 text-xs text-rose-500`}
+                            >
+                                {formData.phoneError}
                             </div>
                         </div>
                         <label
@@ -601,7 +683,7 @@ function Register() {
                             type="submit"
                         >
                             Đăng ký
-                        </button> 
+                        </button>
                     </div>
                     <Link
                         to={"/auth/login"}
@@ -609,123 +691,119 @@ function Register() {
                     >
                         Đăng nhập
                     </Link>
-                    {formData.isOtpSent && (
-                        <>
-                            <div
-                                className={`fixed inset-0 z-10 overflow-y-auto ${
-                                    formData.isOtpSent ? "block" : "hidden"
-                                }`}
-                            >
-                                <div className="flex min-h-screen items-center justify-center p-4">
-                                    <div
-                                        className="fixed inset-0 transition-opacity"
-                                        aria-hidden="true"
+                </form>
+                {formData.isOtpSent && (
+                    <>
+                        <div
+                            className={`fixed inset-0 z-10 overflow-y-auto ${
+                                formData.isOtpSent ? "block" : "hidden"
+                            }`}
+                        >
+                            <div className="flex min-h-screen items-center justify-center p-4">
+                                <div
+                                    className="fixed inset-0 transition-opacity"
+                                    aria-hidden="true"
+                                >
+                                    <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                                </div>
+
+                                <div className="relative rounded-xl bg-white p-8 shadow-xl">
+                                    <button
+                                        type="button"
+                                        className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-lg rounded-tr-xl bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900"
+                                        onClick={() =>
+                                            setFormData((prevState) => ({
+                                                ...prevState,
+                                                isOtpSent: false,
+                                            }))
+                                        }
                                     >
-                                        <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-                                    </div>
-
-                                    <div className="relative rounded-xl bg-white p-8 shadow-xl">
-                                        <button
-                                            type="button"
-                                            className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-lg rounded-tr-xl bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900"
-                                            onClick={() =>
-                                                setFormData((prevState) => ({
-                                                    ...prevState,
-                                                    isOtpSent: false,
-                                                }))
-                                            }
+                                        <svg
+                                            className="h-4 w-4"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg"
                                         >
-                                            <svg
-                                                className="h-4 w-4"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    clipRule="evenodd"
-                                                    d="M10.586 10l5.707-5.707a1 1 0 10-1.414-1.414L9.172 8.586 3.465 2.879a1 1 0 00-1.414 1.414L7.758 10 2.051 15.707a1 1 0 101.414 1.414L9.172 11.414l5.707 5.707a1 1 0 001.414-1.414L10.586 10z"
+                                            <path
+                                                fillRule="evenodd"
+                                                clipRule="evenodd"
+                                                d="M10.586 10l5.707-5.707a1 1 0 10-1.414-1.414L9.172 8.586 3.465 2.879a1 1 0 00-1.414 1.414L7.758 10 2.051 15.707a1 1 0 101.414 1.414L9.172 11.414l5.707 5.707a1 1 0 001.414-1.414L10.586 10z"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <h2 className="mb-4 text-center text-3xl font-semibold">
+                                        Xác thực email
+                                    </h2>
+                                    <p className="mb-4 text-center text-gray-600">
+                                        Chúng tôi đã gửi mã đến email{" "}
+                                        <strong>{formData.email}</strong>.{" "}
+                                        <br />
+                                        Vui lòng kiểm tra email của bạn!
+                                    </p>
+
+                                    <div className="text-center">
+                                        <div className="mb-4 flex justify-center space-x-4">
+                                            {[0, 1, 2, 3, 4, 5].map((index) => (
+                                                <input
+                                                    key={index}
+                                                    ref={(el) =>
+                                                        (otpRefs.current[
+                                                            index
+                                                        ] = el)
+                                                    }
+                                                    className="h-12 w-12 rounded-xl border border-gray-300 text-center focus:border-blue-700 focus:ring-blue-700"
+                                                    type="text"
+                                                    maxLength="1"
+                                                    value={formData.otp[index]}
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            index,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) =>
+                                                        handleKeyDown(index, e)
+                                                    }
                                                 />
-                                            </svg>
-                                        </button>
-                                        <h2 className="mb-4 text-center text-3xl font-semibold">
-                                            Xác thực email
-                                        </h2>
-                                        <p className="mb-4 text-center text-gray-600">
-                                            Chúng tôi đã gửi mã đến email{" "}
-                                            <strong>{formData.email}</strong>.{" "}
-                                            <br />
-                                            Vui lòng kiểm tra email của bạn!
-                                        </p>
-
-                                        <div className="text-center">
-                                            <div className="mb-4 flex justify-center space-x-4">
-                                                {[0, 1, 2, 3, 4, 5].map(
-                                                    (index) => (
-                                                        <input
-                                                            key={index}
-                                                            ref={(el) =>
-                                                                (otpRefs.current[
-                                                                    index
-                                                                ] = el)
-                                                            }
-                                                            className="h-12 w-12 rounded-xl border border-gray-300 text-center focus:border-blue-700 focus:ring-blue-700"
-                                                            type="text"
-                                                            maxLength="1"
-                                                            value={
-                                                                formData.otp[
-                                                                    index
-                                                                ]
-                                                            }
-                                                            onChange={(e) =>
-                                                                handleInputChange(
-                                                                    index,
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            onKeyDown={(e) =>
-                                                                handleKeyDown(
-                                                                    index,
-                                                                    e
-                                                                )
-                                                            }
-                                                        />
-                                                    )
-                                                )}
-                                            </div>
-                                            <div className="flex flex-col items-center justify-between gap-4">
-                                                {formData.otpError && (
-                                                    <div className="mt-1 text-sm text-rose-500">
-                                                        {formData.otpError}
-                                                    </div>
-                                                )}
-                                                <button
-                                                    className="rounded-xl bg-blue-700 px-4 py-2 text-white hover:bg-blue-600"
-                                                    onClick={handleVerifyOTP}
-                                                >
-                                                    Xác thực
-                                                </button>
-
-                                                <div className="text-sm">
-                                                    <p className="mb-1">
-                                                        Bạn chưa nhận được mã?
-                                                    </p>
-                                                    <button
-                                                        className="text-blue-700 hover:underline"
-                                                        onClick={handleSubmit}
-                                                    >
-                                                        Gửi lại mã
-                                                    </button>
+                                            ))}
+                                        </div>
+                                        <div className="flex flex-col items-center justify-between gap-4">
+                                            {formData.otpError && (
+                                                <div className="mt-1 text-sm text-rose-500">
+                                                    {formData.otpError}
                                                 </div>
+                                            )}
+                                            <button
+                                                className="rounded-xl bg-blue-700 px-4 py-2 text-white hover:bg-blue-600"
+                                                onClick={handleVerifyOTP}
+                                                // onKeyDown={(e) => {
+                                                //     if (e.key === "enter") {
+                                                //         e.preventDefault();
+                                                //         handleVerifyOTP();
+                                                //     }
+                                                // }}
+                                            >
+                                                Xác thực
+                                            </button>
+
+                                            <div className="text-sm">
+                                                <p className="mb-1">
+                                                    Bạn chưa nhận được mã?
+                                                </p>
+                                                <button
+                                                    className="text-blue-700 hover:underline"
+                                                    onClick={handleSubmit}
+                                                >
+                                                    Gửi lại mã
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </>
-                    )}
-                </form>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

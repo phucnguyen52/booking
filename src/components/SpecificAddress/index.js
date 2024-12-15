@@ -9,7 +9,7 @@ import {
     apiGetPublicDistrict,
     apiGetPublicWard,
 } from "../../services/address";
-const SpecificAddress = ({onFieldChange}) => {
+const SpecificAddress = ({ onFieldChange }) => {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
@@ -53,6 +53,25 @@ const SpecificAddress = ({onFieldChange}) => {
         !district && setWards([]);
     }, [district]);
     useEffect(() => {
+        // const address = `${numberAddress ? `${numberAddress},` : ""}${
+        //     ward
+        //         ? `${wards?.find((item) => item.ward_id === ward)?.ward_name},`
+        //         : ""
+        // } ${
+        //     district
+        //         ? `${
+        //               districts?.find((item) => item.district_id === district)
+        //                   ?.district_name
+        //           },`
+        //         : ""
+        // } ${
+        //     province
+        //         ? `${
+        //               provinces?.find((item) => item.province_id === province)
+        //                   ?.province_name
+        //           }`
+        //         : ""
+        // }`;
         const address = `${numberAddress ? `${numberAddress},` : ""}${
             ward
                 ? `${wards?.find((item) => item.ward_id === ward)?.ward_name},`
@@ -62,18 +81,17 @@ const SpecificAddress = ({onFieldChange}) => {
                 ? `${
                       districts?.find((item) => item.district_id === district)
                           ?.district_name
-                  },`
-                : ""
-        } ${
-            province
-                ? `${
-                      provinces?.find((item) => item.province_id === province)
-                          ?.province_name
                   }`
                 : ""
         }`;
-        onFieldChange('address', address)
-        onFieldChange("city", province ? provinces.find((item) => item.province_id === province)?.province_name : "")
+        onFieldChange("address", address);
+        onFieldChange(
+            "city",
+            province
+                ? provinces.find((item) => item.province_id === province)
+                      ?.province_name
+                : ""
+        );
     }, [province, district, ward, numberAddress]);
     return (
         <>

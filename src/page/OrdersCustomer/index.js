@@ -647,7 +647,26 @@ const OrdersCustomer = () => {
             ],
         },
     ];
+    const [orders, setOrders] = useState([]);
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(
+                "http://localhost:8080/api/customer/booking",
+                {
+                    withCredentials: true,
+                }
+            );
 
+            if (response.data.status === true) {
+                setOrders(response.data.booking);
+            }
+        } catch (error) {
+            console.error("Lỗi khi fetch dữ liệu:", error);
+        }
+    };
+    useEffect(() => {
+        fetchData();
+    }, []);
     const [dataOrders, setDataOrders] = useState([]);
     const [groupedOrders, setGroupedOrders] = useState([]);
     const [currentStatus, setCurrentStatus] = useState(null);
@@ -667,9 +686,8 @@ const OrdersCustomer = () => {
     ];
     const [ratingDescription, setRatingDescription] = useState("");
     const filterOrdersByStatus = (status) => {
-        return data.filter((order) => order.order_info.status === status);
+        return orders.filter((order) => order.booking_status === status);
     };
-
     const fetchOrdersByStatus = (status) => {
         const filteredOrders = filterOrdersByStatus(status);
         console.log("1", filteredOrders);
@@ -680,8 +698,8 @@ const OrdersCustomer = () => {
         setCurrentStatus(status);
     };
     useEffect(() => {
-        setCurrentStatus("ĐÃ ĐẶT TRƯỚC");
-        fetchOrdersByStatus("ĐÃ ĐẶT TRƯỚC");
+        setCurrentStatus("pending");
+        fetchOrdersByStatus("pending");
     }, []);
     const calculateTotalPriceByOrderId = () => {
         const totalPriceByOrderId = {};
@@ -793,9 +811,9 @@ const OrdersCustomer = () => {
             <hr className="mb-3 flex" />
             <div className="flex justify-around">
                 <a
-                    onClick={() => handleStatusClick("ĐÃ ĐẶT TRƯỚC")}
+                    onClick={() => handleStatusClick("pending")}
                     className={`group text-black transition-all duration-300 ease-in-out focus:text-pink-500 ${
-                        currentStatus === "ĐÃ ĐẶT TRƯỚC" && "text-pink-500"
+                        currentStatus === "pending" && "text-pink-500"
                     }`}
                     href="#"
                 >
@@ -804,9 +822,9 @@ const OrdersCustomer = () => {
                     </span>
                 </a>
                 <a
-                    onClick={() => handleStatusClick("ĐANG SỬ DỤNG")}
+                    onClick={() => handleStatusClick("booked")}
                     className={`group text-black transition-all duration-300 ease-in-out focus:text-pink-500 ${
-                        currentStatus === "ĐANG SỬ DỤNG" && "text-pink-500"
+                        currentStatus === "booked" && "text-pink-500"
                     }`}
                     href="#"
                 >
@@ -816,14 +834,25 @@ const OrdersCustomer = () => {
                 </a>
 
                 <a
-                    onClick={() => handleStatusClick("ĐÃ TRẢ")}
+                    onClick={() => handleStatusClick("completed")}
                     className={`group text-black transition-all duration-300 ease-in-out focus:text-pink-500 ${
-                        currentStatus === "ĐÃ TRẢ" && "text-pink-500"
+                        currentStatus === "completed" && "text-pink-500"
                     }`}
                     href="#"
                 >
                     <span className="bg-gradient-to-r from-pink-500 to-pink-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 ease-out hover:text-pink-500 group-hover:bg-[length:100%_2px]">
                         ĐÃ TRẢ
+                    </span>
+                </a>
+                <a
+                    onClick={() => handleStatusClick("cancelled")}
+                    className={`group text-black transition-all duration-300 ease-in-out focus:text-pink-500 ${
+                        currentStatus === "cancelled" && "text-pink-500"
+                    }`}
+                    href="#"
+                >
+                    <span className="bg-gradient-to-r from-pink-500 to-pink-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 ease-out hover:text-pink-500 group-hover:bg-[length:100%_2px]">
+                        ĐÃ HỦY
                     </span>
                 </a>
             </div>

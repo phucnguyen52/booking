@@ -40,9 +40,10 @@ function Login() {
 
                 if (
                     response &&
-                    response.data &&
-                    response.data.role === "customer"
+                    response.data 
+                   
                 ) {
+              
                     Cookies.set("token", response.data.token);
                     toast.success("Đăng nhập thành công", {
                         autoClose: 500,

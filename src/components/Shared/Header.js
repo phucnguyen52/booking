@@ -81,7 +81,7 @@ const Header = () => {
             if (suggestions.current && !suggestions.current.contains(event.target)) {
                 setLocationSuggestions([]);
             }
-            console.log(detailRoomRef.current, event.target)
+            // console.log(detailRoomRef.current, event.target)
         };
         document.addEventListener('mousedown', clickOutside);
         return () => {

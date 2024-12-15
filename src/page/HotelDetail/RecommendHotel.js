@@ -230,7 +230,7 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                     </div>
                 </div>
             </div>
-            <div className="mt-6">
+            {/* <div className="mt-6">
                 <div>
                     {information.description.split("\u005C\u005C").map((item, index) => (
                         <div key={index} className="flex my-3 text-sm ">
@@ -242,8 +242,8 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                     Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng
                     © OpenStreetMap
                 </div>
-            </div>
-            <div className="mt-4">
+            </div> */}
+            {/* <div className="mt-4">
                 <div className="text-base font-bold mb-2">Các tiện nghi được ưa chuộng nhất</div>
                 <ul className="flex flex-wrap gap-6 text-gray-700">
                 {information.convenientLove.map((convenient, index) => (
@@ -253,7 +253,7 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                     </li>
                 ))}
             </ul>
-            </div>
+            </div> */}
         </div>
     );
 };

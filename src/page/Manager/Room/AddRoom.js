@@ -1,36 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../../components/Button";
 import { BsImageFill } from "react-icons/bs";
-const AddRoom = ({ handleClose }) => {
+import axios from "axios";
+import { toast } from "react-toastify";
+const AddRoom = ({ handleClose, handleFetch }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState([]);
     const [formData, setFormData] = useState({
-        roomName: "",
-        area: "",
-        roomClass: "",
-        note: "",
+        roomNumber: "",
+        description: "",
+        roomID: "",
+        roomType: [],
     });
+    const fetchRoomType = async () => {
+        try {
+            const response = await axios.get(
+                "http://localhost:8080/api/receptionist/room",
+                {
+                    withCredentials: true,
+                }
+            );
 
+            if (response.data.status === true) {
+                setFormData({
+                    ...formData,
+                    roomType: response.data.room,
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
+    useEffect(() => {
+        fetchRoomType();
+    }, []);
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData((prevState) => ({
+            ...prevState,
             [name]: value,
-        });
+        }));
     };
-    const room = [
-        { id: 1, name: "Tầng 1" },
-        { id: 2, name: "Tầng 2" },
-        { id: 3, name: "Tầng 3" },
-        { id: 4, name: "Tầng 4" },
-        { id: 5, name: "Tầng 5" },
-    ];
-    const roomClasses = [
-        { id: 1, name: "Hạng tiêu chuẩn", priceDay: 500000 },
-        { id: 2, name: "Hạng cao cấp", priceDay: 800000 },
-        { id: 3, name: "Hạng VIP", priceDay: 1500000 },
-        { id: 4, name: "Hạng Suite", priceDay: 2000000 },
-    ];
     const handleBeforeUpload = async (event) => {
         const file = event.target.files[0];
         const formData = new FormData();
@@ -49,12 +59,45 @@ const AddRoom = ({ handleClose }) => {
         setIsLoading(false);
     };
 
-    const onSubmit = () => {
-        const finalData = {
-            ...formData,
-            imageUrl,
-        };
-        console.log(finalData);
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        for (let key in formData) {
+            if (formData[key] === "") {
+                toast.warning("Vui lòng nhập đầy đủ thông tin.");
+                return;
+            }
+        }
+        try {
+            const response = await axios.post(
+                "http://localhost:8080/api/receptionist/room_detail",
+                {
+                    room_number: formData.roomNumber,
+                    description: formData.description,
+                    RoomId: formData.roomID
+                },
+                { withCredentials: true }
+            );
+
+            const data = response.data;
+
+            if (data.status === true) {
+                toast.success(data.message);
+                setFormData({
+                    roomNumber: "",
+                    description: "",
+                    roomID: "",
+                });
+                handleClose();
+                handleFetch();
+            }
+        } catch (error) {
+            toast.error("Thêm loại phòng không thành công!");
+        }
+        // const finalData = {
+        //     ...formData,
+        //     imageUrl,
+        // };
+        // console.log(finalData);
     };
 
     return (
@@ -92,107 +135,67 @@ const AddRoom = ({ handleClose }) => {
                 </div>
                 <div className="px-10 py-5 bg-white w-full">
                     <div className="flex gap-8 w-full">
-                        <div className="w-1/2 flex flex-col justify-between">
+                        <div className="w-full flex flex-col justify-between">
                             <div className="mb-4 flex items-center">
                                 <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                                    Tên phòng
+                                    Số phòng
                                 </label>
                                 <input
                                     type="text"
-                                    name="roomName"
-                                    placeholder="Nhập tên phòng"
+                                    name="roomNumber"
+                                    placeholder="Nhập số phòng"
                                     className="rounded-t-lg p-2 w-full text-sm text-gray-900 dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
-                                    value={formData.roomName}
+                                    value={formData.roomNumber}
                                     onChange={handleChange}
                                 />
                             </div>
                             <div className="mb-4 flex items-center">
                                 <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                                    Khu vực
+                                    Loại phòng
                                 </label>
                                 <select
-                                    name="area" // Gắn tên trường là "area"
-                                    value={formData.area} // Giá trị từ formData
+                                    name="roomID"
+                                    value={formData.roomID}
                                     onChange={handleChange}
                                     className="focus:outline-none px-1 py-3 block w-full text-sm text-gray-900 dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
                                 >
-                                    <option
-                                        value=""
-                                        className="bg-white text-gray-300"
-                                    >
+                                    <option value="" className="text-gray-400">
                                         Lựa chọn
                                     </option>
-                                    {/* Hiển thị danh sách tầng */}
-                                    {room.map((option) => (
-                                        <option
-                                            key={option.id}
-                                            value={option.name}
-                                            className="bg-white"
-                                        >
-                                            {option.name}{" "}
-                                            {/* Hiển thị tên tầng */}
-                                        </option>
-                                    ))}
+                                    {formData &&
+                                        formData.roomType.map((roomClass) => (
+                                            <option
+                                                key={roomClass.id}
+                                                value={roomClass.id}
+                                            >
+                                                {roomClass.room_name}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
-
-                            <div className="mb-4 flex items-center">
+                            <div className="mb-4 flex items-start">
                                 <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                                    Hạng phòng
-                                </label>
-                                <select
-                                    name="roomClass" // Gắn giá trị hạng phòng vào formData.roomClass
-                                    value={formData.roomClass}
-                                    onChange={handleChange}
-                                    className="focus:outline-none px-1 py-3 block w-full text-sm text-gray-900 dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:ring-0 focus:border-green-600 focus:border-b-2 peer"
-                                >
-                                    <option value="">Lựa chọn</option>
-                                    {roomClasses.map((roomClass) => (
-                                        <option
-                                            key={roomClass.id}
-                                            value={roomClass.name}
-                                        >
-                                            {roomClass.name}
-                                          
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="mb-4 flex items-center">
-                                <label className="text-sm font-medium text-gray-700 text-nowrap w-44">
-                                    Ghi chú
+                                    Mô tả
                                 </label>
 
                                 <textarea
-                                    name="note"
-                                    id="note"
-                                    placeholder="Ghi chú..."
+                                    name="description"
+                                    id="description"
+                                    placeholder="Mô tả..."
                                     cols="30"
-                                    rows="1"
-                                    value={formData.note}
+                                    rows="5"
+                                    value={formData.description}
                                     className="resize-none rounded-t-lg p-2 text-sm text-gray-900 w-full dark:bg-gray-700 border-0 border-b-[2px] border-gray-400 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-500 focus:outline-none focus:ring-0 focus:border-green-600 focus:border-b-2 peer overflow-hidden"
                                     onChange={(e) => {
-                                        handleChange(e); // Gọi hàm xử lý khi thay đổi giá trị
-                                        e.target.style.height = "auto"; // Đặt chiều cao về tự động để tính toán lại
-                                        e.target.style.height = `${e.target.scrollHeight}px`; // Cập nhật chiều cao dựa trên nội dung
+                                        handleChange(e);
+                                        e.target.style.height = "auto";
+                                        e.target.style.height = `${e.target.scrollHeight}px`;
                                     }}
                                 ></textarea>
                             </div>
                         </div>
-
-                        <div className="flex-1 w-1/2">
-                            <div className="bg-gray-100 p-4 rounded-md mt-2 text-sm text-gray-700 h-full">
-                                <h4 className="text-sm font-medium text-gray-700 mb-3">
-                                    Phòng sẽ được áp dụng theo giá của hạng
-                                    phòng:
-                                </h4>
-                                <ul className="list-disc ml-4">
-                                    <li className="mb-3">Giá cả ngày</li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
-                    <div className="mt-5">
+                    {/* <div className="mt-5">
                         <div className="rounded-md w-full border">
                             <h3 className="font-medium text-gray-700 mb-4 bg-gray-100 p-3">
                                 Hình ảnh
@@ -289,20 +292,20 @@ const AddRoom = ({ handleClose }) => {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div className="rounded-b-lg absolute bottom-0 left-0 w-full bg-white border-t border-gray-300 flex flex-end justify-end gap-2 px-10 py-3">
                 <Button
                     color="green"
-                    textColor="text-white"
+                    textColor="white"
                     children="Lưu và thêm mới"
                     size="lg"
                     handleClick={onSubmit}
                 />
                 <Button
                     color="gray"
-                    textColor="text-gray-700"
+                    textColor="gray-700"
                     children="Hủy"
                     size="lg"
                     handleClick={handleClose}

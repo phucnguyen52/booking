@@ -24,7 +24,7 @@ const CountryDropdown = ({ selectedCountry, onFieldChange }) => {
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const selectCountry = (country) => {
-    onFieldChange('selectedCountry',country.name.common);
+    onFieldChange('country',country.name.common);
     setIsOpen(false);
   };
 

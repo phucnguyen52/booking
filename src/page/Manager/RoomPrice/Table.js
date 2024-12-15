@@ -45,6 +45,7 @@ const Table = ({
             [key]: value,
         });
     };
+
     const filteredData =
         Array.isArray(data) && data.length > 0
             ? data.filter((row) =>
@@ -57,7 +58,17 @@ const Table = ({
             : [];
 
     const getUniqueValues = (key) => {
-        return [...new Set(data.map((item) => item[key]))];
+        if (key === "name") {
+            return [...new Set(data.map((item) => item[key]))];
+        }
+
+        return [
+            ...new Set(
+                data.flatMap((item) =>
+                    item.details.map((detail) => detail[key])
+                )
+            ),
+        ];
     };
 
     const handleCheckAll = () => {
@@ -88,7 +99,7 @@ const Table = ({
 
     const startIndex = (currentPage - 1) * pageSize;
     const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
-
+    console.log(paginatedData);
     const totalPages = Math.ceil(filteredData.length / pageSize);
     const totalItems = filteredData.length;
 
@@ -253,7 +264,7 @@ const Table = ({
                                         column.key === "id" ||
                                         column.key === "button" ||
                                         column.key === "hinh" ||
-                                        column.key === "price"||
+                                        column.key === "price" ||
                                         column.key === "adult_count" ||
                                         column.key === "room_count"
                                             ? "text-center"
@@ -267,7 +278,9 @@ const Table = ({
                                                 : ""
                                         }`}
                                     >
-                                        <div className="text-nowrap">{column.label}</div>
+                                        <div className="text-nowrap">
+                                            {column.label}
+                                        </div>
                                     </div>
                                     {column.isFilterable && (
                                         <select
@@ -299,120 +312,84 @@ const Table = ({
                         </tr>
                     </thead>
                     <tbody>
-                        {paginatedData.map((row, index) => (
-                            <React.Fragment key={index}>
-                                <tr
-                                    onClick={() =>
-                                        onRowClick && onRowClick(index)
-                                    }
-                                    className="cursor-pointer border-b overflow-y-auto p-2"
-                                >
-                                    <td className="pl-2">
-                                        <div className="inline-flex items-center">
-                                            <label
-                                                className="relative flex cursor-pointer items-center rounded-full p-3"
-                                                htmlFor={`ripple-${index}`}
-                                                data-ripple-dark="true"
-                                            >
-                                                <input
-                                                    id={`ripple-${index}`}
-                                                    type="checkbox"
-                                                    className="peer relative h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 shadow hover:shadow-md transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-slate-400 before:opacity-0 before:transition-opacity checked:border-slate-800 checked:bg-slate-800 checked:before:bg-slate-400 hover:before:opacity-10"
-                                                    checked={selectedRows.includes(
-                                                        index
-                                                    )}
-                                                    onChange={() =>
-                                                        handleCheckRow(index)
-                                                    }
-                                                    onClick={(e) =>
-                                                        e.stopPropagation()
-                                                    }
-                                                />
-                                                <span className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        className="h-3.5 w-3.5"
-                                                        viewBox="0 0 20 20"
-                                                        fill="currentColor"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1"
-                                                    >
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                            clipRule="evenodd"
-                                                        ></path>
-                                                    </svg>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </td>
-                                    {columns.map((column) => (
-                                        <td
-                                            key={column.key}
-                                            className={`text-nowrap ${
-                                                column.key === "id" ||
-                                                column.key === "quantitySell" ||
-                                                column.key === "price" ||
-                                                column.key === "discount" ||
-                                                column.key === "button" ||
-                                                column.key === "adult_count" ||
-                                                column.key === "room_count" 
-                                                    ? "px-4 py-2 text-center"
-                                                    : "px-4 py-2"
-                                            }`}
-                                        >
-                                            {column.isImage ? (
-                                                <img
-                                                    src={
-                                                        row[column.key]
-                                                            ? JSON.parse(
-                                                                  row[
-                                                                      column.key
-                                                                  ]
-                                                              )[0]
-                                                            : "default-image.jpg"
-                                                    }
-                                                    alt={column.label}
-                                                    className="w-20 h-2016 object-cover"
-                                                    onClick={(event) => {
-                                                        event.stopPropagation();
-                                                    }}
-                                                />
-                                            ) : column.key === "store_date" ||
-                                              column.key === "orderDate" ? (
-                                                (() => {
-                                                    const date = new Date(
-                                                        row[column.key]
-                                                    );
-                                                    return format(
-                                                        date,
-                                                        "dd/MM/yy HH:mm"
-                                                    );
-                                                })()
-                                            ) : column.render ? (
-                                                column.render(row)
-                                            ) : (
-                                                row[column.key]
-                                            )}
-                                        </td>
-                                    ))}
-                                </tr>
-
-                                {expandedRow && expandedRow.includes(index) && (
-                                    <tr>
-                                        <td
-                                            colSpan={columns.length + 1}
-                                            className="px-4 py-2 bg-gray-100 shadow-inner"
-                                        >
-                                            <div>
-                                                <div>
-                                                    {renderExpandedRow(row)}
-                                                </div>
+                        {paginatedData.map((pricingItem, pricingIndex) => (
+                            <React.Fragment key={pricingIndex}>
+                                {pricingItem.details.map((room, roomIndex) => (
+                                    <tr
+                                        key={roomIndex}
+                                        onClick={() =>
+                                            onRowClick && onRowClick(roomIndex)
+                                        }
+                                        className="cursor-pointer border-b overflow-y-auto p-2"
+                                    >
+                                        <td className="pl-2">
+                                            <div className="inline-flex items-center">
+                                                <label
+                                                    className="relative flex cursor-pointer items-center rounded-full p-3"
+                                                    htmlFor={`ripple-${pricingIndex}-${roomIndex}`}
+                                                    data-ripple-dark="true"
+                                                >
+                                                    <input
+                                                        id={`ripple-${pricingIndex}-${roomIndex}`}
+                                                        type="checkbox"
+                                                        className="peer relative h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 shadow hover:shadow-md transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-slate-400 before:opacity-0 before:transition-opacity checked:border-slate-800 checked:bg-slate-800 checked:before:bg-slate-400 hover:before:opacity-10"
+                                                    />
+                                                </label>
                                             </div>
                                         </td>
+                                        {columns.map((column) => (
+                                            <td
+                                                key={column.key}
+                                                className={`text-nowrap ${
+                                                    column.key === "id" ||
+                                                    column.key ===
+                                                        "quantitySell" ||
+                                                    column.key === "price" ||
+                                                    column.key === "discount" ||
+                                                    column.key === "button" ||
+                                                    column.key ===
+                                                        "adult_count" ||
+                                                    column.key === "room_count"
+                                                        ? "px-4 py-2 text-center"
+                                                        : "px-4 py-2"
+                                                }`}
+                                            >
+                                                {column.key === "name"
+                                                    ? // Hiển thị tên chương trình giá
+                                                      pricingItem.name ||
+                                                      "Chưa có tên chương trình"
+                                                    : column.key === "room_name"
+                                                    ? // Hiển thị tên loại phòng
+                                                      room.room_name ||
+                                                      "Chưa có tên phòng"
+                                                    : column.key === "price"
+                                                    ? // Hiển thị giá phòng
+                                                      Number(
+                                                          room[column.key]
+                                                      ).toLocaleString(
+                                                          "vi-VN",
+                                                          {
+                                                              style: "currency",
+                                                              currency: "VND",
+                                                          }
+                                                      )
+                                                    : column.key ===
+                                                          "start_date" ||
+                                                      column.key === "end_date"
+                                                    ? // Định dạng ngày tháng
+                                                      new Date(
+                                                          room[column.key]
+                                                      ).toLocaleDateString(
+                                                          "vi-VN"
+                                                      )
+                                                    : column.render
+                                                    ? column.render(room)
+                                                    : room[column.key] ||
+                                                      "Chưa có dữ liệu"}
+                                            </td>
+                                        ))}
                                     </tr>
-                                )}
+                                ))}
                             </React.Fragment>
                         ))}
                     </tbody>

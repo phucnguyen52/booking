@@ -21,8 +21,8 @@ const Convenient = () => {
             "Phòng tắm",
             "Giấy vệ sinh",
             "Khăn tắm",
-            "Chậu rửa vệ sinh (bidet)",
-            "Dép",
+           
+           
             "Toilet chung",
             "Phòng tắm riêng",
             "Nhà vệ sinh",
@@ -32,8 +32,7 @@ const Convenient = () => {
         "Ngoài trời": [
             "Bàn ghế ngoài trời",
             "Khu vực ăn uống ngoài trời",
-            "Sân hiên",
-            "Sân hiên phơi nắng",
+            
             "Sân trong",
             "Sân vườn",
         ],
@@ -41,25 +40,21 @@ const Convenient = () => {
             "Dịch vụ đưa đón",
             "Dịch vụ trợ giúp đặc biệt",
             "Cho thuê xe hơi",
-            "Thu đổi ngoại tệ",
-            "Dịch vụ là (ủi)",
+            
             "Giặt ủi",
             "Dịch vụ phòng",
         ],
         "Tổng quát": [
             "Khu vực cho phép hút thuốc",
             "Điều hòa nhiệt độ",
-            "Phòng không gây dị ứng",
-            "Sàn lát gạch/đá cẩm thạch",
+            
+            
             "Phòng gia đình",
-            "Phòng không hút thuốc",
+          
             "Lối vào dành cho người khuyết tật",
             "Xe lăn có thể đi đến mọi nơi trong toàn bộ khuôn viên",
         ],
-        "Lối vào dành cho người khuyết tật": [
-            "Xe lăn có thể đi đến mọi nơi trong toàn bộ khuôn viên",
-        ],
-        "Ngôn ngữ được sử dụng": ["Tiếng Anh", "Tiếng Việt"],
+       
     };
 
     return (

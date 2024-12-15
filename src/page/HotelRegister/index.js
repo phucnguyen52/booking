@@ -5,18 +5,19 @@ import SpecificAddress from "../../components/SpecificAddress";
 import UploadImage from "../../components/UploadImage";
 import Services from "./Services";
 import Button from "../../components/Button";
+import { toast } from "react-toastify";
 
 const HotelRegister = () => {
     const [formData, setFormData] = useState({
-        selectedCountry: "Vietnam",
+        country: "Vietnam",
         address: "",
-        image: "",
+        image: "1",
         city: "",
-        services: "",
+        amenity_type: "",
         name: "",
         description: "",
     });
-   
+
     const previousFormData = useRef(formData);
 
     const handleFieldChange = (fieldName, value) => {
@@ -30,17 +31,31 @@ const HotelRegister = () => {
     };
     const handleSubmit = async (event) => {
         event.preventDefault();
+        for (let key in formData) {
+            if (formData[key] === "") {
+                toast.warning("Vui lòng nhập đầy đủ thông tin.");
+                return;
+            }
+        }
         console.log(formData);
-        // try {
-        //     const response = await axios.post(
-        //         "http://localhost:8080/api/hotel",
-        //         formData
-        //     );
-        //     console.log(response);
-        // } catch (error) {
-        //     console.error(error);
-        // }
-    }
+        try {
+            const response = await axios.post(
+                "http://localhost:8080/api/receptionist/hotel",
+                {
+                    ...formData,
+                },
+                { withCredentials: true }
+            );
+
+            const data = response.data;
+
+            if (data.status === true) {
+                toast.success(data.message);
+            }
+        } catch (error) {
+            toast.error("Thêm khách sạn không thành công!");
+        }
+    };
     return (
         <>
             <div>
@@ -50,7 +65,7 @@ const HotelRegister = () => {
                 <div className="border rounded-md border-gray-300 p-5">
                     {" "}
                     <CountryDropdown
-                        selectedCountry={formData.selectedCountry}
+                        selectedCountry={formData.country}
                         onFieldChange={(fieldName, newValue) =>
                             handleFieldChange(fieldName, newValue)
                         }

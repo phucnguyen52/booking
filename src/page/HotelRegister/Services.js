@@ -35,7 +35,7 @@ const Services = ({ onFieldChange }) => {
     };
   
     useEffect(() => {
-      onFieldChange("services",selectedServices);
+      onFieldChange("amenity_type",selectedServices);
     }, [selectedServices]);
 
     return (

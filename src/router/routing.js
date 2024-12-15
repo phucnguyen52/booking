@@ -12,12 +12,14 @@ import OrderDetail from "../page/Order/OrderDetail";
 import Payment from "../page/Order/Payment";
 import HotelDetail from "../page/HotelDetail/index";
 import Timeline from "../components/Calendar/Timeline";
-import BookingDetails from "../page/BookingDetails/BookingDetails";
+import BookingDetails from "../page/BookingDetails";
 import AllRoom from "../page/RoomHotel/AllRoom";
 import ListOrder from "../page/Manager/Order";
 import Room from "../page/Manager/Room";
 import HotelRegister from "../page/HotelRegister";
 import OrdersCustomer from "../page/OrdersCustomer";
+import Services from "../page/Manager/Services";
+import RoomPrice from "../page/Manager/RoomPrice";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -66,7 +68,14 @@ const router = createBrowserRouter([
                 path: APP_ROUTER.ROOM,
                 element: <Room />,
             },
-           
+            {
+                path: APP_ROUTER.SERVICES,
+                element: <Services />,
+            },
+            {
+                path: APP_ROUTER.ROOMPRICE,
+                element: <RoomPrice />,
+            },
             //
             {
                 path: APP_ROUTER.HOTELREGISTER,
