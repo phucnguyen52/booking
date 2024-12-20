@@ -6,6 +6,8 @@ import UploadImage from "../../components/UploadImage";
 import Services from "./Services";
 import Button from "../../components/Button";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { setHotel, setRole } from "../../utils/AuthCheck";
 
 const HotelRegister = () => {
     const [formData, setFormData] = useState({
@@ -29,6 +31,8 @@ const HotelRegister = () => {
             previousFormData.current[fieldName] = value;
         }
     };
+   
+    const navigate = useNavigate()
     const handleSubmit = async (event) => {
         event.preventDefault();
         for (let key in formData) {
@@ -51,6 +55,20 @@ const HotelRegister = () => {
 
             if (data.status === true) {
                 toast.success(data.message);
+                setRole('admin')
+                const hotelResponse = await axios.get(
+                    "http://localhost:8080/api/receptionist/hotel",
+                    { withCredentials: true }
+                  );
+                  const hotelData = hotelResponse.data;
+                  if (hotelData.status === true && hotelData.hotel.length > 0) {
+                    const firstHotelId = hotelData.hotel[0].id;
+                    setHotel(firstHotelId);
+                    navigate('/admin');
+                  } else {
+                    toast.warning("Không tìm thấy khách sạn nào.");
+                  }
+                
             }
         } catch (error) {
             toast.error("Thêm khách sạn không thành công!");
