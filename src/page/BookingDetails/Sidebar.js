@@ -180,11 +180,7 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
                                 className="border rounded-lg p-2 shadow-md flex items-center gap-2 bg-gray-50 hover:scale-110 transition-transform duration-200"
                                 onClick={() => handleServiceClick(service)}
                             >
-                                <img
-                                    src={service.image}
-                                    alt={service.name}
-                                    className="w-12 h-12 rounded-md object-cover"
-                                />
+                               
                                 <div>
                                     <h3 className="font-semibold text-xs">
                                         {service.service_name} {service.unit}

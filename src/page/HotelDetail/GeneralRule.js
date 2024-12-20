@@ -10,7 +10,7 @@ const GeneralRule = () => {
     const data = [
         {
             label: "Nhận phòng",
-            value: "Từ 14:00\nKhách được yêu cầu xuất trình giấy tờ tùy thân có ảnh và thẻ tín dụng lúc nhận phòng.\nTrước đó bạn sẽ cần cho chỗ nghỉ biết giờ bạn sẽ đến nơi.",
+            value: "Từ 12:00\nKhách được yêu cầu xuất trình giấy tờ tùy thân có ảnh và thẻ tín dụng lúc nhận phòng.\nTrước đó bạn sẽ cần cho chỗ nghỉ biết giờ bạn sẽ đến nơi.",
         },
         { label: "Trả phòng", value: "Đến 12:00" },
         {
@@ -40,7 +40,7 @@ const GeneralRule = () => {
                         <div>Nhận phòng</div>
                     </div>
                     <div className="whitespace-pre-line text-sm">
-                        <div className="mb-1">Từ 14:00.</div>
+                        <div className="mb-1">Từ 12:00.</div>
                         <div className="mb-1 text-gray-700">
                             Khách được yêu cầu xuất trình giấy tờ tùy thân có
                             ảnh và thẻ tín dụng lúc nhận phòng.
@@ -77,7 +77,7 @@ const GeneralRule = () => {
                             Vui lòng kiểm tra các điều kiện có thể được áp dụng
                             cho mỗi lựa chọn của bạn.
                         </div>
-                    </div>
+                    </div>  
                 </div>
 
                 <div className="grid grid-cols-[25%_75%] gap-4 border-b border-gray-200 py-4">

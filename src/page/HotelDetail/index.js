@@ -3,13 +3,13 @@ import axios from 'axios';
 import { IoLocationSharp } from "react-icons/io5";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { GoShareAndroid } from "react-icons/go";
-import { MdViewCozy } from "react-icons/md";
+import { IoMdCheckmark } from "react-icons/io";
 import { BsTag } from "react-icons/bs";
 import ImageHotel from "./ImageHotel";
 import RecommendHotel from "./RecommendHotel";
 import EmptyRoom from "./EmptyRoom";
 import Rating from "./Rating";
-import Convenient from "./Convenient";
+
 import GeneralRule from "./GeneralRule";
 import Note from "./Note";
 import Button from "../../components/Button";
@@ -17,7 +17,27 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { CiUser, CiCalendar, CiLocationOn } from "react-icons/ci";
 import { IoIosArrowDown } from "react-icons/io";
 import { GrAdd, GrSubtract } from "react-icons/gr";
+import { getHotelDetail } from "../../service/hotelService";
 const HotelDetail = () => {
+    const hotelId = 1;
+    const [hotelData, setHotelData] = useState(null);  
+    const [loading, setLoading] = useState(true);     
+    const [error, setError] = useState(null);    
+    useEffect(() => {
+        const fetchHotelDetail = async () => {
+          try {
+            const data = await getHotelDetail(hotelId);
+            console.log("data", data)
+            setHotelData(data);  
+          } catch (error) {
+            setError(error); 
+          } finally {
+            setLoading(false); 
+          }
+        };
+    
+        fetchHotelDetail(); 
+      }, [hotelId]);
     const images = `["https://pistachiohotel.com/UploadFile/Gallery/Overview/a3.jpg",
     "https://pistachiohotel.com/UploadFile/Gallery/Lobby/a2.jpg",
     "https://pistachiohotel.com/UploadFile/Gallery/Lobby/a3.jpg",
@@ -310,17 +330,6 @@ const HotelDetail = () => {
     const handleRating = (value) => {
         setRating(value);
     };
-    const information = {
-        description: `Bạn có thể đủ điều kiện hưởng giảm giá Genius tại Huong Giang Bungalow. Để biết giảm giá Genius có áp dụng cho ngày bạn đã chọn hay không, hãy đăng nhập.\\\\Giảm giá Genius tại chỗ nghỉ này tùy thuộc vào ngày đặt phòng, ngày lưu trú và các ưu đãi có sẵn khác.\\\\Huong Giang Bungalow nằm tại thị trấn Dương Đông, chỉ cách bãi biển 100 m. Nơi nghỉ này sở hữu nhà hàng gọi món và cung cấp truy cập Wi-Fi miễn phí.\\\\Các bungalow tại đây được trang bị sân trong và sân hiên cho tầm nhìn ra quang cảnh khu vườn cùng truyền hình cáp màn hình phẳng, minibar và phòng tắm riêng với tiện nghi vòi sen, dép đi trong phòng và khăn tắm.\\\\Nơi nghỉ này có lễ tân 24 giờ. Quý khách có thể được hỗ trợ với dịch vụ giặt là, dịch vụ đưa/đón sân bay, dịch vụ ủi và cho thuê xe hơi. Chỗ đỗ xe riêng cũng được cung cấp miễn phí cho khách.\\\\Huong Giang cách Nhà hàng Chez Carole 1,1 km, cách Chùa Sư Muôn 1,7 km và cách Coco Bar 2,2 km.\\\\Các nhóm khách đặc biệt thích địa điểm này — họ cho điểm 8,5 khi đánh giá chuyến đi theo nhóm.`,
-        convenientLove: [
-            "Phòng không hút thuốc",
-            "Chỗ đỗ xe miễn phí",
-            "Dịch vụ phòng",
-            "WiFi miễn phí",
-            "Phòng gia đình",
-            "Điều hòa nhiệt độ",
-        ],
-    };
     const [place, setPlace] = useState({});
     const [locationSuggestions, setLocationSuggestions] = useState([]);
     const [isOpenDetail, setIsOpenDetail] = useState(false);
@@ -484,7 +493,7 @@ const HotelDetail = () => {
             >
                 <div className="flex flex-col gap-2  w-[80%]">
                     <div className="text-2xl font-bold">
-                        Huong Giang Bungalow
+                        {hotelData?.hotel[0]?.name}
                     </div>
                     <div className="flex items-center">
                         <a href="">
@@ -492,8 +501,7 @@ const HotelDetail = () => {
                         </a>
                         <div className="flex text-sm space-x-1">
                             <div className="">
-                                Tran Hung Dao St, Bai Dai, Duong To, Phú Quốc,
-                                Việt Nam
+                            {hotelData?.hotel[0]?.address}
                             </div>
 
                         </div>
@@ -524,7 +532,7 @@ const HotelDetail = () => {
             </div>
             <div className="mt-6">
                 <div>
-                    {information.description
+                    { hotelData?.hotel[0]?.description
                         .split("\u005C\u005C")
                         .map((item, index) => (
                             <div key={index} className="flex my-3 text-sm ">
@@ -537,7 +545,7 @@ const HotelDetail = () => {
                     © OpenStreetMap
                 </div>
             </div>
-            <div className="mt-4">
+            {/* <div className="mt-4">
                 <div className="text-base font-bold mb-2">
                     Các tiện nghi được ưa chuộng nhất
                 </div>
@@ -549,7 +557,7 @@ const HotelDetail = () => {
                         </li>
                     ))}
                 </ul>
-            </div>
+            </div> */}
             <div>
             <div className="mt-5 grid grid-rows-1 grid-cols-5 gap-1 items-stretch justify-stretch mb-4 p-1  bg-yellow-500 rounded-lg">
                 
@@ -644,18 +652,19 @@ const HotelDetail = () => {
             <div id="convenient" className="mt-8">
                 <div className="flex justify-between items-center">
                     <div className="text-2xl font-bold">
-                        Các tiện nghi của Huong Giang Bungalow
+                        Các tiện nghi của  {hotelData?.hotel[0]?.name}
                     </div>
-                    {/* <Button
-                        color="blue"
-                        children="Xem phòng trống"
-                        size="sm"
-                        border={false}
-                        id="info-price"
-                        handleClick={handleClick}
-                    ></Button> */}
                 </div>
-                <Convenient></Convenient>
+                <div className="">
+                    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-4 mt-4">
+                        {hotelData?.hotel[0]?.amenity_type.map((item, index) => (
+                            <div key={index} className="flex items-center text-sm text-gray-700">
+                                <IoMdCheckmark className="mr-2 text-green-600 w-4 h-4" />
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
             <div id="generalRule" className="mt-10">
                 <div className="flex justify-between items-center">
@@ -671,7 +680,7 @@ const HotelDetail = () => {
                     ></Button> */}
                 </div>
                 <div className="text-base text-gray-700">
-                    Huong Giang Bungalow nhận yêu cầu đặc biệt - gửi yêu cầu
+                {hotelData?.hotel[0]?.name} nhận yêu cầu đặc biệt - gửi yêu cầu
                     trong bước kế tiếp!
                 </div>
                 <GeneralRule></GeneralRule>

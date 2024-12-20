@@ -58,7 +58,7 @@ const HotelRegister = () => {
     };
     return (
         <>
-            <div>
+            <div className="px-32 py-10">
                 <div className="text-3xl font-bold mb-3">
                     Đăng kí chỗ nghỉ của Quý vị
                 </div>

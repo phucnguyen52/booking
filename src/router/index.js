@@ -22,6 +22,7 @@ import HotelRegister from "../page/HotelRegister";
 import OrdersCustomer from "../page/OrdersCustomer";
 import Services from "../page/Manager/Services";
 import RoomPrice from "../page/Manager/RoomPrice";
+import AdminLayout from "../layout/Main/AdminLayout";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -44,17 +45,6 @@ const router = createBrowserRouter([
                 path: APP_ROUTER.ORDER,
                 element: <Order />,
             },
-        ],
-    },
-    {
-        path: APP_ROUTER.USER,
-        element: <PrivateRoutes role="customer" />,
-        children: [
-            {
-                path: APP_ROUTER.BOOKINGDETAILS,
-                element: <BookingDetails />,
-            },
-            
             {
                 path: APP_ROUTER.ORDERSCUSTOMER,
                 element: <OrdersCustomer />,
@@ -62,8 +52,26 @@ const router = createBrowserRouter([
         ],
     },
     {
+        path: APP_ROUTER.USER,
+        element: <PrivateRoutes role="customer" />,
+        children: [
+            {
+                path: APP_ROUTER.ORDERSCUSTOMER,
+                element: <OrdersCustomer />,
+            },
+            {
+                path: APP_ROUTER.HOTELREGISTER,
+                element: <HotelRegister />,
+            }
+        ],
+    },
+    {
         path: APP_ROUTER.ADMIN,
-        element: <PrivateRoutes role="admin" />,
+        element: (
+            <PrivateRoutes role="admin">
+                <AdminLayout />
+            </PrivateRoutes>
+        ),
         children: [           
             {
                 path: APP_ROUTER.TIMELINE,
@@ -91,9 +99,10 @@ const router = createBrowserRouter([
                 element: <RoomPrice />,
             },
             //
+            
             {
-                path: APP_ROUTER.HOTELREGISTER,
-                element: <HotelRegister />,
+                path: APP_ROUTER.BOOKINGDETAILS,
+                element: <BookingDetails />,
             },
         ],
     },
