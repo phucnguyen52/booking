@@ -18,3 +18,11 @@ export const setRole = (role) => {
     sameSite: 'Strict' 
   })
 }
+export const setHotel = (id) => {
+  Cookies.set('hotel_id', id, {
+    expires: 1, 
+    path: '/',  
+    secure: true,
+    sameSite: 'Strict' 
+  })
+}

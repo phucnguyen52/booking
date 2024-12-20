@@ -11,8 +11,6 @@ const Header = () => {
     const [isOpenDetail, setIsOpenDetail] = useState(false);
     const [detailRoom, setDetailRoom] = useState({
         adults: 2,
-        children: 0,
-        rooms: 1
     })
     const [date, setDate] = useState({
         startDate: null,
@@ -167,7 +165,7 @@ const Header = () => {
                     <div className="h-full flex justify-between items-center">
                         <span className="flex items-center gap-2">
                             <span className="text-3xl"><CiUser /></span>
-                            <span className="font-semibold">{`${detailRoom.adults} adults · ${detailRoom.children} children · ${detailRoom.rooms} room`}</span>
+                            <span className="font-semibold">{`${detailRoom.adults} adults `}</span>
                         </span>
                         <button className="text-xl focus:outline-none"><IoIosArrowDown /></button>
                     </div>
@@ -191,7 +189,7 @@ const Header = () => {
 
                             </div>
 
-                            <div className="flex justify-between items-center">
+                            {/* <div className="flex justify-between items-center">
                                 <span>Children</span>
                                 <div className="flex items-center gap-6 border rounded-lg">
                                     <GrSubtract
@@ -220,7 +218,7 @@ const Header = () => {
                                     />
                                 </div>
 
-                            </div>
+                            </div> */}
                         </div>
                     )}
                 </div>

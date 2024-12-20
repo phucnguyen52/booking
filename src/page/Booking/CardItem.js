@@ -10,9 +10,6 @@ const CardItem = (props) => {
             <div className="grow">
                 <h3 className="text-2xl font-bold text-blue-700">
                     {nameHotel}
-                    <span className="text-yellow-500 ml-2">
-                        {"★".repeat(starRating)}
-                    </span>
                 </h3>
                 <Link className="font-bold text-sm text-blue-700 underline">
                     {address.split(',').slice(-3, -1).join(',').trim()}
@@ -38,7 +35,7 @@ const CardItem = (props) => {
                                 <p>{roomItem.quantity}x</p>
                                 <div>
                                     <p className="font-semibold">{roomItem.nameRoom}</p>
-                                    <p className="text-sm text-gray-600">{roomItem.bed.quantity} {roomItem.bed.nameBed}</p>
+                                    <p className="text-sm text-gray-600">Giá: 2.000.000 / đêm </p>
                                 </div>
 
                             </div>
@@ -46,7 +43,7 @@ const CardItem = (props) => {
                     </div>
 
                     <div className="text-right">
-                        <p className='text-sm text-gray-600 mb-2'>9 nights, 3 adults, 2 children</p>
+                        <p className='text-sm text-gray-600 mb-2'>9 nights, 3 adults</p>
                         <div>
                             <p className="line-through text-red-500 mb-2">
                                 VND {totalAmount.toLocaleString()}

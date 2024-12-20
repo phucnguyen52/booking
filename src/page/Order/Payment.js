@@ -100,6 +100,9 @@ const Payment = (props) => {
               {`${Math.floor(timer / 60)}:${timer % 60 < 10 ? '0' : ''}${timer % 60}`}
             </div>
           )}
+
+          <div>Số tiền: {(totalAmount-totalDiscount).toLocaleString()} VND</div>
+          <div>Nội dung: {transactionId}</div>
         </div>
       )}
       <div className="flex justify-end gap-4">

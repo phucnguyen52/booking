@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { authService } from "../../../service/authService";
 function Login() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -30,21 +31,8 @@ function Login() {
         console.log(formData);
         if (validate()) {
             try {
-                const response = await axios.post(
-                    "http://localhost:8080/api/customer/login",
-                    {
-                        email: formData.email,
-                        password: formData.password,
-                    }
-                );
-
-                if (
-                    response &&
-                    response.data 
-                   
-                ) {
-              
-                    Cookies.set("token", response.data.token);
+                const login = await authService.login(formData.email, formData.password)
+                if(login?.success){
                     toast.success("Đăng nhập thành công", {
                         autoClose: 500,
                     });

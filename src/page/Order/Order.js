@@ -42,8 +42,8 @@ const Order = () => {
         quantity: 1
       }
     ],
-    totalAmount: 5000,
-    totalDiscount: 10
+    totalAmount: 6000000,
+    totalDiscount: 0
   });
   const [step, setStep] = useState(1)
   console.log("info", infoCustomer)

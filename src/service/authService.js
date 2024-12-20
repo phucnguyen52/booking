@@ -1,13 +1,14 @@
 import axios from "axios"
-import { setRole } from "../utils/AuthCheck"
+import { setHotel, setRole } from "../utils/AuthCheck"
+import apiConfig from "./axiosConfig";
 
 //api login
-export const login = async (data) => {
+export const login = async (email, password) => {
    try {
-      const response = await axios.post('http://localhost:8080/api/customer/login', {
-         ...data,
-      }, { withCredentials: true })
+      const response = await apiConfig.post('/customer/login',{email, password})
+      console.log("response", response);
       setRole(response.data.role)
+      if(response.data.hotel_id) setHotel(response.data.hotel_id)
       return response.data
    } catch (error) {
       if (error.status === 404) {

@@ -24,8 +24,8 @@ const hotels = [
                 quantity: 2
             }
         ],
-        totalAmount: 183793500,
-        discount: 10,
+        totalAmount: 6000000,
+        discount: 5,
         images: [
             "https://res.cloudinary.com/dkhqruqbd/image/upload/v1713535579/DTU_CIDO_3/cf5_jxikjp.jpg",
             "https://res.cloudinary.com/dkhqruqbd/image/upload/v1713581874/DTU_CIDO_3/uIMG_1035_copy_twjdif.jpg",
@@ -52,7 +52,7 @@ const hotels = [
                 quantity: 1
             }
         ],
-        totalAmount: 90500000,
+        totalAmount: 4000000,
         discount: 15,
         images: [
             "https://res.cloudinary.com/dkhqruqbd/image/upload/v1713535579/DTU_CIDO_3/cf5_jxikjp.jpg",
@@ -186,7 +186,7 @@ const BookingPage = () => {
                     ))}  
                 </div>
 
-                <div className="p-4 border-b">
+                {/* <div className="p-4 border-b">
                     <div className="font-bold mb-4">Đánh giá</div>
                     {[1, 2, 3, 4, 5].map((star) => (
                         <label class="ms-2 text-gray-900 flex items-center gap-2 mb-1">
@@ -242,7 +242,7 @@ const BookingPage = () => {
                             {item.name}
                         </label>
                     ))}  
-                </div>
+                </div> */}
             </div>
 
             {hotels?.length > 0 &&

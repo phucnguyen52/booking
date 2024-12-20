@@ -4,7 +4,9 @@ import { useMemo } from "react";
 import "@mobiscroll/react/dist/css/mobiscroll.min.css";
 import { roomDetailService } from "../../service/roomDetailService";
 import { bookingService } from "../../service/bookingService";
+import ModalDetail from "./ModalDetail";
 import ModalBooking from "./ModalBooking";
+import ModalRoom from "./ModalRoom";
 setOptions({
     locale: localeVi,
     theme: "windows",
@@ -39,6 +41,12 @@ const Timeline = () => {
     const [date, setDate] = useState({ start: null, end: null });
     const [bookingSchedule, setBookingSchedule] = useState([])
     const [room, setRoom] = useState([])
+    const [openDetail, setOpenDetail] = useState(false)
+    const [openBooking, setOpenBooking] = useState(false)
+    const [bookingDetails, setBookingDetails] = useState({
+        bookingId: null,
+        bookingDetailId: null,
+    })
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,19 +64,27 @@ const Timeline = () => {
         fetchData()
     }, [date, status])
     const fetchSchedule = async () => {
-        if(date){
-            const schedule = await bookingService.getSchedule(date.start, date.end)
+        const checkedKeys = status
+        ? Object.entries(status)
+            .filter(([_, value]) => value.isChecked)
+            .map(([key]) => key)
+        : [];
+        if (date) {
+            const schedule = await bookingService.getSchedule(date.start, date.end, checkedKeys)
+            console.log(schedule)
             if (schedule?.length > 0) {
-                setBookingSchedule((await bookingService.getSchedule(date.start, date.end)).map(i => ({
-                    resource: i.room_id,
+                setBookingSchedule(schedule.map(i => ({
+                    resource: i.room_detail_id,
                     start: i.checkin,
                     end: i.checkout,
                     text: i.booking_detail_id,
                     color: status[i.status].color,
+                    booking_id: i.booking_id,
+                    booking_detail_id: i.booking_detail_id
                 })))
-            }
+            } else setBookingSchedule([])
         }
-        
+
     }
 
     const view = useMemo(() => {
@@ -107,17 +123,17 @@ const Timeline = () => {
             <div className="flex justify-center gap-4">
                 {Object.keys(status).map(item => (
                     <div key={item} >
-                        <input id={item} name="status" value={item}  type="checkbox" className="peer hidden" 
-                        onChange={(e)=>{
-                            setStatus(prev=>({
-                                ...prev, 
-                                [e.target.value]: {
-                                    ...prev[e.target.value], 
-                                    isChecked: e.target.checked 
-                                }
-                            }))
-                        }}/>
-                        <label  htmlFor={item} className="flex gap-2 items-center peer-checked:underline">
+                        <input id={item} name="status" value={item} type="checkbox" className="peer hidden"
+                            onChange={(e) => {
+                                setStatus(prev => ({
+                                    ...prev,
+                                    [e.target.value]: {
+                                        ...prev[e.target.value],
+                                        isChecked: e.target.checked
+                                    }
+                                }))
+                            }} />
+                        <label htmlFor={item} className="flex gap-2 items-center peer-checked:underline">
                             <span className="rounded-full w-4 h-4" style={{ backgroundColor: status[item].color }}></span>
                             <div className={``}>
                                 {status[item].title}
@@ -132,6 +148,13 @@ const Timeline = () => {
         </div>
     );
 
+    const handleEventClick = useCallback((event) => {
+        setOpenDetail(true)
+        setBookingDetails({
+            bookingId: event.event.booking_id,
+            bookingDetailId: event.event.booking_detail_id,
+        })
+    }, []);
     return (
         <div
             className="w-[90%] h-[800px] mx-auto border border-gray-100 rounded-md p-4 overflow-auto relative [&::-webkit-scrollbar]:w-2
@@ -140,6 +163,11 @@ const Timeline = () => {
             dark:[&::-webkit-scrollbar-track]:bg-neutral-700
             dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
         >
+            <div className="flex justify-end">
+                <button onClick={() => setOpenBooking(true)} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                    Đặt phòng
+                </button>
+            </div>
             <Eventcalendar
                 renderHeader={headerTimeline}
                 clickToCreate={false}
@@ -151,6 +179,7 @@ const Timeline = () => {
                 view={view}
                 data={bookingSchedule}
                 resources={room}
+                onEventClick={handleEventClick}
                 onPageChange={(e) => {
                     setDate({
                         start: fomatDate(e.firstDay),
@@ -168,7 +197,14 @@ const Timeline = () => {
                     }
                 }}
             />
-            <ModalBooking />
+            <ModalDetail
+                isModalOpen={openDetail}
+                setIsModalOpen={setOpenDetail}
+                bookingDetailId={bookingDetails.bookingDetailId}
+                bookingId={bookingDetails.bookingId}
+            />
+            <ModalBooking isModalOpen={openBooking} setIsModalOpen={setOpenBooking} />
+
         </div>
     );
 };

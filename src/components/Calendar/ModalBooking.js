@@ -1,107 +1,235 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal } from 'antd';
+import { CiSearch, CiUser } from "react-icons/ci";
+import { IoIosRemove, IoIosAdd } from "react-icons/io";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import { roomService } from '../../service/roomService';
+import { use } from 'react';
+import ModalRoom from './ModalRoom';
 import { bookingService } from '../../service/bookingService';
+const { RangePicker } = DatePicker;
 
-const ModalBooking = () => {
-   const bookingDetailId = 1
-   const bookingId = 1
-   const [booking, setBooking] = useState(null);
-   
-   useEffect(() => {
-      const fetchBooking = async() => {
-         const data = await bookingService.getBookingDetail(bookingId)
-         if(data) setBooking(data)
+const ModalBooking = (props) => {
+  const { isModalOpen, setIsModalOpen } = props
+  const [openSearch, setOpenSearch] = useState(true)
+  const [dataOrder, setDataOrder] = useState({
+    booking: {
+      checkin: dayjs(),
+      checkout: dayjs().add(1, 'day'),
+      adult_count: 1,
+    },
+    booking_detail: []
+  })
+
+  const handleOrder = async (e) => {
+    e.preventDefault()
+    console.log("dataOrder", dataOrder, e, e.target.elements.fullname.value)
+    if(dataOrder.booking_detail.length > 0) {
+      const data = {
+        booking: {
+          checkin: dataOrder.booking.checkin.format('YYYY-MM-DD'),
+          checkout: dataOrder.booking.checkout.format('YYYY-MM-DD'),
+          adult_count: dataOrder.booking.adult_count,
+          fullname: e.target.elements.fullname.value,
+          email: e.target.elements.email.value,
+          numberphone: e.target.elements.phone.value,
+          note: e.target.elements.note.value,
+          total_price: dataOrder?.booking_detail?.reduce((sum, item) => sum + item.total_price * item.count, 0)
+        },
+        booking_detail: dataOrder?.booking_detail.map((item, i)=> ({
+          RoomId : item.room_id,
+          count : item.count,
+          price : item.total_price
+        }))
       }
-   fetchBooking()
-   }, [bookingId, bookingDetailId]);
-   console.log('bookingDetail', booking)
-   const [isModalOpen, setIsModalOpen] = useState(false);
+      const bookingId = await bookingService.creatBooking(data)
+      console.log("data", data, bookingId)
+    }
+    
+  }
 
-   const showModal = () => {
-      setIsModalOpen(true);
-   };
+  return (
+    <>
+      <Modal
+        title="Đặt/Nhận phòng nhanh"
+        open={isModalOpen}
+        // onOk={handleOk}
+        onCancel={() => setIsModalOpen(false)}
+        style={{ top: 20, }}
+        width={900}
+        footer={[]}
+      >
+        <form className="container mx-auto p-6" onSubmit={handleOrder}>
 
-   const handleOk = () => {
-      setIsModalOpen(false);
-   };
+          {/* {users?.length > 0 && (
+          <div className="max-h-64 overflow-y-auto border border-gray-300 rounded mb-4">
+            {users.map((user) => (
+              <div
+                key={user}
+                // onClick={() =>
+                //   handleSelectUser(user)
+                // }
+                className="p-2 cursor-pointer hover:bg-gray-200"
+              >
+                <div>{user.fullName}</div>
+                <small>{user.email}</small>
+              </div>
+            ))}
+          </div>
+        )} */}
 
-   return (
-      <div>
-         <Button type="primary" onClick={showModal}>
-            Open Modal
-         </Button>
-         <Modal
-            title="P403"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={()=> setIsModalOpen(false)}
-            style={{
-               top: 20,
-            }}
-            width={700}
-            footer={[
-               <Button key="back" onClick={()=>setIsModalOpen(false)} className="px-4 py-2 bg-white text-green-700 !border-green-600 rounded-md hover:!bg-green-100 hover:!text-green-700">
-                  Sửa đặt phòng
-               </Button>,
-               <Button key="submit" type="primary" onClick={handleOk} className="px-4 py-2 bg-green-600 text-white rounded-md hover:!bg-green-700">
-                  Đóng
-               </Button>,
-            ]}
-         >
-            <div className='rounded-lg border p-4'>
-               <div className="mb-4 border-b">
-                  <h5 className="text-base font-semibold pb-2">
-                     Phòng 01 giường đôi và 1 giường đơn cho 3 người
-                     <span className="text-sm text-green-600 ml-2">Đang sử dụng</span>
-                  </h5>
-               </div>
 
-               <div className="grid grid-cols-4 gap-4 text-sm mb-4">
-                  <div className='col-span-2 border-r'>
-                     <p className="text-gray-500">Khách hàng</p>
-                     <p>Khách lẻ</p>
-                  </div>
-                  <div>
-                     <p className="text-gray-500">Mã đặt phòng</p>
-                     <p>DP000009</p>
-                  </div>
-                  <div className='col-span-2 border-r'>
-                     <p className="text-gray-500">Thời gian lưu trú</p>
-                     <p>1 tháng <span className="text-gray-400">(Đã sử dụng: 1 tháng)</span></p>
-                  </div>
-                  <div className='border-r'>
-                     <p className="text-gray-500">Nhận phòng</p>
-                     <p>09 thg 12, 00:00</p>
-                  </div>
-                  <div>
-                     <p className="text-gray-500">Trả phòng</p>
-                     <p>08 thg 1, 23:59</p>
-                  </div>
-               </div>
-
+          {/* Tìm kiếm khách hàng */}
+          <div className="flex justify-between">
+            <div>
+              <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none text-xl">
+                  <CiSearch />
+                </div>
+                <input type="search" id="search" class="block ps-10 p-2  text-sm text-gray-900 border border-gray-300 rounded-lg  focus:ring-blue-500 focus:border-blue-500 " placeholder="Tìm kiếm khách hàng" />
+              </div>
             </div>
-            <div className='flex justify-between items-start gap-20 mt-10'>
-               <div>
-                  <p className='font-semibold mb-2'>Các phòng cùng đơn</p>
-                  <span className='py-1 px-2 mr-2 rounded-md bg-green-100 text-green-700 text-xs font-semibold'>P100</span>
-                  <span className='py-1 px-2 mr-2 rounded-md bg-orange-100 text-orange-700 text-xs font-semibold'>P101</span>
-                  <span className='py-1 px-2 mr-2 rounded-md bg-green-100 text-green-700 text-xs font-semibold'>P102</span>
-                  <span className='py-1 px-2 mr-2 rounded-md bg-green-100 text-green-700 text-xs font-semibold'>P103</span>
-               </div>
-               <div className="flex justify-between items-start gap-14 text-gray-700 bg-gray-100 p-4 rounded-lg">
-                  <div>
-                     <p>P403</p>
-                     <p>Khách đã trả</p>
-                  </div>
-                  <div className='text-right font-semibold'>
-                     <p>29,000,000</p>
-                     <p>0</p>
-                  </div>
-               </div>
+            <button onClick={() => setOpenSearch(true)} className="hover:bg-black ring-2 ring-gray-600 hover:text-white font-medium rounded-lg px-4 py-2 ">
+              Thêm phòng
+            </button>
+          </div>
+
+
+          {/* Thông tin khách hàng */}
+          <div className='flex gap-2 mt-4'>
+            <div class="relative z-0 w-full mb-5 ">
+              <label for="floating_last_name" className="block text-sm font-medium text-gray-600 mb-2">Tên khách hàng</label>
+              <input
+                type="text"
+                name="fullname"
+                id="floating_last_name"
+                onInvalid={(e) => {
+                  if (!e.target.value.trim()) {
+                    e.target.setCustomValidity("Vui lòng nhập tên khách hàng!");
+                  }
+                }}
+                onInput={(e) => {
+                  e.target.setCustomValidity("");
+                }}
+                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5"
+                placeholder="Nguyễn Văn A"
+                required />
             </div>
-         </Modal>
-      </div>
-   );
+            <div class="relative z-0 w-full mb-5 group">
+              <label for="floating_email" className="block text-sm font-medium text-gray-600 mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                id="floating_email"
+                onInvalid={(e) => {
+                  if (!e.target.value.trim()) {
+                    e.target.setCustomValidity("Vui lòng nhập email khách hàng!");
+                  }
+                }}
+                onInput={(e) => {
+                  e.target.setCustomValidity("");
+                }}
+                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5"
+                placeholder="nguyena@gmail.com"
+                required />
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+              <label for="floating_phone" className="block text-sm font-medium text-gray-600 mb-2">Số điện thoại</label>
+              <input
+                type="tel"
+                pattern="[0-9]{3}[0-9]{3}[0-9]{4}"
+                name="phone"
+                id="floating_phone"
+                onInvalid={(e) => {
+                  if (!e.target.value.trim()) {
+                    e.target.setCustomValidity("Vui lòng nhập số điện thoại khách hàng!");
+                  }
+                }}
+                onInput={(e) => {
+                  e.target.setCustomValidity("");
+                }}
+                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5"
+                placeholder="0123456789"
+                required />
+            </div>
+          </div>
+
+          {/* Thông tin đặt phòng */}
+          <div className="mb-6 flex ">
+            <div className='flex items-center'>
+              <div className="block text-sm font-medium text-gray-600 ">Ngày nhận phòng:</div>
+              <div className='ml-4 font-semibold'>{dayjs(dataOrder.booking?.checkin).format('YYYY/MM/DD') || null}</div>
+            </div>
+            <div className='flex items-center ml-10'>
+              <div className="block text-sm font-medium text-gray-600 ">Ngày trả phòng</div>
+              <div className='ml-4 font-semibold'>{dayjs(dataOrder.booking?.checkout).format('YYYY/MM/DD') || null}</div>
+            </div>
+            <div className='flex items-center ml-10'>
+              <div className="block text-sm font-medium text-gray-600 ">Số người ở</div>
+              <div className='ml-4 font-semibold'>{dataOrder.booking?.adult_count || null}</div>
+            </div>
+          </div>
+
+          {/* Danh sách phòng đặt */}
+          <table className="w-full mb-6 ">
+            <thead>
+              <tr className="bg-green-100 mb-2 rounded-xl text-center">
+                <th className=" p-2 text-left">Phòng gợi ý</th>
+                <th className=" p-2">Giá tiền</th>
+                <th className=" p-2">Số lượng</th>
+                <th className=" p-2">Thành tiền</th>
+              </tr>
+            </thead>
+            {dataOrder.booking_detail.length > 0 ? (
+              <tbody>
+                {dataOrder.booking_detail.map((room, index) => (
+                  <tr key={index} className={` rounded-lg text-center border-b`}>
+                    <td className="p-2 text-left font-semibold flex gap-2">
+                      {room.room_name}
+                      <span className='flex font-normal items-center text-xs'>
+                        {room.adult_count}<CiUser />
+                      </span>
+                    </td>
+                    <td className="p-2">{room.total_price.toLocaleString()} VND</td>
+                    <td className="p-2">{room.count}</td>
+                    <td className="p-2 font-semibold ">
+                      {(room.total_price * room.count).toLocaleString()} VND
+                      <span className='py-2 text-lg float-right'><RiDeleteBin6Line /></span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            ) : <div className='text-gray-600 font-bold italic p-2 text-center mx-auto'>Vui lòng chọn phòng</div>}
+          </table>
+          <div className='flex items-end justify-between'>
+            <div className='w-1/2'>
+              <label for="message" class="block mb-2 text-sm font-semibold text-gray-900">Ghi chú:</label>
+              <textarea name='note' id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Nhập ghi chú ..."></textarea>
+            </div>
+            <div className="flex justify-between items-start gap-14 text-gray-700 bg-gray-100 p-4 rounded-lg">
+              <p>Khách cần trả</p>
+              <p className='text-right font-semibold'>{dataOrder?.booking_detail?.reduce((sum, item) => sum + item.total_price * item.count, 0)} VND</p>
+            </div>
+          </div>
+          <div className='flex justify-end gap-4 mt-4 '>
+            <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 font-semibold bg-white text-green-700 border !border-green-600 rounded-md hover:!bg-green-100 hover:!text-green-700">
+              Đóng
+            </button>
+            <button type="submit" className="px-4 py-2 font-semibold bg-green-600 text-white rounded-md hover:!bg-green-700">
+              Đặt phòng
+            </button>
+          </div>
+
+        </form>
+        <ModalRoom isModalOpen={openSearch} setIsModalOpen={setOpenSearch} setDataOrder={setDataOrder} dataOrder={dataOrder} />
+      </Modal>
+
+    </>
+
+  );
 };
 
 export default ModalBooking;
