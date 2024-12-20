@@ -44,36 +44,6 @@ const Header = () => {
         } catch (error) {
             console.error("Error fetching suggestions: ", error);
         }
-        // try {
-        //     const response = await axios.get('https://wft-geo-db.p.rapidapi.com/v1/geo/cities', {
-        //         params: { namePrefix: term },
-        //         headers: {
-        //             'X-RapidAPI-Key': 'fa86074513msh4d3a5f226798626p17b382jsn97e0d66a626e',
-        //             'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
-        //         }
-        //     });
-        //     const cities = response.data.data.map((city) => `${city.name}, ${city.country}`);
-        //     setLocationSuggestions(cities);
-        // } catch (error) {
-        //     console.error("Error fetching suggestions: ", error);
-        // }
-
-        // try {
-        //     const response = await axios.get('https://booking-com15.p.rapidapi.com/api/v1/attraction/searchLocation', {
-        //         params: {
-        //             query: term,
-        //             languagecode: 'en-us'
-        //         },
-        //         headers: {
-        //             'X-RapidAPI-Key': 'fa86074513msh4d3a5f226798626p17b382jsn97e0d66a626e',
-        //             'X-RapidAPI-Host': 'booking-com15.p.rapidapi.com'
-        //         }
-        //     });
-        //     const cities = response.data.products.map((city) => `${city.name}, ${city.country}`);
-        //     setLocationSuggestions(cities);
-        // } catch (error) {
-        //     console.error("Error fetching suggestions: ", error);
-        // }
     };
     useEffect(() => {
         const clickOutside = (event) => {

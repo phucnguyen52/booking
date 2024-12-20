@@ -7,12 +7,17 @@ import { CgAssign } from "react-icons/cg";
 import { IoMdCheckmark } from "react-icons/io";
 import { VscCheck } from "react-icons/vsc";
 import { IoPersonSharp } from "react-icons/io5";
-const EmptyRoom = ({ emptyRoom }) => {
-    const [selectedPrice, setSelectedPrice] = useState({});
+const EmptyRoom = ({ emptyRoom, setEmptyRoom }) => {
+    const [roomSelect, setRoomSelect] = useState([]);
 
-    const handlePriceChange = (roomId, price) => {
-        setSelectedPrice({ ...selectedPrice, [roomId]: price });
+    const handleRoomChange = (count, index) => {
+        const newSelect = [...emptyRoom]
+        newSelect[index] = { ...newSelect[index], count: count }
+        setEmptyRoom(newSelect);
+        console.log(count, index)
+        console.log(newSelect)
     };
+
     return (
         <div>
             <div className="text-2xl font-bold">Phòng trống</div>
@@ -39,15 +44,9 @@ const EmptyRoom = ({ emptyRoom }) => {
                                 className="z-20 text-nowrap bg-[#003b95] text-white px-2 py-[6px] text-sm font-bold pb-8 border-1 border-[#5bbaff] border border-t-0 sticky top-0"
                                 style={{ width: "20%" }}
                             >
-                                Giá cho n đêm
+                                Giá cho 1 đêm
                                 <MdOutlineArrowDropDown className="absolute w-12 h-12 bottom-[-26px] left-14 text-[#003b95]" />
                             </th>
-                            {/* <th
-                                className="z-20 text-nowrap bg-[#4c76b2] text-white px-2 py-[6px] text-sm font-bold pb-8 border-1 border-[#5bbaff] border border-t-0 sticky top-0"
-                                style={{ width: "30%" }}
-                            >
-                                Các lựa chọn
-                            </th> */}
                             <th
                                 className="z-20 text-nowrap bg-[#4c76b2] text-white px-2 py-[6px] text-sm font-bold pb-8 border-1 border-[#5bbaff] border border-t-0 sticky top-0"
                                 style={{ width: "7%" }}
@@ -56,277 +55,114 @@ const EmptyRoom = ({ emptyRoom }) => {
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {emptyRoom.map((room) => (
-                            <tr
-                                key={room.id}
-                                className="border-b border-[#5bbaff]"
-                            >
-                                <td
-                                    className="px-2 py-4 border-r border-[#5bbaff]"
-                                    style={{ width: "30%" }}
+                    {emptyRoom.length > 0 ? (
+                        <tbody>
+                            {emptyRoom.map((room, index) => (
+                                <tr
+                                    key={index}
+                                    className="border-b border-[#5bbaff]"
                                 >
-                                    <a
-                                        href=""
-                                        className="font-bold text-base underline text-blue-600
-                                    "
+                                    <td
+                                        className="px-2 py-4 border-r border-[#5bbaff]"
+                                        style={{ width: "30%" }}
                                     >
-                                        {room.name}
-                                    </a>
-                                    <div className="flex items-center gap-1 my-1">
-                                        <div>
-                                            <AiFillExclamationCircle className="text-base text-red-500" />
-                                        </div>
-                                        <div className="text-red-800 font-semibold text-xs">
-                                            Chỉ còn {room.availability} trên
-                                            trang của chúng tôi
-                                        </div>
-                                    </div>
-                                    <ul className="my-2">
-                                        {room.bedDetails.map((bed, idx) => (
-                                            <li
-                                                key={idx}
-                                                className="flex items-center"
-                                            >
-                                                <span className="mr-2 text-nowrap text-sm">
-                                                    {bed.quantity} {bed.type}
-                                                </span>
-                                                <div className="flex gap-1 flex-wrap">
-                                                    {Array.from({
-                                                        length: bed.quantity,
-                                                    }).map((_, iconIdx) =>
-                                                        bed.type ===
-                                                        "Giường đôi cực lớn" ? (
-                                                            <LuBedDouble
-                                                                key={iconIdx}
-                                                                className="text-xl"
-                                                            />
-                                                        ) : bed.type ===
-                                                          "Giường đơn" ? (
-                                                            <LuBedSingle
-                                                                key={iconIdx}
-                                                                className="text-xl"
-                                                            />
-                                                        ) : null
-                                                    )}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-
-                                    <div className="flex items-center gap-1">
-                                        <CgAssign className="w-5 h-5" />
-                                        <div className="flex-nowrap text-sm">
-                                            {room.size}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {room.features.map((feature, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="flex items-center gap-1"
-                                            >
-                                                <MdHotelClass className="text-gray-600" />{" "}
-                                                <span className="text-xs">
-                                                    {feature}
-                                                </span>
+                                        <a
+                                            href=""
+                                            className="font-bold text-base underline text-blue-600
+                                 "
+                                        >
+                                            {room.room_name}
+                                        </a>
+                                        <div className="flex items-center gap-1 my-1">
+                                            <div>
+                                                <AiFillExclamationCircle className="text-base text-red-500" />
                                             </div>
-                                        ))}
-                                    </div>
-                                    <hr className="my-2" />
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {room.additionalAmenities.map(
-                                            (feature, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className="flex items-center gap-1"
-                                                >
-                                                    <IoMdCheckmark className="text-green-600" />{" "}
-                                                    <span className="text-xs">
-                                                        {feature}
-                                                    </span>
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
-                                </td>
+                                            <div className="text-red-800 font-semibold text-xs">
+                                                Chỉ còn {room.available} trên
+                                                trang của chúng tôi
+                                            </div>
+                                        </div>
+                                    </td>
 
-                                <td
-                                    className="px-2 py-4 border-r border-[#5bbaff] h-full"
-                                    style={{ width: "13%" }}
-                                >
-                                    <div
-                                        className="grid w-full h-full gap-1"
-                                        style={{
-                                            gridTemplateRows: `repeat(${room.options.length}, 1fr)`,
-                                            alignItems: "start",
-                                        }}
+                                    <td
+                                        className="px-2 py-4 border-r border-[#5bbaff] h-full"
+                                        style={{ width: "13%" }}
                                     >
-                                        {room.options.map((option, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={`flex items-center justify-between p-2 ${
-                                                    idx !== 0
-                                                        ? "border-t border-[#5bbaff]"
-                                                        : ""
-                                                }`}
-                                            >
-                                                <div className="flex items-center">
-                                                    {option.guestCount <= 5 ? (
-                                                        Array.from(
-                                                            {
-                                                                length: option.guestCount,
-                                                            },
-                                                            (_, iconIdx) => (
-                                                                <IoPersonSharp
-                                                                    key={
-                                                                        iconIdx
-                                                                    }
-                                                                    className="text-blue-500"
-                                                                />
-                                                            )
-                                                        )
-                                                    ) : (
-                                                        <div className="flex items-center gap-1">
-                                                            <span className="ml-2">
-                                                                {
-                                                                    option.guestCount
-                                                                }{" "}
-                                                                x
-                                                            </span>
-                                                            <IoPersonSharp className="text-blue-500" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </td>
-                                <td
-                                    className="px-2 py-4 border-r border-[#5bbaff] h-full"
-                                    style={{ width: "20%" }}
-                                >
-                                    <div
-                                        className="grid w-full h-full gap-1"
-                                        style={{
-                                            gridTemplateRows: `repeat(${room.options.length}, 1fr)`,
-                                            alignItems: "start",
-                                        }}
-                                    >
-                                        {room.options.map((option, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={`flex flex-col items-start justify-between p-2 ${
-                                                    idx !== 0
-                                                        ? "border-t border-[#5bbaff]"
-                                                        : ""
-                                                }`}
-                                            >
-                                                <div
-                                                    key={idx}
-                                                    className="font-bold text-base"
-                                                >
-                                                    VNĐ {option.price}
-                                                </div>
-                                                <p className="text-xs mb-7 text-nowrap">
-                                                    Đã bao gồm thuế và phí
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </td>
-                                {/* <td
-                                    className="px-2 py-4 border-r border-[#5bbaff] h-full"
-                                    style={{ width: "30%" }}
-                                >
-                                    <div
-                                        className="grid w-full h-full gap-1"
-                                        style={{
-                                            gridTemplateRows: `repeat(${room.options.length}, 1fr)`,
-                                            alignItems: "start",
-                                        }}
-                                    >
-                                        {room.options.map((option, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={`flex justify-center flex-col p-2 ${
-                                                    idx !== 0
-                                                        ? "border-t border-[#5bbaff]"
-                                                        : ""
-                                                }`}
-                                            >
-                                                <div
-                                                    key={idx}
-                                                    className="flex gap-1 text-xs items-center"
-                                                >
-                                                    <div className="flex gap-1 items-center text-green-700">
-                                                        <VscCheck className="text-sm" />
-                                                        <div className="font-bold text-xs text-nowrap">
-                                                            Hủy miễn phí
-                                                        </div>
-                                                    </div>{" "}
-                                                    <div className="text-green-700 text-nowrap">
-                                                        trước{" "}
+                                        <div className="flex items-center">
+                                            {room.adult_count <= 5 ? (
+                                                Array.from(
+                                                    {
+                                                        length: room.adult_count,
+                                                    },
+                                                    (_, iconIdx) => (
+                                                        <IoPersonSharp
+                                                            key={
+                                                                iconIdx
+                                                            }
+                                                            className="text-blue-500"
+                                                        />
+                                                    )
+                                                )
+                                            ) : (
+                                                <div className="flex items-center gap-1">
+                                                    <span className="ml-2">
                                                         {
-                                                            option
-                                                                .cancellationPolicy
-                                                                .freeCancellationUntil
-                                                        }
-                                                    </div>
+                                                            room.adult_count
+                                                        }{" "}
+                                                        x
+                                                    </span>
+                                                    <IoPersonSharp className="text-blue-500" />
                                                 </div>
-                                                <div className="text-xs text-wrap">
-                                                    <div className="flex gap-1 items-center text-green-700">
-                                                        <VscCheck className="text-base" />
-                                                        <div className="font-bold text-nowrap">
-                                                            Không cần thanh toán
-                                                            trước{" "}
-                                                        </div>
-                                                    </div>{" "}
-                                                    <div className="text-green-700 text-nowrap">
-                                                        - thanh toán tại chỗ
-                                                        nghỉ
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </td> */}
-
-                                <td
-                                    className="px-2 py-4 border-r border-[#5bbaff]"
-                                    style={{ width: "7%" }}
-                                >
-                                    <select
-                                        value={selectedPrice[room.id] || ""}
-                                        onChange={(e) =>
-                                            handlePriceChange(
-                                                room.id,
-                                                e.target.value
-                                            )
-                                        }
-                                        className="focus:outline-none px-1 py-3 block w-full bg-gray-100 border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-transparent dark:text-neutral-400 dark:focus:ring-neutral-600"
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td
+                                        className="px-2 py-4 border-r border-[#5bbaff] h-full"
+                                        style={{ width: "20%" }}
                                     >
-                                        <option value="" className="bg-white">
-                                            0
-                                        </option>
-                                        {room.options.map((option, idx) => (
-                                            <option
-                                                key={idx}
-                                                value={option.price}
-                                                className="bg-white w-full"
+                                        <div
+                                        // className="grid w-full h-full gap-1"
+                                        >
+                                            <div
+                                                className="font-bold text-base"
                                             >
-                                                {option.price}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
+                                                VNĐ {room.total_price}
+                                            </div>
+                                            <p className="text-xs mb-7 text-nowrap">
+                                                Đã bao gồm thuế và phí
+                                            </p>
+                                        </div>
+                                    </td>
+
+                                    <td
+                                        className="px-2 py-4 border-r border-[#5bbaff]"
+                                        style={{ width: "7%" }}
+                                    >
+                                        <select
+                                            value={room.count}
+                                            onChange={(e) => {
+                                                handleRoomChange(Number(e.target.value), index)
+                                            }}
+                                            className="focus:outline-none px-1 py-3 block w-full bg-gray-100 border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:border-transparent dark:text-neutral-400 dark:focus:ring-neutral-600"
+                                        >
+                                            {Array.from({ length: room.available + 1 }).map((_, idx) => (
+                                                <option
+                                                    key={idx}
+                                                    value={idx}
+                                                    className="bg-white w-full"
+                                                >
+                                                    {idx}{idx === 0 ? '' : ` - ${room.total_price * idx}`} VND
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    ) : <div>Không có phòng trống</div>}
                 </table>
 
-              
+
                 <div className="w-1/5 border-[#5bbaff] border-b-[1px]">
                     <div className=" bg-[#4c76b2] text-[#4c76b2] px-2 py-[6px] text-sm font-bold pb-8 border-1 border-[#5bbaff] border border-t-0 sticky top-0 z-20 text-nowrap">
                         a

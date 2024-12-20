@@ -12,10 +12,11 @@ export const getSuggestRoom = async (checkin, checkout, num) =>{
    }
 }
 
-export const getEmptyRoombyUser = async (checkin, checkout, num) =>{
+export const getEmptyRoombyUser = async (checkin, checkout, num, hotelId) =>{
    if(!(checkin||checkout||num)) return
+   const hotel = hotelId ? hotelId : 1
    try {
-      const response = await apiConfig.get(`/customer/room/1?start='${checkin}'&end='${checkout}'&num=${num}`)
+      const response = await apiConfig.get(`/customer/room/${hotel}?start='${checkin}'&end='${checkout}'&num=${num}`)
       // console.log("empty",response.data.room[0].room_empty)
       return response.data.room[0].room_empty.map(i=> ({...i, available: i.count, count: 0}))
    } catch (error) {

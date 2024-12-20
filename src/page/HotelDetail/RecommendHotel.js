@@ -7,7 +7,7 @@ import {
     AiFillExclamationCircle,
 } from "react-icons/ai";
 import { MdViewCozy } from "react-icons/md";
-const RecommendHotel = ({ roomData, totalPrice }) => {
+const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => {
         setIsModalOpen(true);
@@ -15,24 +15,11 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
     const closeModal = () => {
         setIsModalOpen(false);
     };
-    const information = {
-        "description" : `Bạn có thể đủ điều kiện hưởng giảm giá Genius tại Huong Giang Bungalow. Để biết giảm giá Genius có áp dụng cho ngày bạn đã chọn hay không, hãy đăng nhập.\\\\Giảm giá Genius tại chỗ nghỉ này tùy thuộc vào ngày đặt phòng, ngày lưu trú và các ưu đãi có sẵn khác.\\\\Huong Giang Bungalow nằm tại thị trấn Dương Đông, chỉ cách bãi biển 100 m. Nơi nghỉ này sở hữu nhà hàng gọi món và cung cấp truy cập Wi-Fi miễn phí.\\\\Các bungalow tại đây được trang bị sân trong và sân hiên cho tầm nhìn ra quang cảnh khu vườn cùng truyền hình cáp màn hình phẳng, minibar và phòng tắm riêng với tiện nghi vòi sen, dép đi trong phòng và khăn tắm.\\\\Nơi nghỉ này có lễ tân 24 giờ. Quý khách có thể được hỗ trợ với dịch vụ giặt là, dịch vụ đưa/đón sân bay, dịch vụ ủi và cho thuê xe hơi. Chỗ đỗ xe riêng cũng được cung cấp miễn phí cho khách.\\\\Huong Giang cách Nhà hàng Chez Carole 1,1 km, cách Chùa Sư Muôn 1,7 km và cách Coco Bar 2,2 km.\\\\Các nhóm khách đặc biệt thích địa điểm này — họ cho điểm 8,5 khi đánh giá chuyến đi theo nhóm.`,
-        "convenientLove": [
-            "Phòng không hút thuốc",
-            "Chỗ đỗ xe miễn phí",
-            "Dịch vụ phòng",
-            "WiFi miễn phí",
-            "Phòng gia đình",
-            "Điều hòa nhiệt độ"
-        ]
-    }
-    
-
     return (
         <div>
             <div className="w-full rounded-xl shadow-xl">
                 <div className="p-5 text-xl font-bold">
-                    Được giới thiệu cho 5 người lớn
+                    Được giới thiệu cho {adult_count} người lớn
                 </div>
                 <hr />
                 <div className="grid grid-cols-[50%,20%,30%] w-full">
@@ -40,18 +27,18 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                         <React.Fragment key={room.id}>
                             <div className="p-4 border-[0.5px] border-l-0 border-gray-200 flex flex-col gap-[3px]">
                                 <div className="flex">
-                                    <div className="">1 x </div>
+                                    <div className="">{room.count} x </div>
                                     <a
                                         href=""
                                         className="text-blue-600 underline ml-1"
                                     >
-                                        {room.name}
+                                        {room.room_name}
                                     </a>
                                 </div>
                                 <div className="flex gap-2 items-center text-sm">
                                     <p className="font-semibold">Giá cho: </p>
                                     <div className="flex">
-                                        {Array(room.maxCount)
+                                        {Array(room.adult_count)
                                             .fill()
                                             .map((_, index) => (
                                                 <IoPersonSharp
@@ -62,7 +49,7 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                                     </div>
                                 </div>
                                 <div className="text-sm">
-                                    <div className="flex items-center space-x-2">
+                                    {/* <div className="flex items-center space-x-2">
                                         {room.bedDoubleCount > 0 && (
                                             <>
                                                 <span>
@@ -103,9 +90,9 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                                                 ))}
                                             </>
                                         )}
-                                    </div>
+                                    </div> */}
                                 </div>
-                                <div className="flex gap-1 text-sm items-center">
+                                {/* <div className="flex gap-1 text-sm items-center">
                                     <div className="flex gap-1 items-center text-green-700">
                                         <VscCheck className="text-base" />
                                         <div className="font-bold text-nowrap">
@@ -118,8 +105,8 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                                     <button onClick={openModal}>
                                         <AiOutlineQuestionCircle className="text-xl text-blue-600" />
                                     </button>
-                                </div>
-                                <div className="flex gap-1 text-sm items-center">
+                                </div> */}
+                                {/* <div className="flex gap-1 text-sm items-center">
                                     <div className="flex gap-1 items-center text-green-700">
                                         <VscCheck className="text-base" />
                                         <div className="font-bold text-nowrap">
@@ -129,7 +116,7 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                                     <div className="text-green-700 text-nowrap">
                                         - thanh toán tại chỗ nghỉ
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className="flex items-center gap-1">
                                     <div>
                                         <AiFillExclamationCircle className="text-base text-red-500" />
@@ -141,12 +128,11 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                                 </div>
                             </div>
                             <div className="p-4 border-[0.5px] border-gray-200">
-                                <p className="font-bold text-xl">
-                                    {room.price}
+                                <p className="font-semibold text-xl">
+                                VND {Number(room.total_price).toLocaleString()} 
                                 </p>
-                                <p className="text-xs">{room.priceDetails}</p>
                             </div>
-                            {isModalOpen && (
+                            {/* {isModalOpen && (
                                 <div
                                     className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-50"
                                     onClick={closeModal}
@@ -208,7 +194,7 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                                         </div>
                                     </div>
                                 </div>
-                            )}
+                            )} */}
                         </React.Fragment>
                     ))}
                     <div
@@ -216,9 +202,13 @@ const RecommendHotel = ({ roomData, totalPrice }) => {
                         style={{ gridRowEnd: `span ${roomData.length}` }}
                     >
                         <p className="text-xs mb-2">
-                            {totalPrice.duration}, {totalPrice.guests}
+                            Cho {adult_count} người ở
                         </p>
-                        <p className="font-bold text-xl">{totalPrice.amount}</p>
+                        <p className="text-xs mb-2">
+                            
+                            Từ ngày {checkin} đến ngày {checkout}
+                        </p>
+                        <p className="font-bold text-xl">{roomData?.reduce((sum, item) => sum + item.total_price * item.count, 0).toLocaleString() || null} VND</p>
                         <p className="text-xs mb-7">Đã bao gồm thuế và phí</p>
                         <button className="mb-3 w-full cursor-pointer text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                             Đặt các lựa chọn của bạn
