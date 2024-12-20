@@ -3,6 +3,7 @@ import Button from "../../../components/Button";
 import { BsImageFill } from "react-icons/bs";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 const AddRoomType = ({ handleClose, handleFetch}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState([]);
@@ -48,7 +49,8 @@ const AddRoomType = ({ handleClose, handleFetch}) => {
         }
         setIsLoading(false);
     };
-
+const hotel_id = Cookies.get('hotel_id');
+console.log("hotel_id=", hotel_id);
     const onSubmit = async (e) => {
         e.preventDefault();
         for (let key in formData) {
@@ -76,7 +78,7 @@ const AddRoomType = ({ handleClose, handleFetch}) => {
                     bathroom_count: formData.bathroomCount,
                     adult_count: formData.adultCount,
                     child_count: formData.childCount,
-                    HotelId: 1,
+                    HotelId: hotel_id,
                     // description: formData.description,
                     images: imageUrl,
                 },

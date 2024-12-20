@@ -27,7 +27,7 @@ const HotelDetail = () => {
         const fetchHotelDetail = async () => {
           try {
             const data = await getHotelDetail(hotelId);
-            console.log("data", data)
+            console.log("dataaa", data)
             setHotelData(data);  
           } catch (error) {
             setError(error); 

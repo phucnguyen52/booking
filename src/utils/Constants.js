@@ -10,6 +10,7 @@ export const APP_ROUTER = {
     INFO: "/order/info",
     AUTH: "auth",
     LOGIN: "/auth/login",
+    LOGOUT: "/auth/logout",
     REGISTER: "/auth/register",
     REFRESH_TOKEN: "/auth/accessToken-generate",
     USER: "/user",
@@ -20,11 +21,12 @@ export const APP_ROUTER = {
     TIMELINE: "/admin/timeline",
     ALLROOM: "/admin/all-rooms",
     LISTORDERS: "/admin/list-orders",
-     BOOKINGDETAILS: "/admin/booking-details",
+    BOOKINGDETAILS: '/admin/booking-details/:bookingId',
     ROOM: "/admin/rooms",
     HOTELREGISTER: "/user/hotel/register",
     SERVICES: "/admin/services",
     ROOMPRICE: "/admin/rooms/price",
+    INFORHOTEL: "/admin/hotel"
 };
 
 export const QR = {

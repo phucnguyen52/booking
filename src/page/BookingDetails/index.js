@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import Content from "./Content";
 import axios from "axios";
+import { useParams } from "react-router";
+
 
 const BookingDetails = () => {
     const [items, setItems] = useState([]);
@@ -9,11 +11,13 @@ const BookingDetails = () => {
     const handleAddItem = (item) => {
         setItems([...items, item]);
     };
+    const {bookingId} = useParams()
+    console.log("BookingDetails", bookingId)
     const [data, setData] = useState([]);
     const fetchData = async () => {
         try {
             const response = await axios.get(
-                "http://localhost:8080/api/receptionist/bookings/2",
+                `http://localhost:8080/api/receptionist/bookings/${bookingId}`,
                 {
                     withCredentials: true,
                 }
@@ -29,12 +33,13 @@ const BookingDetails = () => {
     useEffect(() => {
         fetchData();
     }, []);
+    console.log("data", data);
     const outputData = {
-        ...data, // Sao chép status, message, và các trường khác
+        ...data,
         room: data.map((room) => {
-            // Nhóm các chi tiết theo room_name
+       
             const roomDetailsGrouped = room.details.reduce((acc, detail) => {
-                // Kiểm tra nếu tên phòng đã có trong accumulator chưa
+                
                 if (!acc[detail.room_name]) {
                     acc[detail.room_name] = {
                         room_name: detail.room_name,
@@ -42,15 +47,12 @@ const BookingDetails = () => {
                     };
                 }
 
-                // Loại bỏ room_name khỏi detail
                 const { room_name, ...rest } = detail;
 
-                // Thêm chi tiết vào nhóm phòng tương ứng
                 acc[detail.room_name].detail.push(rest);
                 return acc;
             }, {});
 
-            // Chuyển các nhóm chi tiết thành mảng
             const groupedDetails = Object.values(roomDetailsGrouped);
 
             return {
@@ -59,8 +61,31 @@ const BookingDetails = () => {
             };
         }),
     };
-    console.log("out",outputData)
-    const [bookingDetailId, setBookingDetailId] = useState(5);
+    
+
+  
+    
+    const getFirstBookingDetailId = (data) => {
+        if (Array.isArray(data) && data.length > 0) {
+            const firstRoom = data[0];
+            if (firstRoom.details && Array.isArray(firstRoom.details) && firstRoom.details.length > 0) {
+                return firstRoom.details[0].booking_detail_id;
+            }
+        }
+        return null;
+    };
+
+  
+    const initialBookingDetailId = getFirstBookingDetailId(data);
+
+    const [bookingDetailId, setBookingDetailId] = useState(initialBookingDetailId);
+    useEffect(() => {
+        const firstBookingDetailId = getFirstBookingDetailId(data);
+        if (firstBookingDetailId !== null) {
+            setBookingDetailId(firstBookingDetailId);
+        }
+    }, [data]);
+
     const handleSetId = (id) => {
         setBookingDetailId(id);
     };

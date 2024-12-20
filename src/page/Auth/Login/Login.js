@@ -36,7 +36,14 @@ function Login() {
                     toast.success("Đăng nhập thành công", {
                         autoClose: 500,
                     });
-                    navigate("/home");
+                    const role = Cookies.get('role')
+                    console.log("role",role)
+                    if(role === 'customer') {
+                        navigate("/home")
+                    }else {
+                        navigate("/admin");
+                    }
+                    
                 } else {
                     console.error("Đăng nhập không thành công");
                     toast.error("Bạn không phải là người dùng");

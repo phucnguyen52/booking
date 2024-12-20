@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal } from 'antd';
 import { bookingService } from '../../service/bookingService';
+import { useNavigate } from 'react-router';
 
 const ModalDetail = (props) => {
    const { isModalOpen, setIsModalOpen, bookingId, bookingDetailId } = props
@@ -33,10 +34,12 @@ const ModalDetail = (props) => {
       }
       if (bookingId && bookingDetailId) fetchBooking()
    }, [bookingId, bookingDetailId]);
-
-
+console.log(bookingId, bookingDetailId)
+const navigate = useNavigate()
    const handleOk = () => {
       setIsModalOpen(false);
+      console.log("333",bookingId)
+      navigate(`/admin/booking-details/${bookingId}`)
    };
 
    return (

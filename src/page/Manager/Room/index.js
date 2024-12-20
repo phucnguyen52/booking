@@ -441,7 +441,7 @@ const Room = () => {
         setIsModalOpenAddRoom(false);
     };
     return (
-        <div>
+        <div className="">
             <div className="flex flex-col mb-4">
                 <div className="flex mb-4 gap-2">
                     <button

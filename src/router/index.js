@@ -7,6 +7,7 @@ import HomePage from "../page/Home/HomePage";
 import BookingPage from "../page/Booking/BookingPage";
 import Login from "../page/Auth/Login/Login";
 import Register from "../page/Auth/Register/Register";
+import Logout from "../page/Auth/Logout/Logout";
 import Order from "../page/Order/Order";
 import OrderDetail from "../page/Order/OrderDetail";
 import Payment from "../page/Order/Payment";
@@ -14,7 +15,7 @@ import HotelDetail from "../page/HotelDetail/index";
 import Timeline from "../components/Calendar/Timeline";
 import BookingDetails from "../page/BookingDetails";
 import AllRoom from "../page/RoomHotel/AllRoom";
-import Information from "../page/Order/Information";
+import InformationHotel from "../page/InformationHotel";
 import PrivateRoutes from "./PrivateRoutes";
 import ListOrder from "../page/Manager/Order";
 import Room from "../page/Manager/Room";
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
                 path: APP_ROUTER.BOOKINGDETAILS,
                 element: <BookingDetails />,
             },
+            {
+                path: APP_ROUTER.INFORHOTEL,
+                element: <InformationHotel />,
+            },
         ],
     },
     {
@@ -118,6 +123,10 @@ const router = createBrowserRouter([
             {
                 path: APP_ROUTER.REGISTER,
                 element: <Register />,
+            },
+            {
+                path: APP_ROUTER.LOGOUT,
+                element: <Logout />,
             },
         ],
     },
