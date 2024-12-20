@@ -113,7 +113,7 @@ function Register() {
                 passwordError: "Vui lòng nhập mật khẩu của bạn!",
             }));
         } else if (
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?/;.&])[A-Za-z\d@$!%*?/;.&]{8,}$/.test(
                 formData.password
             )
         ) {
@@ -204,7 +204,7 @@ function Register() {
         if (IsValidate()) {
             const requestBody = {
                 // role: formData.role,
-                fullName: formData.name,
+                fullname: formData.name,
                 email: formData.email,
                 password: formData.password,
                 phone: formData.phone,

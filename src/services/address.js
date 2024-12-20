@@ -5,7 +5,7 @@ export const apiGetPublicProvinces = () =>
         try {
             const response = await axiosDefault({
                 method: "get",
-                url: "https://vapi.vnappmob.com/api/province/",
+                url: "https://vapi.vnappmob.com/api/v2/province",
             });
             resolve(response);
         } catch (error) {
@@ -17,7 +17,7 @@ export const apiGetPublicDistrict = (provinceId) =>
         try {
             const response = await axiosDefault({
                 method: "get",
-                url: `https://vapi.vnappmob.com/api/province/district/${provinceId}`,
+                url: `https://vapi.vnappmob.com/api/v2/province/district/${provinceId}`,
             });
             resolve(response);
         } catch (error) {
@@ -29,7 +29,7 @@ export const apiGetPublicWard = (districtID) =>
         try {
             const response = await axiosDefault({
                 method: "get",
-                url: `https://vapi.vnappmob.com/api/province/ward/${districtID}`,
+                url: `https://vapi.vnappmob.com/api/v2/province/ward/${districtID}`,
             });
             resolve(response);
         } catch (error) {

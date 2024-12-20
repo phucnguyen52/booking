@@ -45,6 +45,7 @@ function Login() {
                 ) {
               
                     Cookies.set("token", response.data.token);
+                    Cookies.set("role", response.data.role);
                     toast.success("Đăng nhập thành công", {
                         autoClose: 500,
                     });

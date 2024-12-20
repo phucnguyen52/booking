@@ -5,7 +5,7 @@ const Button = ({
     handleClick,
     children,
     type = "button",
-    color,
+    color="",
     htmlType,
     className = "",
     size = "default",

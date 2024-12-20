@@ -4,7 +4,11 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { CiUser, CiCalendar, CiLocationOn } from "react-icons/ci";
 import { IoIosArrowDown } from "react-icons/io";
 import { GrAdd, GrSubtract } from "react-icons/gr";
-
+import { TbBrandBooking } from "react-icons/tb";
+import Button from "../Button";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { FaUserCircle } from "react-icons/fa";
 const Header = () => {
     const [place, setPlace] = useState({});
     const [locationSuggestions, setLocationSuggestions] = useState([]);
@@ -111,8 +115,99 @@ const Header = () => {
         e.preventDefault();
         console.log("Searching for:", place, date, detailRoom);
     };
+    const navigate = useNavigate()
+    const handleSubmitRegisterHotel = () => {
+
+        navigate('/user/hotel/register')
+    };
+    const handleSubmitLogin = () => {
+
+        navigate('/auth/login')
+    };
+    const handleSubmitRegister = () => {
+
+        navigate('/auth/register')
+    };
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+    const handleSubmitInfor = () => {
+        setDropdownVisible(!isDropdownVisible);
+       
+    };
+   
+
+  
+
+  const handleUserInfo = () => {
+    console.log("Hiển thị thông tin người dùng");
+ 
+  };
+
+  const handleOrderInfo = () => {
+   
+    navigate('/user/orders/customer');
+  };
+
+  const handleHotelInfo = () => {
+    console.log("Hiển thị thông tin khách sạn");
+    
+  };
+ 
+  const handleLogout = () => {
+    setDropdownVisible(!isDropdownVisible);
+    localStorage.clear(); 
+    Cookies.remove('token');
+    Cookies.remove('role');
+    navigate('/home');
+    window.location.reload();
+};
+
+    const checkToken = Cookies.get('token')
     return (
         <div>
+            <div className="py-5 px-32 bg-blue-700/80 mb-5 flex items-center justify-between">
+                <div className="flex gap-2 items-center">
+                    <div><TbBrandBooking className="w-10 h-10 text-white"/></div>
+                    <div className="font-bold text-2xl text-white">Booking</div>
+                </div>
+                <div className="flex items-center gap-1 ">
+                    <Button children="Đăng ký chỗ nghĩ của quý vị" size="xs" handleClick={handleSubmitRegisterHotel}></Button>
+                    <div className="relative inline-block"> 
+                    <Button children={<FaUserCircle className="w-4 h-4"/>} size="xs" handleClick={handleSubmitInfor} className={checkToken ? '' : 'hidden'}></Button>
+                    {isDropdownVisible && (
+                        <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-300 shadow-lg rounded-md z-10">
+                            <ul className="divide-y divide-gray-200">
+                                <li
+                                className="p-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={handleUserInfo}
+                                >
+                                Thông tin người dùng
+                                </li>
+                                <li
+                                className="p-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={handleOrderInfo}
+                                >
+                                Thông tin đặt phòng
+                                </li>
+                                <li
+                                className="p-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={handleHotelInfo}
+                                >
+                                Thông tin khách sạn
+                                </li>
+                                <li
+                                className="p-2 hover:bg-gray-100 cursor-pointer text-red-500"
+                                onClick={handleLogout}
+                                >
+                                Đăng xuất
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+                    </div>
+                    <Button children="Đăng nhập" size="xs" handleClick={handleSubmitLogin} className={checkToken ? 'hidden' : ''}></Button>
+                    <Button children="Đăng kí" size="xs" className={checkToken ? 'hidden' : ''} handleClick={handleSubmitRegister}></Button>
+                </div>
+            </div>
             <div className="mx-32 grid grid-rows-1 grid-cols-11 gap-1 items-stretch justify-stretch mb-4 p-1  bg-yellow-500 rounded-lg">
                 <div className="relative col-span-4 bg-white rounded-lg p-2" >
                     <div className="flex gap-2 w-full">
