@@ -47,7 +47,7 @@ const HotelDetail = () => {
         if (data) setEmptyRoom(data)
     }
     const fetchRoomSuggest = async () => {
-        const data = await roomService.getSuggestRoom(detailSearch.checkin, detailSearch.checkout, detailSearch.adult_count)
+        const data = await roomService.getSuggestRoom(detailSearch.checkin, detailSearch.checkout, detailSearch.adult_count, hotelId)
         if (data) setSuggestedRooms(data[0])
     }
     const fetchHotelDetail = async () => {

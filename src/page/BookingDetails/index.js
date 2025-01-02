@@ -3,125 +3,126 @@ import Sidebar from "./Sidebar";
 import Content from "./Content";
 import axios from "axios";
 import { useParams } from "react-router";
+import { bookingService } from "../../service/bookingService";
 
 
 const BookingDetails = () => {
-    const [items, setItems] = useState([]);
+    const [selectedService, setSelectedService] = useState([]);
+    const { bookingId } = useParams()
+    const [data, setData] = useState({});
+    const [bookingDetail, setBookingDetail] = useState();
+    const [total, setTotal] = useState({
+        totalService: 0,
+        totalPaid: 0,
+        service: {},
+        paid: {},
+    });
 
-    const handleAddItem = (item) => {
-        setItems([...items, item]);
-    };
-    const {bookingId} = useParams()
-    console.log("BookingDetails", bookingId)
-    const [data, setData] = useState([]);
     const fetchData = async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:8080/api/receptionist/bookings/${bookingId}`,
-                {
-                    withCredentials: true,
-                }
-            );
-
-            if (response.data.status === true) {
-                setData(response.data.room);
+        if (bookingId) {
+            const data = await bookingService.getBookingDetail(bookingId)
+            if (data) {
+                setData(data)
+                if(!bookingDetail) setBookingDetail(data.details[0] || null)
+                else setBookingDetail(data.details.find(
+                    (detail) => detail.booking_detail_id === bookingDetail.booking_detail_id) || null
+                );
             }
-        } catch (error) {
-            console.error("Lỗi khi fetch dữ liệu:", error);
         }
     };
+
     useEffect(() => {
-        fetchData();
-    }, []);
-    console.log("data", data);
-    const outputData = {
+        fetchData()
+    }, [bookingId])
+
+    const groupRoom = () => ({
         ...data,
-        room: data.map((room) => {
-       
-            const roomDetailsGrouped = room.details.reduce((acc, detail) => {
-                
+        details: data?.details ? Object.values(
+            data.details.reduce((acc, detail) => {
                 if (!acc[detail.room_name]) {
                     acc[detail.room_name] = {
                         room_name: detail.room_name,
                         detail: [],
                     };
                 }
-
-                const { room_name, ...rest } = detail;
-
-                acc[detail.room_name].detail.push(rest);
+                acc[detail.room_name].detail.push(detail);
                 return acc;
-            }, {});
+            }, {})
+        ) : []
+    })
 
-            const groupedDetails = Object.values(roomDetailsGrouped);
+    const handleBookingDetail = (detail) => {
+        setBookingDetail(detail);
+    };
 
-            return {
-                ...room,
-                details: groupedDetails,
+    const handleServiceSelection = (service, quantity) => {
+        const index = selectedService.findIndex(
+            (item) =>
+                item.BookingDetailId === bookingDetail.booking_detail_id &&
+                item.ServiceId === service.id
+        );
+        if (index === -1) {
+            setSelectedService([
+                ...selectedService,
+                {
+                    BookingDetailId: bookingDetail.booking_detail_id,
+                    ServiceId: service.id,
+                    quantity: 1,
+                    price: service.price,
+                    total_price: service.price,
+                    service_name: service.service_name
+                },
+            ]);
+        } else {
+            const updatedService = [...selectedService];
+            updatedService[index] = {
+                ...updatedService[index],
+                quantity: quantity,
+                total_price: updatedService[index].price * (quantity || 1),
             };
-        }),
-    };
-    
-
-  
-    
-    const getFirstBookingDetailId = (data) => {
-        if (Array.isArray(data) && data.length > 0) {
-            const firstRoom = data[0];
-            if (firstRoom.details && Array.isArray(firstRoom.details) && firstRoom.details.length > 0) {
-                return firstRoom.details[0].booking_detail_id;
-            }
+            setSelectedService(updatedService);
         }
-        return null;
     };
 
-  
-    const initialBookingDetailId = getFirstBookingDetailId(data);
-
-    const [bookingDetailId, setBookingDetailId] = useState(initialBookingDetailId);
     useEffect(() => {
-        const firstBookingDetailId = getFirstBookingDetailId(data);
-        if (firstBookingDetailId !== null) {
-            setBookingDetailId(firstBookingDetailId);
-        }
-    }, [data]);
+        const totalService = selectedService.reduce((acc, { BookingDetailId, total_price }) => {
+            acc[BookingDetailId] = (acc[BookingDetailId] || 0) + total_price
+            return acc
+        }, {})
+        const totalPaid = data?.details?.reduce((acc, detail) => {
+            const serviceTotal = detail.services
+                ? detail.services.reduce((sum, service) => sum + service.price * service.quantity, 0)
+                : 0;
+            acc[detail.booking_detail_id] = detail.price + serviceTotal;
 
-    const handleSetId = (id) => {
-        setBookingDetailId(id);
-    };
-    const [selectedService, setSelectedService] = useState(null);
+            return acc;
+        }, {});
+        setTotal({
+            service: totalService || {},
+            paid: totalPaid || {},
+            totalService: totalService ? Object.values(totalService).reduce((sum, value) => sum + value, 0) : 0,
+            totalPaid: totalPaid ? Object.values(totalPaid).reduce((sum, value) => sum + value, 0) : 0,
+        })
+    }, [selectedService, data]);
 
-    const handleServiceSelection = (service) => {
-        setSelectedService(service);
-    };
-    const [total, setTotal] = useState(0);
-    const [remainingTotal, setRemainingTotal] = useState(0);
-    const [roomTotals, setRoomTotals] = useState([]);
-    const updateTotals = (totalAmount, remainingAmount,roomTotal) => {
-      setTotal(totalAmount);
-      setRemainingTotal(remainingAmount);
-      setRoomTotals(roomTotal);
-    };
-    console.log('updateTotals', total, remainingTotal, roomTotals);
+    console.log(bookingDetail?.booking_detail_id, selectedService)
     return (
         <div className="flex max-h-screen p-3 gap-3 w-full">
             <Sidebar
-                onAddItem={handleAddItem}
-                data={outputData}
-                handleSetId={handleSetId}
+                data={groupRoom()}
+                handleBookingDetail={handleBookingDetail}
                 onSelectService={handleServiceSelection}
-                total={total} 
-                remainingTotal={remainingTotal}
-                roomTotals={roomTotals} 
+                total={total}
             />
             <Content
-                items={items}
                 className="h-full"
                 data={data}
-                idBookingDetail={bookingDetailId}
+                bookingDetail={bookingDetail}
                 selectedService={selectedService}
+                changeQuantityService={handleServiceSelection}
+                deleteServices={() => setSelectedService([])}
                 handleFetch={fetchData}
-                onUpdateTotals={updateTotals}
+                total={total}
             />
         </div>
     );

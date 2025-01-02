@@ -12,10 +12,10 @@ export const getSchedule  = async(start, end, status) => {
    }
 }
 export const getBookingDetail  = async(id) => {
-   if(!id) return
+   // if(!id) return
    try {
       const response = await apiConfig.get(`/receptionist/bookings/${id}`)
-      return response.data.room[0]
+      return response.data.room[0] || {}
    } catch (error) {
       console.log("Error getSchedule: " + error)
       return {}

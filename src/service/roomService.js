@@ -1,9 +1,10 @@
 import apiConfig from "./axiosConfig"
 
-export const getSuggestRoom = async (checkin, checkout, num) =>{
+export const getSuggestRoom = async (checkin, checkout, num, hotelId) =>{
    if(!(checkin||checkout||num)) return
+   const hotel = hotelId ? hotelId : 1
    try {
-      const response = await apiConfig.get(`/customer/room/1/suggest?start='${checkin}'&end='${checkout}'&num=${num}`)
+      const response = await apiConfig.get(`/customer/room/${hotel}/suggest?start='${checkin}'&end='${checkout}'&num=${num}`)
       // console.log("suggest",response.data.room)
       return response.data.room
    } catch (error) {

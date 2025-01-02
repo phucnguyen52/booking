@@ -5,7 +5,10 @@ import { IoIosRemove, IoIosAdd } from "react-icons/io";
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { roomService } from '../../service/roomService';
+import Cookies from "js-cookie";
 const { RangePicker } = DatePicker;
+
+
 
 const ModalRoom = (props) => {
   const { isModalOpen, setIsModalOpen, setDataOrder, dataOrder } = props
@@ -13,8 +16,9 @@ const ModalRoom = (props) => {
   const [emptyRoom, setEmptyRoom] = useState([])
 
   const fetchData = async () => {
-    const suggest = await roomService.getSuggestRoom(dataOrder.booking.checkin, dataOrder.booking.checkout, dataOrder.booking.adult_count)
-    const empty = await roomService.getEmptyRoombyUser(dataOrder.booking.checkin, dataOrder.booking.checkout, dataOrder.booking.adult_count)
+    const hotelId = Cookies.get("hotel_id")
+    const suggest = await roomService.getSuggestRoom(dataOrder.booking.checkin, dataOrder.booking.checkout, dataOrder.booking.adult_count, hotelId)
+    const empty = await roomService.getEmptyRoombyUser(dataOrder.booking.checkin, dataOrder.booking.checkout, dataOrder.booking.adult_count, hotelId)
     if (suggest) setSuggestedRooms(suggest)
     if (empty) setEmptyRoom(empty)
   }

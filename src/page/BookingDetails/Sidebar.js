@@ -2,40 +2,31 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { GrFormPrevious, GrFormNext } from "react-icons/gr";
 import { FaCaretDown, FaCaretRight } from "react-icons/fa";
+import { serviceService } from "../../service/serviceService";
 
-const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,roomTotals }) => {
+const Sidebar = ({ data, handleBookingDetail, onSelectService, total }) => {
     const [services, setServices] = useState([]);
-    const fetchServices = async () => {
-        try {
-            const response = await axios.get(
-                "http://localhost:8080/api/receptionist/services",
-                {
-                    withCredentials: true,
-                }
-            );
+    const [activeRooms, setActiveRooms] = useState({});
+    const [currentStatus, setCurrentStatus] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
 
-            if (response.data.status === true) {
-                setServices(response.data.services);
-            }
-        } catch (error) {
-            console.error("Lỗi khi fetch dữ liệu:", error);
-        }
-    };
     useEffect(() => {
+        const fetchServices = async () => {
+            const data = await serviceService.getServices()
+            setServices(data);
+        };
         fetchServices();
     }, []);
-   
-    
-    const [currentStatus, setCurrentStatus] = useState(null);
+
+
+
     const handleStatusClick = (status) => {
         setCurrentStatus(status);
         setActiveRooms({})
     };
-    const [currentPage, setCurrentPage] = useState(1);
+
     const itemsPerPage = 12;
-
     const totalPages = Math.ceil(services.length / itemsPerPage);
-
     const paginatedServices = services.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
@@ -47,19 +38,11 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
         }
     };
 
-    
-    const [activeRooms, setActiveRooms] = useState({});
     const handleRoomClick = (roomName) => {
         setActiveRooms((prev) => ({
             ...prev,
             [roomName]: !prev[roomName],
         }));
-    };
-    const handleRoomDetailClick = (bookingDetailId) => {
-        handleSetId(bookingDetailId); 
-    };
-    const handleServiceClick = (service) => {
-        onSelectService(service);
     };
 
     return (
@@ -67,9 +50,7 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
             <div className="flex gap-2 mb-4">
                 <a
                     onClick={() => handleStatusClick(1)}
-                    className={`font-semibold group text-black transition-all duration-300 ease-in-out focus:text-green-700 ${
-                        currentStatus === 1 && "text-green-700"
-                    }`}
+                    className={`font-semibold group text-black transition-all duration-300 ease-in-out focus:text-green-700 ${currentStatus === 1 && "text-green-700"}`}
                     href="#"
                 >
                     <span className="bg-gradient-to-r from-green-700 to-green-700 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 ease-out hover:text-green-700 group-hover:bg-[length:100%_2px]">
@@ -78,9 +59,7 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
                 </a>
                 <a
                     onClick={() => handleStatusClick(2)}
-                    className={`font-semibold group text-black transition-all duration-300 ease-in-out focus:text-green-700 ${
-                        currentStatus === 2 && "text-green-700"
-                    }`}
+                    className={`font-semibold group text-black transition-all duration-300 ease-in-out focus:text-green-700 ${currentStatus === 2 && "text-green-700"}`}
                     href="#"
                 >
                     <span className="bg-gradient-to-r from-green-700 to-green-700 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 ease-out hover:text-green-700 group-hover:bg-[length:100%_2px]">
@@ -103,72 +82,59 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
                     className="w-full outline-none text-sm"
                 />
             </div>)}
-            
+
             <div className="">
                 {currentStatus === 2 ? (
                     <div>
-                        {data.room.map((room) => (
-                            <div key={room.booking_id} className="space-y-2">
-                                {room.details.map((roomDetail) => (
-                                    <div key={roomDetail.booking_detail_id}>
-                                        <div
-                                            className="flex items-center gap-2 p-4 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200"
-                                            onClick={() =>
-                                                handleRoomClick(
-                                                    roomDetail.room_name
-                                                )
-                                            }
-                                        >
-                                            {activeRooms[
-                                                roomDetail.room_name
-                                            ] ? (
-                                                <FaCaretDown />
-                                            ) : (
-                                                <FaCaretRight />
-                                            )}
-                                            <h3 className="text-base font-semibold">
-                                                {roomDetail.room_name}
-                                            </h3>
-                                        </div>
-                                        {activeRooms[roomDetail.room_name] && roomDetail.detail && roomDetail.detail.length > 0 && (
-                                            <div className="mt-2 space-y-2 pl-4">
-                                                {roomDetail.detail.map((detail, index) => {
-                                            
-                                                    const roomTotal = roomTotals.find(
-                                                        (room) => room.bookingId === detail.booking_detail_id
-                                                    );
+                        {data?.details.map((roomDetail) => (
+                            <div key={roomDetail.booking_detail_id}>
+                                <div
+                                    className="flex items-center gap-2 p-4 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200"
+                                    onClick={() =>
+                                        handleRoomClick(
+                                            roomDetail.room_name
+                                        )
+                                    }
+                                >
+                                    {activeRooms[
+                                        roomDetail.room_name
+                                    ] ? (
+                                        <FaCaretDown />
+                                    ) : (
+                                        <FaCaretRight />
+                                    )}
+                                    <h3 className="text-base font-semibold">
+                                        {roomDetail.room_name}
+                                    </h3>
+                                </div>
+                                {activeRooms[roomDetail.room_name] && roomDetail.detail && roomDetail.detail.length > 0 && (
+                                    <div className="mt-2 space-y-2 pl-4">
+                                        {roomDetail.detail.map((detail, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="hover:scale-x-105 transition-transform duration-200 p-3 bg-gray-50 border-l-4 border-blue-500 rounded-md flex justify-between items-center"
+                                                    onClick={() =>
+                                                        handleBookingDetail(detail)
+                                                    }
+                                                >
+                                                    <div className="text-sm text-gray-600 flex items-center gap-1">
+                                                        <div>Số phòng:</div>
+                                                        <div className="font-medium">
+                                                            {detail.room_number}
+                                                        </div>
+                                                    </div>
 
-                                                    return (
-                                                        <div
-                                                            key={index}
-                                                            className="hover:scale-x-105 transition-transform duration-200 p-3 bg-gray-50 border-l-4 border-blue-500 rounded-md flex justify-between items-center"
-                                                            onClick={() =>
-                                                                handleRoomDetailClick(detail.booking_detail_id)
-                                                            }
-                                                        >
-                                                        <div className="text-sm text-gray-600 flex items-center gap-1">
-                                                            <div>Số phòng:</div>
-                                                            <div className="font-medium">
-                                                                {detail.room_number}
-                                                            </div>
-                                                        </div>
-                                                    
-                                                        {roomTotal && (
-                                                            <div className="text-sm text-gray-600">
-                                                            
-                                                                <span className="font-medium text-blue-600">
-                                                                    {roomTotal.total.toLocaleString()} 
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
+                                                    <div className="text-sm text-gray-600">
+                                                        <span className="font-medium text-blue-600">
+                                                            {((total.service[detail.booking_detail_id] || 0) + (total.paid[detail.booking_detail_id] || 0)).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )
                                         )}
-
                                     </div>
-                                ))}
+                                )}
+
                             </div>
                         ))}
                     </div>
@@ -178,9 +144,9 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
                             <div
                                 key={index}
                                 className="border rounded-lg p-2 shadow-md flex items-center gap-2 bg-gray-50 hover:scale-110 transition-transform duration-200"
-                                onClick={() => handleServiceClick(service)}
+                                onClick={() => onSelectService(service)}
                             >
-                               
+
                                 <div>
                                     <h3 className="font-semibold text-xs">
                                         {service.service_name} {service.unit}
@@ -199,11 +165,10 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
             ) : (
                 <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-4 gap-2">
                     <button
-                        className={`p-2 rounded-full ${
-                            currentPage === 1
-                                ? "invisible"
-                                : "hover:bg-gray-200"
-                        }`}
+                        className={`p-2 rounded-full ${currentPage === 1
+                            ? "invisible"
+                            : "hover:bg-gray-200"
+                            }`}
                         onClick={() => goToPage(currentPage - 1)}
                         disabled={currentPage === 1}
                     >
@@ -214,20 +179,18 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
                             <button
                                 key={i}
                                 onClick={() => goToPage(i + 1)}
-                                className={`w-2 h-2 rounded-full mx-1 transition-all duration-300 ease-linear ${
-                                    currentPage === i + 1
-                                        ? "bg-green-600 w-3 h-3"
-                                        : "bg-gray-300"
-                                }`}
+                                className={`w-2 h-2 rounded-full mx-1 transition-all duration-300 ease-linear ${currentPage === i + 1
+                                    ? "bg-green-600 w-3 h-3"
+                                    : "bg-gray-300"
+                                    }`}
                             ></button>
                         ))}
                     </div>
                     <button
-                        className={`p-2 rounded-full ${
-                            currentPage === totalPages
-                                ? "invisible"
-                                : "hover:bg-gray-200"
-                        }`}
+                        className={`p-2 rounded-full ${currentPage === totalPages
+                            ? "invisible"
+                            : "hover:bg-gray-200"
+                            }`}
                         onClick={() => goToPage(currentPage + 1)}
                     >
                         <GrFormNext className="text-gray-500 w-5 h-5" />
@@ -236,24 +199,23 @@ const Sidebar = ({ data,handleSetId, onSelectService, total, remainingTotal,room
             )}
             {currentStatus === 2 ? (
                 <div className="shadow-inner absolute bottom-0 left-0 right-0 flex justify-end items-center gap-2 bg-white rounded-b-xl "><div className=" rounded-b-xl bg-white shadow-current text-sm text-green-700 font-semibold">
-                        <table className="table-auto w-full border-collapse">
-                            <tbody>
-                                <tr className="">
-                                    <td className="p-2 text-left">Tổng cộng</td>
-                                    <td className="p-2 text-right">
-                                       {total.toLocaleString()}
-                                    </td>
-                                </tr>
-                                <tr className="">
-                                    <td className="p-2 pt-0 text-left">Tổng cộng cần thanh toán</td>
-                                    <td className="p-2 pt-0 text-right">
-                                    {remainingTotal.toLocaleString()}
-                                    </td>
-                                </tr>
-                               
-                            </tbody>
-                        </table>
-                    </div></div>
+                    <table className="table-auto w-full border-collapse">
+                        <tbody>
+                            <tr className="">
+                                <td className="p-2 text-left">Tổng cộng</td>
+                                <td className="p-2 text-right">
+                                    {(total.totalService + total.totalPaid).toLocaleString()}
+                                </td>
+                            </tr>
+                            <tr className="">
+                                <td className="p-2 pt-0 text-left">Tổng cộng cần thanh toán</td>
+                                <td className="p-2 pt-0 text-right">
+                                    {total.totalService.toLocaleString()}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div></div>
             ) : (
                 ""
             )}

@@ -38,7 +38,6 @@ console.log(bookingId, bookingDetailId)
 const navigate = useNavigate()
    const handleOk = () => {
       setIsModalOpen(false);
-      console.log("333",bookingId)
       navigate(`/admin/booking-details/${bookingId}`)
    };
 
