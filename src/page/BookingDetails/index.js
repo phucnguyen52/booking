@@ -9,6 +9,7 @@ const BookingDetails = () => {
     const [items, setItems] = useState([]);
 
     const handleAddItem = (item) => {
+        console.log("Add item to booking", item);
         setItems([...items, item]);
     };
     const {bookingId} = useParams()

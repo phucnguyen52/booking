@@ -9,644 +9,6 @@ import { Link } from "react-router-dom";
 import { RiListUnordered } from "react-icons/ri";
 import Button from "../../components/Button";
 const OrdersCustomer = () => {
-    const data = [
-        {
-            order_info: {
-                hotel_name: "Khách sạn Đỗ Bá",
-                booking_time: "2024-11-30T08:00:00",
-                check_in_time: "2024-11-30T14:00:00",
-                check_out_time: "2024-12-01T12:00:00",
-                status: "ĐÃ ĐẶT TRƯỚC",
-                rooms: [
-                    {
-                        room_code: "R001",
-                        room_name: "Phòng Deluxe",
-                        quantity: 1,
-                        unit_price: 1000000,
-                        discount: 100000,
-                        total_price: 900000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R002",
-                        room_name: "Phòng Standard",
-                        quantity: 2,
-                        unit_price: 700000,
-                        discount: 50000,
-                        total_price: 1350000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S001",
-                    room_code: "R001",
-                    service_name: "Bữa sáng",
-                    quantity: 1,
-                    unit_price: 100000,
-                    discount: 20000,
-                    total_price: 80000,
-                    payment_status: "Chưa thanh toán",
-                },
-                {
-                    service_code: "S002",
-                    room_code: "R002",
-                    service_name: "Dịch vụ giặt ủi",
-                    quantity: 2,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 90000,
-                    payment_status: "Chưa thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Mường Thanh",
-                booking_time: "2024-11-29T14:15:00",
-                check_in_time: "2024-11-29T15:00:00",
-                check_out_time: "2024-11-30T11:00:00",
-                status: "ĐÃ TRẢ",
-                rooms: [
-                    {
-                        room_code: "R003",
-                        room_name: "Phòng Suite",
-                        quantity: 1,
-                        unit_price: 1500000,
-                        discount: 150000,
-                        total_price: 1350000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R004",
-                        room_name: "Phòng Executive",
-                        quantity: 1,
-                        unit_price: 1200000,
-                        discount: 100000,
-                        total_price: 1100000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S003",
-                    room_code: "R003",
-                    service_name: "Dịch vụ spa",
-                    quantity: 1,
-                    unit_price: 300000,
-                    discount: 50000,
-                    total_price: 250000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S004",
-                    room_code: "R004",
-                    service_name: "Chuyến xe đưa đón sân bay",
-                    quantity: 1,
-                    unit_price: 150000,
-                    discount: 20000,
-                    total_price: 130000,
-                    payment_status: "Đã thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Đỗ Phước",
-                booking_time: "2024-11-28T10:30:00",
-                check_in_time: "2024-11-28T14:00:00",
-                check_out_time: "2024-11-29T12:00:00",
-                status: "ĐÃ TRẢ",
-                rooms: [
-                    {
-                        room_code: "R005",
-                        room_name: "Phòng Junior",
-                        quantity: 2,
-                        unit_price: 800000,
-                        discount: 50000,
-                        total_price: 1500000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R006",
-                        room_name: "Phòng Luxury",
-                        quantity: 1,
-                        unit_price: 1800000,
-                        discount: 200000,
-                        total_price: 1600000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S005",
-                    room_code: "R005",
-                    service_name: "Bữa sáng",
-                    quantity: 2,
-                    unit_price: 100000,
-                    discount: 15000,
-                    total_price: 170000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S006",
-                    room_code: "R006",
-                    service_name: "Dịch vụ spa",
-                    quantity: 1,
-                    unit_price: 350000,
-                    discount: 30000,
-                    total_price: 320000,
-                    payment_status: "Đã thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn cao cấp",
-                booking_time: "2024-11-27T19:00:00",
-                check_in_time: "2024-11-27T20:00:00",
-                check_out_time: "2024-11-28T11:00:00",
-                status: "ĐÃ ĐẶT TRƯỚC",
-                rooms: [
-                    {
-                        room_code: "R007",
-                        room_name: "Phòng Executive",
-                        quantity: 1,
-                        unit_price: 1500000,
-                        discount: 200000,
-                        total_price: 1300000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R008",
-                        room_name: "Phòng Ocean View",
-                        quantity: 1,
-                        unit_price: 2000000,
-                        discount: 250000,
-                        total_price: 1750000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S007",
-                    room_code: "R007",
-                    service_name: "Dịch vụ giặt ủi",
-                    quantity: 2,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 90000,
-                    payment_status: "Chưa thanh toán",
-                },
-                {
-                    service_code: "S008",
-                    room_code: "R008",
-                    service_name: "Chuyến xe đưa đón sân bay",
-                    quantity: 1,
-                    unit_price: 150000,
-                    discount: 0,
-                    total_price: 150000,
-                    payment_status: "Chưa thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Du lịch Á Châu",
-                booking_time: "2024-11-26T09:30:00",
-                check_in_time: "2024-11-26T14:00:00",
-                check_out_time: "2024-11-27T12:00:00",
-                status: "ĐANG SỬ DỤNG",
-                rooms: [
-                    {
-                        room_code: "R009",
-                        room_name: "Phòng Garden View",
-                        quantity: 1,
-                        unit_price: 900000,
-                        discount: 50000,
-                        total_price: 850000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R010",
-                        room_name: "Phòng Penthouse",
-                        quantity: 1,
-                        unit_price: 2500000,
-                        discount: 300000,
-                        total_price: 2200000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S009",
-                    room_code: "R009",
-                    service_name: "Bữa sáng",
-                    quantity: 1,
-                    unit_price: 100000,
-                    discount: 20000,
-                    total_price: 80000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S010",
-                    room_code: "R010",
-                    service_name: "Dịch vụ xông hơi",
-                    quantity: 2,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 90000,
-                    payment_status: "Chưa thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Đỗ Phủ",
-                booking_time: "2024-11-25T15:30:00",
-                check_in_time: "2024-11-25T16:00:00",
-                check_out_time: "2024-11-26T10:00:00",
-                status: "ĐÃ TRẢ",
-                rooms: [
-                    {
-                        room_code: "R011",
-                        room_name: "Phòng Superior",
-                        quantity: 3,
-                        unit_price: 950000,
-                        discount: 100000,
-                        total_price: 2850000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S011",
-                    room_code: "R011",
-                    service_name: "Dịch vụ xông hơi",
-                    quantity: 3,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 135000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S012",
-                    room_code: "R011",
-                    service_name: "Bữa sáng",
-                    quantity: 3,
-                    unit_price: 100000,
-                    discount: 15000,
-                    total_price: 255000,
-                    payment_status: "Đã thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Đỗ Bá",
-                booking_time: "2024-11-24T14:00:00",
-                check_in_time: "2024-11-24T18:00:00",
-                check_out_time: "2024-11-25T10:00:00",
-                status: "ĐÃ ĐẶT TRƯỚC",
-                rooms: [
-                    {
-                        room_code: "R012",
-                        room_name: "Phòng Luxury",
-                        quantity: 1,
-                        unit_price: 1800000,
-                        discount: 200000,
-                        total_price: 1600000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R013",
-                        room_name: "Phòng Suite",
-                        quantity: 2,
-                        unit_price: 1500000,
-                        discount: 150000,
-                        total_price: 2700000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S013",
-                    room_code: "R012",
-                    service_name: "Dịch vụ spa",
-                    quantity: 1,
-                    unit_price: 350000,
-                    discount: 50000,
-                    total_price: 300000,
-                    payment_status: "Chưa thanh toán",
-                },
-                {
-                    service_code: "S014",
-                    room_code: "R013",
-                    service_name: "Dịch vụ giặt ủi",
-                    quantity: 3,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 135000,
-                    payment_status: "Chưa thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Resort",
-                booking_time: "2024-11-23T13:00:00",
-                check_in_time: "2024-11-23T15:00:00",
-                check_out_time: "2024-11-24T11:00:00",
-                status: "ĐÃ TRẢ",
-                rooms: [
-                    {
-                        room_code: "R014",
-                        room_name: "Phòng Standard",
-                        quantity: 2,
-                        unit_price: 700000,
-                        discount: 50000,
-                        total_price: 1350000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R015",
-                        room_name: "Phòng Garden View",
-                        quantity: 1,
-                        unit_price: 900000,
-                        discount: 50000,
-                        total_price: 850000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S015",
-                    room_code: "R014",
-                    service_name: "Dịch vụ giặt ủi",
-                    quantity: 3,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 135000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S016",
-                    room_code: "R015",
-                    service_name: "Chuyến xe đưa đón sân bay",
-                    quantity: 1,
-                    unit_price: 150000,
-                    discount: 20000,
-                    total_price: 130000,
-                    payment_status: "Đã thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Thuận Phước",
-                booking_time: "2024-11-22T12:00:00",
-                check_in_time: "2024-11-22T14:00:00",
-                check_out_time: "2024-11-23T10:00:00",
-                status: "ĐANG SỬ DỤNG",
-                rooms: [
-                    {
-                        room_code: "R016",
-                        room_name: "Phòng Deluxe",
-                        quantity: 1,
-                        unit_price: 1000000,
-                        discount: 100000,
-                        total_price: 900000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R017",
-                        room_name: "Phòng Suite",
-                        quantity: 1,
-                        unit_price: 1500000,
-                        discount: 150000,
-                        total_price: 1350000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S017",
-                    room_code: "R016",
-                    service_name: "Bữa sáng",
-                    quantity: 1,
-                    unit_price: 100000,
-                    discount: 20000,
-                    total_price: 80000,
-                    payment_status: "Chưa thanh toán",
-                },
-                {
-                    service_code: "S018",
-                    room_code: "R017",
-                    service_name: "Dịch vụ xông hơi",
-                    quantity: 2,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 90000,
-                    payment_status: "Chưa thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn MuayThai",
-                booking_time: "2024-11-21T18:30:00",
-                check_in_time: "2024-11-21T20:00:00",
-                check_out_time: "2024-11-22T12:00:00",
-                status: "ĐÃ TRẢ",
-                rooms: [
-                    {
-                        room_code: "R018",
-                        room_name: "Phòng Luxury",
-                        quantity: 2,
-                        unit_price: 1800000,
-                        discount: 200000,
-                        total_price: 3200000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S019",
-                    room_code: "R018",
-                    service_name: "Dịch vụ giặt ủi",
-                    quantity: 2,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 90000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S020",
-                    room_code: "R018",
-                    service_name: "Dịch vụ spa",
-                    quantity: 1,
-                    unit_price: 300000,
-                    discount: 50000,
-                    total_price: 250000,
-                    payment_status: "Đã thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn Bá Kiên",
-                booking_time: "2024-11-20T09:00:00",
-                check_in_time: "2024-11-20T15:00:00",
-                check_out_time: "2024-11-21T11:00:00",
-                status: "ĐÃ ĐẶT TRƯỚC",
-                rooms: [
-                    {
-                        room_code: "R019",
-                        room_name: "Phòng Junior",
-                        quantity: 1,
-                        unit_price: 800000,
-                        discount: 50000,
-                        total_price: 750000,
-                        payment_status: "Chưa thanh toán",
-                    },
-                    {
-                        room_code: "R020",
-                        room_name: "Phòng Penthouse",
-                        quantity: 1,
-                        unit_price: 2500000,
-                        discount: 300000,
-                        total_price: 2200000,
-                        payment_status: "Chưa thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S021",
-                    room_code: "R019",
-                    service_name: "Bữa sáng",
-                    quantity: 1,
-                    unit_price: 100000,
-                    discount: 20000,
-                    total_price: 80000,
-                    payment_status: "Chưa thanh toán",
-                },
-                {
-                    service_code: "S022",
-                    room_code: "R020",
-                    service_name: "Chuyến xe đưa đón sân bay",
-                    quantity: 1,
-                    unit_price: 150000,
-                    discount: 0,
-                    total_price: 150000,
-                    payment_status: "Chưa thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn 5 sao",
-                booking_time: "2024-11-19T17:45:00",
-                check_in_time: "2024-11-19T19:00:00",
-                check_out_time: "2024-11-20T10:00:00",
-                status: "ĐANG SỬ DỤNG",
-                rooms: [
-                    {
-                        room_code: "R021",
-                        room_name: "Phòng Ocean View",
-                        quantity: 2,
-                        unit_price: 2000000,
-                        discount: 250000,
-                        total_price: 3500000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S023",
-                    room_code: "R021",
-                    service_name: "Dịch vụ giặt ủi",
-                    quantity: 3,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 135000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S024",
-                    room_code: "R021",
-                    service_name: "Dịch vụ xông hơi",
-                    quantity: 2,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 90000,
-                    payment_status: "Đã thanh toán",
-                },
-            ],
-        },
-        {
-            order_info: {
-                hotel_name: "Khách sạn 4 sao Đỗ Bá",
-                booking_time: "2024-11-18T08:30:00",
-                check_in_time: "2024-11-18T14:00:00",
-                check_out_time: "2024-11-19T12:00:00",
-                status: "ĐÃ TRẢ",
-                rooms: [
-                    {
-                        room_code: "R022",
-                        room_name: "Phòng Deluxe",
-                        quantity: 1,
-                        unit_price: 1000000,
-                        discount: 100000,
-                        total_price: 900000,
-                        payment_status: "Đã thanh toán",
-                    },
-                    {
-                        room_code: "R023",
-                        room_name: "Phòng Standard",
-                        quantity: 1,
-                        unit_price: 700000,
-                        discount: 50000,
-                        total_price: 650000,
-                        payment_status: "Đã thanh toán",
-                    },
-                ],
-            },
-            services: [
-                {
-                    service_code: "S025",
-                    room_code: "R022",
-                    service_name: "Dịch vụ xông hơi",
-                    quantity: 1,
-                    unit_price: 50000,
-                    discount: 5000,
-                    total_price: 45000,
-                    payment_status: "Đã thanh toán",
-                },
-                {
-                    service_code: "S026",
-                    room_code: "R023",
-                    service_name: "Chuyến xe đưa đón sân bay",
-                    quantity: 1,
-                    unit_price: 150000,
-                    discount: 0,
-                    total_price: 150000,
-                    payment_status: "Đã thanh toán",
-                },
-            ],
-        },
-    ];
     const [orders, setOrders] = useState([]);
     const fetchData = async () => {
         try {
@@ -882,11 +244,99 @@ const OrdersCustomer = () => {
                                         </div>
                                         <div className="text-blue-800 font-medium">
                                             {order?.name_hotel}
+                                        </div>                                     
+                                    </div>
+                                    <div className="flex gap-10 items-center">
+                                        <div className="flex gap-2 items-center mb-2">
+                                            <div className="font-medium">
+                                                Ngày nhận phòng:
+                                            </div>
+                                            <div className="">
+                                                {`${order?.checkin.split("-")[2]}/${order?.checkin.split("-")[1]}/${order?.checkin.split("-")[0]}`}
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2 items-center mb-2">
+                                            <div className="font-medium">
+                                                Ngày trả phòng:
+                                            </div>
+                                            <div className="">
+                                                {`${order?.checkout.split("-")[2]}/${order?.checkout.split("-")[1]}/${order?.checkout.split("-")[0]}`}
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2 items-center mb-2">
+                                            <div className="font-medium">
+                                                Tổng số ngày:
+                                            </div>
+                                            <div className="">
+                                                {order?.total_day}
+                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    {/*  */}
-                                    
+                                    <div className="">
+                                        <h3 className="font-bold text-lg mb-2">Chi tiết đặt phòng:</h3>
+                                        <div className="overflow-x-auto">
+                                            <table className="min-w-full border-collapse border border-gray-300">
+                                                <thead>
+                                                    <tr className="bg-gray-100">
+                                                    <th className="border border-gray-300 px-4 py-2">Tên Phòng/Dịch Vụ</th>
+                                                    <th className="border border-gray-300 px-4 py-2">Số Lượng</th>
+                                                    <th className="border border-gray-300 px-4 py-2">Giá</th>
+                                                    <th className="border border-gray-300 px-4 py-2">Tổng Giá</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {order.details.map((detail, detailIndex) => (
+                                                    <>
+                                                        <tr
+                                                        key={`${orderIndex}-${detailIndex}-room`}
+                                                        className="bg-blue-100/70"
+                                                        >
+                                                        <td className="border border-gray-300 px-4 py-2">
+                                                            {detail.room_name} (Số phòng: {detail.room_number})
+                                                        </td>
+                                                        <td className="border border-gray-300 px-4 py-2 text-center">1</td>
+                                                        <td className="border border-gray-300 px-4 py-2 text-right">
+                                                            {detail.price.toLocaleString()} VND
+                                                        </td>
+                                                        <td className="border border-gray-300 px-4 py-2 text-right">
+                                                            {detail.price.toLocaleString()} VND
+                                                        </td>
+                                                        </tr>
+                                                        {detail.services && detail.services.map((service, serviceIndex) => (
+                                                            <tr
+                                                            key={`${orderIndex}-${detailIndex}-${serviceIndex}-service`}
+                                                            className="bg-white"
+                                                            >
+                                                            <td className="border border-gray-300 px-4 py-2 ">
+                                                                {service.service_name}
+                                                            </td>
+                                                            <td className="border border-gray-300 px-4 py-2 text-center">
+                                                                {service.quantity}
+                                                            </td>
+                                                            <td className="border border-gray-300 px-4 py-2 text-right">
+                                                                {service.price.toLocaleString()} VND
+                                                            </td>
+                                                            <td className="border border-gray-300 px-4 py-2 text-right">
+                                                                {service.total_price.toLocaleString()} VND
+                                                            </td>
+                                                            </tr>
+                                                        ))}
+                                                    </>
+                                                    ))}
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr className="font-bold">
+                                                        <td colSpan="3" className="border border-gray-300 px-4 py-2 text-right">
+                                                        Tổng cộng:
+                                                        </td>
+                                                        <td className="border border-gray-300 px-4 py-2 text-right">
+                                                        {order.total_price.toLocaleString()} VND
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             ))
                         ) : (

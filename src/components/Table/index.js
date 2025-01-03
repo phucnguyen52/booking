@@ -380,7 +380,7 @@ const Table = ({
                                                     }}
                                                 />
                                             ) : column.key === "store_date" ||
-                                              column.key === "orderDate" ? (
+                                              column.key === "orderDate" || column.key === 'createdAt' ? (
                                                 (() => {
                                                     const date = new Date(
                                                         row[column.key]
