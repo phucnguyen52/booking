@@ -8,7 +8,6 @@ import GeneralRule from "./GeneralRule";
 import Note from "./Note";
 import Datepicker from "react-tailwindcss-datepicker";
 import { getHotelDetail } from "../../service/hotelService";
-
 import { IoLocationSharp } from "react-icons/io5";
 import { IoIosHeartEmpty, IoMdCheckmark, IoIosArrowDown } from "react-icons/io";
 import { CiUser, CiCalendar, } from "react-icons/ci";
@@ -16,27 +15,32 @@ import { GrAdd, GrSubtract } from "react-icons/gr";
 import { GoShareAndroid } from "react-icons/go";
 import { BsTag } from "react-icons/bs";
 import { roomService } from "../../service/roomService";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { APP_ROUTER } from "../../utils/Constants";
 const HotelDetail = () => {
-    const hotelId = 1;
-    const [hotelData, setHotelData] = useState(null);
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const [detailSearch, setDetailSearch] = useState({
-        checkin: searchParams.get('checkin'),
-        checkout: searchParams.get('checkout'),
-        adult_count: Number(searchParams.get('adult_count'))
-    })
-    const [emptyRoom, setEmptyRoom] = useState([]);
-    const [suggestedRooms, setSuggestedRooms] = useState([]);
+    const { hotelId } = useParams()
+    const location = useLocation()
+    const searchParams = new URLSearchParams(location.search)
+    const navigate = useNavigate()
+    const [hotelData, setHotelData] = useState(null)
+    const [emptyRoom, setEmptyRoom] = useState([])
+    const [suggestedRooms, setSuggestedRooms] = useState([])
+    const [isOpenDetail, setIsOpenDetail] = useState(false)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isOpenDetail, setIsOpenDetail] = useState(false);
+    const [detailSearch, setDetailSearch] = useState({
+        checkin: searchParams.get('checkin') || new Date().toDateString(),
+        checkout: searchParams.get('checkout') || new Date(Date.now() + 86400000).toDateString(),
+        adult_count: Number(searchParams.get('adult_count')) || 2
+    })
     const [date, setDate] = useState({
         startDate: new Date(detailSearch.checkin),
         endDate: new Date(detailSearch.checkout)
     });
+    const detailRoomRef = useRef(null);
+
+
     useEffect(() => {
         fetchHotelDetail();
         fetchEmpty();
@@ -60,7 +64,6 @@ const HotelDetail = () => {
             setLoading(false);
         }
     };
-    console.log("suggest", suggestedRooms)
 
 
     const scrollToSection = (id) => {
@@ -68,12 +71,11 @@ const HotelDetail = () => {
     };
 
 
-    const detailRoomRef = useRef(null);
+
     useEffect(() => {
         const clickOutside = (event) => {
             if (detailRoomRef.current && !detailRoomRef.current.contains(event.target)) {
                 setIsOpenDetail(false);
-
             }
         };
         document.addEventListener('mousedown', clickOutside);
@@ -88,6 +90,24 @@ const HotelDetail = () => {
         await fetchEmpty()
         await fetchRoomSuggest()
     };
+
+    const handleOrder = (data) => {
+        const info = {
+            idHotel: hotelId,
+            name: hotelData.name,
+            address: hotelData.address,
+            checkin: detailSearch.checkin,
+            checkout: detailSearch.checkout,
+            adult: detailSearch.adult_count,
+            star: 5,
+            room: data,
+            totalAmount: data.reduce((total, room) => total + room.price * room.quantity, 0),
+            totalDiscount: 0
+        }
+        console.log("info: ", info)
+        navigate(APP_ROUTER.ORDER, { state:info });
+    }
+    console.log("hotel", hotelData)
     return (
         <div className="w-9/12 mx-auto">
             <div className="flex justify-between text-sm w-full">
@@ -142,7 +162,7 @@ const HotelDetail = () => {
 
 
 
-            {hotelData && emptyRoom && (
+            {hotelData &&  (
                 <div>
                     <div
                         className="flex justify-between items-center my-5"
@@ -204,8 +224,8 @@ const HotelDetail = () => {
                     </div>
 
 
-{/* Tìm kiếm */}
-<div>
+                    {/* Tìm kiếm */}
+                    <div>
                         <div className="mt-5 grid grid-rows-1 grid-cols-5 gap-1 items-stretch justify-stretch mb-4 p-1  bg-yellow-500 rounded-lg">
 
                             <div className="col-span-2 rounded-lg flex gap-2 bg-white p-2" >
@@ -280,13 +300,18 @@ const HotelDetail = () => {
                             roomData={suggestedRooms}
                             checkin={detailSearch.checkin}
                             checkout={detailSearch.checkout}
-                        ></RecommendHotel>
+                            handleOrder={handleOrder}
+                        />
                     </div>
 
 
-                    
+
                     <div className="mt-5" id="info-price">
-                        <EmptyRoom emptyRoom={emptyRoom} setEmptyRoom={setEmptyRoom}></EmptyRoom>
+                        <EmptyRoom
+                            emptyRoom={emptyRoom}
+                            setEmptyRoom={setEmptyRoom}
+                            handleOrder={handleOrder}
+                        />
                     </div>
 
                     <div id="convenient" className="mt-8">
@@ -309,39 +334,21 @@ const HotelDetail = () => {
                     <div id="generalRule" className="mt-10">
                         <div className="flex justify-between items-center">
                             <div className="text-2xl font-bold">Quy tắc chung</div>
-                            {/* <Button
-                        color="blue"
-                        children="Xem phòng trống"
-                        size="sm"
-                        textColor="white"
-                        border={false}
-                        id="info-price"
-                        handleClick={handleClick}
-                    ></Button> */}
                         </div>
                         <div className="text-base text-gray-700">
                             {hotelData.name} nhận yêu cầu đặc biệt - gửi yêu cầu
                             trong bước kế tiếp!
                         </div>
-                        <GeneralRule></GeneralRule>
+                        <GeneralRule />
                     </div>
                     <div id="notes" className="mt-10">
                         <div className="flex justify-between items-center">
                             <div className="text-2xl font-bold">Ghi chú</div>
-                            {/* <Button
-                        color="blue"
-                        children="Xem phòng trống"
-                        size="sm"
-                        textColor="white"
-                        border={false}
-                        id="info-price"
-                        handleClick={handleClick}
-                    ></Button> */}
                         </div>
                         <div className="text-base text-gray-700">
                             Thông tin quan trọng về chỗ nghỉ này
                         </div>
-                        <Note></Note>
+                        <Note />
                     </div>
                 </div>
             )}

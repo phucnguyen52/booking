@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import React, { useEffect, useRef, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { FaRegStarHalfStroke } from 'react-icons/fa6';
@@ -8,6 +8,9 @@ import Information from './Information';
 import OrderDetail from './OrderDetail';
 import { MdChecklist, MdPayment } from 'react-icons/md';
 import { BiSolidUserDetail } from "react-icons/bi";
+import { bookingService } from '../../service/bookingService';
+import { toast } from 'react-toastify';
+import { APP_ROUTER } from '../../utils/Constants';
 const Order = () => {
   const navigate = useNavigate()
   const [infoCustomer, setInfoCustomer] = useState({
@@ -15,38 +18,44 @@ const Order = () => {
     email: '',
     phone: '',
     address: '',
+    note: '',
   });
-  const [state, setState] = useState({
-    idHotel: 1,
-    name: "La Vela Saigon Hotel",
-    star: 4.5,
-    address: "280 Nam Ky Khoi Nghia, Ward 8, District 3, District 3, Ho Chi Minh City, Vietnam",
-    checkin: 'Thu Nov 28 2024 00:00:00 GMT+0700 (Indochina Time)',
-    checkout: 'Mon Dec 02 2024 00:00:00 GMT+0700 (Indochina Time)',
-    guests: {
-      rooms: 2,
-      adults: 2,
-      children: 1
-    },
-    room: [
-      {
-        id: 1,
-        name: "La Vela Club Lounge - Suite",
-        price: 2000000,
-        quantity: 1,
-      },
-      {
-        id: 2,
-        name: "La Vela Club Lounge - President Suite",
-        price: 4000000,
-        quantity: 1
-      }
-    ],
-    totalAmount: 6000000,
-    totalDiscount: 0
-  });
+  const location = useLocation();
+  const state = location.state;
   const [step, setStep] = useState(1)
-  console.log("info", infoCustomer)
+
+
+  const handleOrder = async() => {
+    const data = {
+      booking: {
+        checkin: state.checkin,
+        checkout: state.checkout,
+        adult_count: state.adult,
+        total_price: state.totalAmount,
+        note: infoCustomer.note,
+        fullname: infoCustomer.fullname,
+        email: infoCustomer.email,
+        numberphone: infoCustomer.phone
+      },
+      booking_detail: state.room.map(room => ({
+        RoomId: room.id,
+        count: room.quantity,
+        price: room.price
+      }))
+    }
+    const order = await bookingService.creatBooking(data)
+    console.log("order", order)
+    if (order?.booking) {
+      toast.success("Đặt phòng thành công")
+      navigate(APP_ROUTER.HOME)
+    } else {
+      toast.error("Đặt phòng thất bại")
+      navigate(-1)
+    }
+  }
+
+  // console.log("state", state);
+
   return (
     <div className='w-9/12 mb-10 mt-4 mx-auto'>
       <ol className="flex items-center w-full sm:mb-5 gap-0">
@@ -56,29 +65,36 @@ const Order = () => {
           </div>
           <p className='p-2 ml-2'>Điền thông tin</p>
         </li>
-        <li className={`${step >= 2 ? 'text-blue-600  after:border-blue-100 ' : ''} flex w-full items-center after:content-[''] after:w-10/12 after:h-1 after:border-b after:border-4 after:inline-block`}>
+        {/* <li className={`${step >= 2 ? 'text-blue-600  after:border-blue-100 ' : ''} flex w-full items-center after:content-[''] after:w-10/12 after:h-1 after:border-b after:border-4 after:inline-block`}>
           <div className={`${step >= 2 ? ' bg-blue-100 ' : 'bg-gray-100 '} flex items-center justify-center text-2xl w-10 h-10 rounded-full lg:h-12 lg:w-12  shrink-0`}>
             {step > 2 ? (<IoCheckmark />) : (<MdChecklist />)}
           </div>
           <p className='p-2 ml-2'>Kiểm tra</p>
-        </li>
+        </li> */}
         <li className={`${step >= 3 ? 'text-blue-600 ' : ''} flex items-center w-auto`}>
           <div className={`${step >= 3 ? ' bg-blue-100 ' : 'bg-gray-100 '} flex items-center justify-center text-2xl w-10 h-10 rounded-full lg:h-12 lg:w-12 shrink-0`}>
-            <MdPayment />
+            {/* <MdPayment /> */}
+            <IoCheckmark />
           </div>
           <p className='p-2 ml-2'>Thanh toán</p>
         </li>
       </ol>
       <div className='mt-5 p-5 border rounded-xl'>
-      {step === 1 ? (
-        <Information setStep={setStep} infoCustomer={infoCustomer} setInfoCustomer={setInfoCustomer} />
-      ) : step === 2 ? (
-        <OrderDetail setStep={setStep} info={{ infoCustomer, state }} />
-      ) : (
-        <Payment setStep={setStep} info={{ infoCustomer, state }} />
-      )}
+        {step === 1 ? (
+          <Information setStep={setStep} infoCustomer={infoCustomer} setInfoCustomer={setInfoCustomer} />
+        )
+          :
+          // step === 2
+          //   ?
+          (
+            <OrderDetail setStep={setStep} info={{ infoCustomer, state }} handleOrder={handleOrder} />
+            // )
+            // :
+            // (
+            //   <Payment setStep={setStep} info={{ infoCustomer, state }} />
+          )}
       </div>
-      
+
     </div>
   )
 }

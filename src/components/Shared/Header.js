@@ -10,13 +10,13 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FaUserCircle } from "react-icons/fa";
 import { isAuthenticated } from "../../utils/AuthCheck";
+import { APP_ROUTER } from "../../utils/Constants";
+import dayjs from "dayjs";
 const Header = () => {
     const [place, setPlace] = useState({});
     const [locationSuggestions, setLocationSuggestions] = useState([]);
     const [isOpenDetail, setIsOpenDetail] = useState(false);
-    const [detailRoom, setDetailRoom] = useState({
-        adults: 2,
-    })
+    const [adults, setAdults] = useState(2)
     const [date, setDate] = useState({
         startDate: null,
         endDate: null
@@ -24,6 +24,7 @@ const Header = () => {
     let debounceTimer = useRef(null)
     const detailRoomRef = useRef(null);
     const suggestions = useRef(null);
+    const navigate = useNavigate()
 
     // Hàm lấy gợi ý địa điểm từ API
     const fetchLocationSuggestions = async (term) => {
@@ -71,20 +72,31 @@ const Header = () => {
         }
         setPlace(prev => ({ ...prev, name: value }));
 
-        if (value) {
-            debounceTimer.current = setTimeout(() => {
-                fetchLocationSuggestions(value);
-            }, 500);
-        } else {
-            setLocationSuggestions([]);
-        }
+        // if (value) {
+        //     debounceTimer.current = setTimeout(() => {
+        //         fetchLocationSuggestions(value);
+        //     }, 500);
+        // } else {
+        //     setLocationSuggestions([]);
+        // }
     };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        console.log("Searching for:", place, date, detailRoom);
+    const handleSearch = () => {
+        if(!place.name||!date.startDate || !date.endDate || !adults){
+            alert("Vui lòng chọn đầy đủ thông tin")
+            return
+        } 
+        const queryParams = new URLSearchParams({
+            place: place.name, 
+            checkin: dayjs(date.startDate).format('YYYY-MM-DD'),
+            checkout: dayjs(date.endDate).format('YYYY-MM-DD'),
+            adults: adults
+        }).toString();
+        console.log(true)
+        navigate(`${APP_ROUTER.BOOKING}?${queryParams}`)
     };
-    const navigate = useNavigate()
+
+    
     const handleSubmitRegisterHotel = () => {
 
         navigate('/user/hotel/register')
@@ -189,10 +201,11 @@ const Header = () => {
                             onChange={handlePlace}
                             placeholder="Search for travel destinations..."
                             className="w-full focus:outline-none font-semibold"
+                            required
                         />
                     </div>
 
-                    {locationSuggestions.length > 0 && (
+                    {/* {locationSuggestions.length > 0 && (
                         <ul className="absolute left-0 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg" ref={suggestions}>
                             {locationSuggestions.map((suggestion, index) => (
                                 <li
@@ -208,31 +221,31 @@ const Header = () => {
                                 </li>
                             ))}
                         </ul>
-                    )}
+                    )} */}
                 </div>
                 <div className="col-span-3 rounded-lg flex gap-2 bg-white p-2" >
                     <span className="text-3xl flex justify-center items-center"><CiCalendar /></span>
-                    <Datepicker
-                        value={date}
-                        separator="—"
-                        minDate={new Date()}
-                        primaryColor={"blue"}
-                        displayFormat="DD/MM/YYYY"
-                        placeholder="Check-in date — Check-out date"
-                        toggleClassName="hidden"
-                        inputClassName="focus-visible:outline-none w-full h-full font-semibold"
-                        onChange={newValue =>  setDate({
-                            startDate: new Date(newValue.startDate.setHours(0, 0, 0, 0)),
-                            endDate: new Date(newValue.endDate.setHours(0, 0, 0, 0))
-                        })}
-                    />
+                        <Datepicker
+                            value={date}
+                            separator="—"
+                            minDate={new Date()}
+                            primaryColor={"blue"}
+                            displayFormat="DD/MM/YYYY"
+                            placeholder="Check-in date — Check-out date"
+                            toggleClassName="hidden"
+                            inputClassName="focus-visible:outline-none w-full h-full font-semibold"
+                            onChange={newValue =>  setDate({
+                                startDate: new Date(newValue.startDate.setHours(0, 0, 0, 0)),
+                                endDate: new Date(newValue.endDate.setHours(0, 0, 0, 0))
+                            })}
+                        />
                 </div>
 
                 <div className="relative col-span-3 hover:cursor-pointer bg-white rounded-lg p-2" onClick={() => { if (!isOpenDetail) setIsOpenDetail((prev) => !prev) }}>
                     <div className="h-full flex justify-between items-center">
                         <span className="flex items-center gap-2">
                             <span className="text-3xl"><CiUser /></span>
-                            <span className="font-semibold">{`${detailRoom.adults} adults `}</span>
+                            <span className="font-semibold">{`${adults} adults `}</span>
                         </span>
                         <button className="text-xl focus:outline-none"><IoIosArrowDown /></button>
                     </div>
@@ -245,12 +258,12 @@ const Header = () => {
                                 <div className="flex items-center gap-6 border rounded-lg">
                                     <GrSubtract
                                         className="w-full h-full p-2 cursor-pointer"
-                                        onClick={() => setDetailRoom(prev => ({ ...prev, adults: prev.adults > 0 ? prev.adults - 1 : 0 }))}
+                                        onClick={() => setAdults(prev => (prev > 0 ? prev - 1 : 0 ))}
                                     />
-                                    <span>{detailRoom.adults}</span>
+                                    <span>{adults}</span>
                                     <GrAdd
                                         className="w-full h-full p-2 cursor-pointer"
-                                        onClick={() => setDetailRoom(prev => ({ ...prev, adults: prev.adults + 1 }))}
+                                        onClick={() => setAdults(prev => (prev + 1 ))}
                                     />
                                 </div>
 
@@ -291,7 +304,7 @@ const Header = () => {
                 </div>
 
                 <button
-                    onClick={handleSearch}
+                    onClick={() =>handleSearch()}
                     className="text-nowrap bg-blue-500 text-white  rounded-lg hover:bg-blue-600"
                 >
                     Tìm kiếm

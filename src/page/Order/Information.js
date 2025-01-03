@@ -65,6 +65,16 @@ const Information = (props) => {
                            onChange={handleInfoChange}
                         />
                      </div>
+                     <div className="col-span-2">
+                        <label className="block text-gray-700 text-sm mb-1">Ghi chú</label>
+                        <input
+                           type="text"
+                           name="note"
+                           value={infoCustomer.note}
+                           className="w-full p-1 border outline-none rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                           onChange={handleInfoChange}
+                        />
+                     </div>
                   </div>
                </div>
 

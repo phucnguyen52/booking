@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import { AiFillExclamationCircle } from "react-icons/ai";
-import { LuBedDouble, LuBedSingle } from "react-icons/lu";
 import { MdOutlineArrowDropDown } from "react-icons/md";
-import { MdHotelClass } from "react-icons/md";
-import { CgAssign } from "react-icons/cg";
-import { IoMdCheckmark } from "react-icons/io";
-import { VscCheck } from "react-icons/vsc";
 import { IoPersonSharp } from "react-icons/io5";
-const EmptyRoom = ({ emptyRoom, setEmptyRoom }) => {
-    const [roomSelect, setRoomSelect] = useState([]);
+import { toast } from "react-toastify";
+const EmptyRoom = ({ emptyRoom, setEmptyRoom, handleOrder }) => {
 
     const handleRoomChange = (count, index) => {
         const newSelect = [...emptyRoom]
@@ -17,6 +12,19 @@ const EmptyRoom = ({ emptyRoom, setEmptyRoom }) => {
         console.log(count, index)
         console.log(newSelect)
     };
+    const order = () => {
+        const data = emptyRoom.reduce((acc, i) => {
+            if (i.count > 0) {
+                acc.push({ id: i.room_id, name: i.room_name, quantity: i.count, price: i.total_price });
+            }
+            return acc;
+        }, []);
+        if (data.length > 0) {
+            handleOrder(data);
+        } else {
+            toast.warning("Bạn chưa chọn phòng")
+        }
+    }
 
     return (
         <div>
@@ -24,6 +32,7 @@ const EmptyRoom = ({ emptyRoom, setEmptyRoom }) => {
             <div className="mt-2 font-semibold text-base">
                 Tất cả lựa chọn còn trống
             </div>
+
             <div className="flex w-full">
                 <table className="w-[80%] h-full table-auto border-collapse">
                     <thead>
@@ -159,19 +168,21 @@ const EmptyRoom = ({ emptyRoom, setEmptyRoom }) => {
                                 </tr>
                             ))}
                         </tbody>
-                    ) : <div>Không có phòng trống</div>}
+                    ) : <div className="italic p-4 text-center">Không có phòng trống</div>}
                 </table>
 
-
-                <div className="w-1/5 border-[#5bbaff] border-b-[1px]">
+                <div className="w-1/5 ">
                     <div className=" bg-[#4c76b2] text-[#4c76b2] px-2 py-[6px] text-sm font-bold pb-8 border-1 border-[#5bbaff] border border-t-0 sticky top-0 z-20 text-nowrap">
                         a
                     </div>
-                    <div className="mt-4 text-center sticky top-20">
-                        <button className="py-3 w-4/5 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                            Đặt phòng
-                        </button>
-                    </div>
+                    {emptyRoom.length > 0 && (
+
+                        <div className="mt-4 text-center sticky top-20">
+                            <button onClick={order} className="py-3 w-4/5 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                                Đặt phòng
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="text-sm my-3">

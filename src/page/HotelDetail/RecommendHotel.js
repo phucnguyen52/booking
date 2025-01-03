@@ -7,7 +7,7 @@ import {
     AiFillExclamationCircle,
 } from "react-icons/ai";
 import { MdViewCozy } from "react-icons/md";
-const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice }) => {
+const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice, handleOrder }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => {
         setIsModalOpen(true);
@@ -15,6 +15,11 @@ const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice }
     const closeModal = () => {
         setIsModalOpen(false);
     };
+    const order =() => {
+        const data = roomData.map(i => ({id: i.room_id, name: i.room_name, quantity: i.count, price: i.total_price}))
+        handleOrder(data);
+    }    
+ 
     return (
         <div>
             <div className="w-full rounded-xl shadow-xl">
@@ -22,9 +27,10 @@ const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice }
                     Được giới thiệu cho {adult_count} người lớn
                 </div>
                 <hr />
-                <div className="grid grid-cols-[50%,20%,30%] w-full">
+                {roomData?.length>0 ? (
+                    <div className="grid grid-cols-[50%,20%,30%] w-full">
                     {roomData.map((room, index) => (
-                        <React.Fragment key={room.id}>
+                        <React.Fragment key={index}>
                             <div className="p-4 border-[0.5px] border-l-0 border-gray-200 flex flex-col gap-[3px]">
                                 <div className="flex">
                                     <div className="">{room.count} x </div>
@@ -132,69 +138,6 @@ const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice }
                                 VND {Number(room.total_price).toLocaleString()} 
                                 </p>
                             </div>
-                            {/* {isModalOpen && (
-                                <div
-                                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-50"
-                                    onClick={closeModal}
-                                >
-                                    <div
-                                        className="bg-white p-6 rounded-lg max-w-lg w-full"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="font-bold text-base">
-                                                Hủy đặt phòng
-                                            </h3>
-                                            <button
-                                                onClick={closeModal}
-                                                className="text-gray-600 text-3xl"
-                                            >
-                                                &times;
-                                            </button>
-                                        </div>
-                                        <div className="">
-                                            <div className="flex gap-1 text-sm items-center">
-                                                <div className="flex gap-1 items-center text-green-700 mb-1">
-                                                    <VscCheck className="w-4 h-4" />
-                                                    <div className="font-bold text-nowrap">
-                                                        Hủy miễn phí
-                                                    </div>
-                                                </div>{" "}
-                                                <div className="text-green-700">
-                                                    trước {room.cancelDate}
-                                                </div>
-                                            </div>
-                                            <p className="text-sm ml-5">
-                                                Bạn có thể hủy miễn phí đến 3
-                                                ngày trước khi tới nhận phòng.
-                                                Bạn sẽ phải trả toàn bộ tiền
-                                                phòng nếu bạn hủy trong vòng 3
-                                                ngày trước khi tới nhận phòng.
-                                                Nếu bạn vắng mặt, phí vắng mặt
-                                                sẽ bằng với phí hủy.
-                                            </p>
-                                            <h3 className="font-bold text-base mt-2 mb-1">
-                                                Trả trước
-                                            </h3>
-                                            <div className="flex gap-1 text-sm items-center">
-                                                <div className="flex gap-1 items-center text-green-700">
-                                                    <VscCheck className="w-4 h-4" />
-                                                    <div className="font-bold text-nowrap">
-                                                        Không cần thanh toán
-                                                        trước{" "}
-                                                    </div>
-                                                </div>{" "}
-                                                <div className="text-green-700 text-nowrap">
-                                                    - thanh toán tại chỗ nghỉ
-                                                </div>
-                                            </div>
-                                            <p className="text-sm ml-5 mt-1">
-                                                Không cần thanh toán trước.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )} */}
                         </React.Fragment>
                     ))}
                     <div
@@ -210,7 +153,7 @@ const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice }
                         </p>
                         <p className="font-bold text-xl">{roomData?.reduce((sum, item) => sum + item.total_price * item.count, 0).toLocaleString() || null} VND</p>
                         <p className="text-xs mb-7">Đã bao gồm thuế và phí</p>
-                        <button className="mb-3 w-full cursor-pointer text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <button onClick={order} className="mb-3 w-full cursor-pointer text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                             Đặt các lựa chọn của bạn
                         </button>
                         <p className="text-xs text-gray-600">
@@ -219,31 +162,10 @@ const RecommendHotel = ({ checkin, checkout, adult_count, roomData, totalPrice }
                         </p>
                     </div>
                 </div>
+                ) : (
+                    <div className="italic text-center p-4">Không tìm thấy phòng phù hợp</div>
+                )}
             </div>
-            {/* <div className="mt-6">
-                <div>
-                    {information.description.split("\u005C\u005C").map((item, index) => (
-                        <div key={index} className="flex my-3 text-sm ">
-                            {item}
-                        </div>
-                    ))}
-                </div>
-                <div className="text-xs text-gray-600">
-                    Các khoảng cách nêu trong mô tả chỗ nghỉ được tính toán bằng
-                    © OpenStreetMap
-                </div>
-            </div> */}
-            {/* <div className="mt-4">
-                <div className="text-base font-bold mb-2">Các tiện nghi được ưa chuộng nhất</div>
-                <ul className="flex flex-wrap gap-6 text-gray-700">
-                {information.convenientLove.map((convenient, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                        <MdViewCozy className="text-green-600 w-5 h-5" />
-                        <span className="text-sm">{convenient}</span>
-                    </li>
-                ))}
-            </ul>
-            </div> */}
         </div>
     );
 };

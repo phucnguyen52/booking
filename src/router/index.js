@@ -8,7 +8,7 @@ import BookingPage from "../page/Booking/BookingPage";
 import Login from "../page/Auth/Login/Login";
 import Register from "../page/Auth/Register/Register";
 import Logout from "../page/Auth/Logout/Logout";
-import Order from "../page/Order/Order";
+import Order from "../page/Order";
 import OrderDetail from "../page/Order/OrderDetail";
 import Payment from "../page/Order/Payment";
 import HotelDetail from "../page/HotelDetail/index";
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
                 element: <BookingPage />,
             },
             {
-                path: APP_ROUTER.HOTELDETAIL,
+                path: `${APP_ROUTER.HOTELDETAIL}/:hotelId`,
                 element: <HotelDetail />,
             },
             {

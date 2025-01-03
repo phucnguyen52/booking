@@ -26,7 +26,7 @@ export const creatBooking = async(data) => {
    if(!data) return
    try {
       const response = await apiConfig.post(`/customer/booking`, data)
-      return response.data.booking
+      return response.data
    } catch (error) {
       console.log("Error getSchedule: " + error)
       return {}
